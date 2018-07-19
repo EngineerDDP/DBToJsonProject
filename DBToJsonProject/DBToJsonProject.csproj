@@ -8,11 +8,12 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>DBToJsonProject</RootNamespace>
     <AssemblyName>DBToJsonProject</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -54,18 +55,57 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Compile Include="Controller\ApplicationControl.cs" />
+    <Compile Include="Controller\UserValidation.cs" />
+    <Compile Include="Login\UserLoginEventArgs.cs" />
+    <Compile Include="SettingManager\DBSettings.cs" />
+    <Compile Include="TaskManager\DataBaseAccess.cs" />
+    <Compile Include="WorkSpace\ExportPage.xaml.cs">
+      <DependentUpon>ExportPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WorkSpace\ImportPage.xaml.cs">
+      <DependentUpon>ImportPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WorkSpace\WelcomePage.xaml.cs">
+      <DependentUpon>WelcomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WorkSpace\WorkWindow.xaml.cs">
+      <DependentUpon>WorkWindow.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Login\LoginWindow.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Login\NewWindowTitle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
+    <Compile Include="Login\LoginWindow.xaml.cs">
+      <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Login\NewWindowTitle.xaml.cs">
+      <DependentUpon>NewWindowTitle.xaml</DependentUpon>
+    </Compile>
+    <Page Include="WorkSpace\ExportPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WorkSpace\ImportPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WorkSpace\WelcomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WorkSpace\WorkWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -92,6 +132,28 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\skin\login_btn_close_press.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\skin\login_btn_close.png" />
+    <Resource Include="Images\skin\login_btn_close_active.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\skin\login_btn_minimum.png" />
+    <Resource Include="Images\skin\login_btn_minimum_active.png" />
+    <Resource Include="Images\skin\login_btn_minimum_press.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\skin\login_img_face.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\login_img_background.jpg" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\icons\arrow.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

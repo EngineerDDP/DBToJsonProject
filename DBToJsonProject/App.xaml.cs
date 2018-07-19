@@ -13,5 +13,16 @@ namespace DBToJsonProject
     /// </summary>
     public partial class App : Application
     {
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            Login.LoginWindow login = new Login.LoginWindow();
+            WorkSpace.WorkWindow work = new WorkSpace.WorkWindow();
+            Controller.ApplicationControl applicationControl = new Controller.ApplicationControl()
+            {
+                Login = login,
+                Work = work
+            };
+            applicationControl.Startup();
+        }
     }
 }

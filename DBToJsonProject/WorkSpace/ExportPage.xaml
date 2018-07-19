@@ -61,9 +61,9 @@
                         </TextBlock>
                         <TextBox Grid.Row="4" IsReadOnly="True"></TextBox>
                         <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-                            <Button Name="Btn_ResetExportSetting">重置</Button>
+                            <Button Name="Btn_ResetExportSetting" Width="60">重置</Button>
                             <Label></Label>
-                            <Button Name="Btn_ExecuteExport">导出</Button>
+                            <Button Name="Btn_ExecuteExport" Width="60">导出</Button>
                         </StackPanel>
                     </Grid>
                 </TabItem>

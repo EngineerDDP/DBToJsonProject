@@ -7,32 +7,54 @@ using System.Xml;
 
 namespace DBToJsonProject.SettingManager
 {
+    public interface JsonTreeNode
+    {
+        String JsonNodeName { get;  }
+        String DbName { get;  }
+        List<JsonTreeNode> ChildNodes { get; }
+    }
+    public interface UserTableInfo
+    {
+        String TableName { get; }
+        String UserName { get; }
+        String Password { get; }
+    }
     class DBSettings
     {
         private readonly static String ExportRootNodeName = "ExportTree";
         private readonly static String ImportRootNodeName = "ImportTree";
         private readonly static String UserTableNodeName = "UserTable";
+        private readonly static String UserNameAttrition = "UserName";
+        private readonly static String PasswordAttrition = "Password";
         private readonly static String RootNodeName = "Setting";
         private readonly static String DbTableAttributeName = "DbTableName";
         private readonly static String DbColumnAttributeName = "DbColumnName";
+        private readonly static String DbConnectionString = "DbConStr";
 
         /// <summary>
         /// 构建Json节点与数据库节点对应关系图，每个JsonObject对应一个数据库表名，每个Json节点下面可能包含元素标签，也可能嵌套其他JsonObject
         /// </summary>
-        private class TreeNode
+        class TreeNode : JsonTreeNode
         {
             public String JsonNodeName { get; set; }
             public String DbName { get; set; }
-            public List<TreeNode> ChildNodes { get; set; }
+            public List<JsonTreeNode> ChildNodes { get; set; }
+        }
+        class UserInfo : UserTableInfo
+        {
+            public String TableName { get; set; }
+            public String UserName { get; set; }
+            public String Password { get; set; }
         }
         /// <summary>
         /// 使用单例模式维护设置
         /// </summary>
-        private DBSettings instance;
+        private static DBSettings instance;
 
-        private TreeNode exportRoot;
-        private TreeNode importRoot;
-        private TreeNode userRoot;
+        private List<JsonTreeNode> exportRoot;
+        private List<JsonTreeNode> importRoot;
+        private UserInfo userRoot;
+        private String DBConnectArgs;
         /// <summary>
         /// 初始化数据库配置文件
         /// </summary>
@@ -50,18 +72,26 @@ namespace DBToJsonProject.SettingManager
                 {
                     xml.Load(file);
                     XmlNode node = xml.SelectSingleNode(ExportRootNodeName);
-                    exportRoot = new TreeNode()
+                    exportRoot = BuildTreeNodeFromXml(node).ChildNodes;         //为导出Json建立配置文件
+
+                    node = xml.SelectSingleNode(ImportRootNodeName);
+                    importRoot = BuildTreeNodeFromXml(node).ChildNodes;         //为导入Json建立配置文件
+
+                    node = xml.SelectSingleNode(UserTableNodeName);             
+                    userRoot = new UserInfo()
                     {
-                        JsonNodeName = "",
-                        DbName = "",
-                        ChildNodes = BuildTreeNodeFromXml(node).ChildNodes
-                    };
+                        TableName = node.Attributes[DbColumnAttributeName].Value,
+                        UserName = node.Attributes[UserNameAttrition].Value,
+                        Password = node.Attributes[PasswordAttrition].Value
+                    };           //为验证用户信息配置数据库
+
+                    DBConnectArgs = xml.SelectSingleNode(RootNodeName).Attributes[DbConnectionString].Value;
                 }
             }
         }
         private TreeNode BuildTreeNodeFromXml(XmlNode xmlNode)
         {
-            List<TreeNode> childs = new List<TreeNode>();
+            List<JsonTreeNode> childs = new List<JsonTreeNode>();
             foreach (XmlNode n in xmlNode.ChildNodes)
             {
                 childs.Add(BuildTreeNodeFromXml(n));
@@ -69,7 +99,7 @@ namespace DBToJsonProject.SettingManager
 
             var node = new TreeNode()
             {
-                JsonNodeName = xmlNode.Name,
+                JsonNodeName = xmlNode.Value,
                 ChildNodes = childs
             };
             if (childs.Count == 0)
@@ -78,15 +108,7 @@ namespace DBToJsonProject.SettingManager
                 node.DbName = xmlNode.Attributes[DbTableAttributeName].Value;
             return node;
         }
-        public DBSettings Default
-        {
-            get
-            {
-                if (instance == null)
-                    instance = new DBSettings();
-                return instance;
-            }
-        }
+
         private FileStream LoadSettingXML()
         {
             FileStream fs;
@@ -117,5 +139,22 @@ namespace DBToJsonProject.SettingManager
             setting.AppendChild(userTable);
             return xml;
         }
+        /// <summary>
+        /// 获取默认设置对象
+        /// </summary>
+        public static DBSettings Default
+        {
+            get
+            {
+                if (instance == null)
+                    instance = new DBSettings();
+                return instance;
+            }
+        }
+
+        public List<JsonTreeNode> ExportRoot { get => exportRoot; }
+        public List<JsonTreeNode> ImportRoot { get => importRoot; }
+        public UserTableInfo UserRoot { get => userRoot; }
+        public string DBConnectStr { get => DBConnectArgs; }
     }
 }

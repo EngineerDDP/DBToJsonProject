@@ -57,9 +57,15 @@
     </ApplicationDefinition>
     <Compile Include="Controller\ApplicationControl.cs" />
     <Compile Include="Controller\UserValidation.cs" />
+    <Compile Include="ErrorBox.xaml.cs">
+      <DependentUpon>ErrorBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Login\UserLoginEventArgs.cs" />
     <Compile Include="SettingManager\DBSettings.cs" />
     <Compile Include="TaskManager\DataBaseAccess.cs" />
+    <Compile Include="WorkSpace\DbSettingToolBox.xaml.cs">
+      <DependentUpon>DbSettingToolBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WorkSpace\ExportPage.xaml.cs">
       <DependentUpon>ExportPage.xaml</DependentUpon>
     </Compile>
@@ -72,6 +78,10 @@
     <Compile Include="WorkSpace\WorkWindow.xaml.cs">
       <DependentUpon>WorkWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="ErrorBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Login\LoginWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -90,6 +100,10 @@
     <Compile Include="Login\NewWindowTitle.xaml.cs">
       <DependentUpon>NewWindowTitle.xaml</DependentUpon>
     </Compile>
+    <Page Include="WorkSpace\DbSettingToolBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="WorkSpace\ExportPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -151,7 +165,9 @@
   <ItemGroup>
     <Resource Include="Images\login_img_background.jpg" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\icons\error.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\icons\arrow.gif" />
   </ItemGroup>

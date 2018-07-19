@@ -155,7 +155,7 @@
                 <ImageBrush ImageSource="/Images/login_img_background.jpg" Stretch="UniformToFill"/>
             </Grid.Background>
             <StackPanel Width="42" Height="21" HorizontalAlignment="Right" VerticalAlignment="Top">
-                <local:NewWindowTitle HorizontalAlignment="Right"></local:NewWindowTitle>
+                <local:NewWindowTitle x:Name="Btns_Ctrl" MinimumBtn_Clicked="Btns_Ctrl_MinimumBtn_Clicked" CloseBtn_Clicked="Btns_Ctrl_CloseBtn_Clicked" HorizontalAlignment="Right"></local:NewWindowTitle>
             </StackPanel>
         </Grid>
         <StackPanel Height="150">
@@ -168,8 +168,38 @@
                 <StackPanel Width="180" Height="89" Margin="10,10,0,0">
                     <Border BorderBrush="Gray" CornerRadius="5" BorderThickness="1">
                         <StackPanel Width="180" Height="60">
-                            <TextBox Name="Txt_Username" Height="25" Width="180" Background="{x:Null}" BorderThickness="0,0,0,1" Margin="2,5,0,0" FontSize="14" Foreground="Gray">用户名</TextBox>
-                            <TextBox Name="Txt_Password" Height="25" Width="180" Background="{x:Null}" BorderThickness="0" Margin="2,2,0,0" FontSize="14" Foreground="Gray">密码</TextBox>
+                            <TextBox Name="Txt_Username" Height="25" Width="180" Margin="2,3,0,0" FontSize="14" BorderThickness="0">
+                                <TextBox.Resources>
+                                    <VisualBrush x:Key="HintText" TileMode="None" Opacity="0.5" Stretch="None" AlignmentX="Left">
+                                        <VisualBrush.Visual>
+                                            <TextBlock Text="请输入用户名"/>
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </TextBox.Resources>
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Style.Triggers>
+                                            <Trigger Property="Text"  Value="">
+                                                <Setter Property="Background" Value="{StaticResource HintText}"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                            <Line X1="0" X2="180" Y1="0" Y2="0" Stroke="Gray" StrokeThickness="1"></Line>
+                            <PasswordBox Name="Txt_Password" Height="25" Width="180" Margin="2,5,0,0" FontSize="14" BorderThickness="0">
+                                <PasswordBox.Resources>
+                                    <VisualBrush x:Key="HintText" TileMode="None" Opacity="0.5" Stretch="None" AlignmentX="Left">
+                                        <VisualBrush.Visual>
+                                            <TextBlock Text="密码"/>
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </PasswordBox.Resources>
+                                <PasswordBox.Style>
+                                    <Style TargetType="PasswordBox">
+                                    </Style>
+                                </PasswordBox.Style>
+                            </PasswordBox>
                         </StackPanel>
                     </Border>
                     <StackPanel Orientation="Horizontal" Height="15" Width="180" Margin="0,10,0,0">

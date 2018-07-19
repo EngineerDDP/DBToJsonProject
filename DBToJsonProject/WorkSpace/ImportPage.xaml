@@ -48,9 +48,9 @@
                         </StackPanel>
 
                         <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-                            <Button Name="Btn_ResetExportSetting">重置</Button>
+                            <Button Name="Btn_ResetExportSetting" Width="60">重置</Button>
                             <Label></Label>
-                            <Button Name="Btn_ExecuteExport">导入</Button>
+                            <Button Name="Btn_ExecuteExport" Width="60">导入</Button>
                         </StackPanel>
                     </Grid>
                 </TabItem>

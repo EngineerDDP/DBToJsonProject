@@ -1,0 +1,360 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Collections.ObjectModel;
+using DBToJsonProject.Controller;
+using DBToJsonProject.Controller.SettingManager;
+using DBToJsonProject.Models;
+using static DBToJsonProject.Controller.SettingManager.DBSettings;
+
+namespace DBToJsonProject.Views.WorkSpace
+{
+    /// <summary>
+    /// DbSettingToolBox.xaml 的交互逻辑
+    /// </summary>
+    public partial class DbSettingToolBox : Window
+    {
+        public event EventHandler<WrongSettingEventArgs> WrongSetting;
+        public event EventHandler<StringEventArgs> UnKnowError;
+        public DbSettingToolBox()
+        {
+            InitializeComponent();
+        }
+        /// <summary>
+        /// 将填充树载入View
+        /// </summary>
+        /// <param name="view"></param>
+        /// <param name="detial"></param>
+        private void LoadTreeView(TreeView view, JsonEntityDetial detial)
+        {
+            view.Items.Clear();
+            ObservableCollection<PropertyNodeItem> items = new ObservableCollection<PropertyNodeItem>();
+            items.Add(PropertyNodeItem.Default);
+            items[0].DisplayName = "根节点";
+            foreach (IJsonTreeNode n in detial.roots)
+            {
+                var i = FillItems(n, detial);
+                i.Parent = items[0];
+                items[0].Childs.Add(i);
+            }
+            view.ItemsSource = items;
+        }
+        /// <summary>
+        /// 递归填充
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="detial"></param>
+        /// <returns></returns>
+        private PropertyNodeItem FillItems(IJsonTreeNode root, JsonEntityDetial detial)
+        {
+            PropertyNodeItem item = PropertyNodeItem.Default;
+            item.DisplayName = root.DisplayName;
+            item.JsonName = root.JsonNodeName;
+            item.EntityName = root.DbName;
+            item.MultiReleationShip = root.MultiRelated;
+            item.HasChildren = root.ChildNodes.Count != 0;
+            item.BuildJson = root.BuildSingleFile;
+            item.Selectable = root.Selectable;
+            item.CustomizedSql = root.Sql.CustomizeSQLString;
+            item.CustomizedSqlParameters = root.Sql.Params?.ToString();
+            
+            foreach(IJsonTreeNode n in root.ChildNodes.Values)
+            {
+                var i = FillItems(n, detial);
+                i.Parent = item;
+                item.Childs.Add(i);
+            }
+            return item;
+        }
+        private JsonEntityDetial BuildSetting(PropertyNodeItem root, String constr)
+        {
+            JsonEntityDetial detial = new JsonEntityDetial();
+            detial.DbConnectStr = constr;
+            foreach(PropertyNodeItem i in root.Childs)
+            {
+                detial.roots.Add(BuildNode(i, null));
+            }
+            return detial;
+        }
+        private IJsonTreeNode BuildNode(PropertyNodeItem root, IJsonTreeNode parent)
+        {
+            TreeNode node = new TreeNode(
+                root.JsonName,
+                root.EntityName,
+                root.DisplayName,
+                root.MultiReleationShip,
+                root.BuildJson,
+                root.Selectable
+                );
+
+            Dictionary<String, IJsonTreeNode> list = new Dictionary<string, IJsonTreeNode>();
+            foreach(PropertyNodeItem n in root.Childs)
+            {
+                list.Add(n.JsonName, BuildNode(n, node));
+            }
+
+            node.ChildNodes = list;
+            node.Parent = parent;
+            node.Sql = new CustomizedSqlDescriber(
+                root.HasCustomizedSql, 
+                root.CustomizedSql, 
+                root.CustomizedSqlParameters, node);
+            return node;
+        }
+        /// <summary>
+        /// 编辑实体
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Btn_ImEditImEntity_Click(object sender, RoutedEventArgs e)
+        {
+            if (Tree_Import.SelectedItem != null)
+            {
+                PropertyNodeItem i = Tree_Import.SelectedItem as PropertyNodeItem;
+                i.DisplayName = Txt_ImDisplayName.Text;
+                i.EntityName = Txt_ImEntityName.Text;
+                i.BuildJson = Select_ImBuildJson.SelectedIndex == 1;
+                i.JsonName = Txt_ImJsonName.Text;
+                i.MultiReleationShip = Select_ImMultiRelation.SelectedIndex == 1;
+
+                Btn_EditImEntity.IsEnabled = false;
+            }
+        }
+
+        private void Btn_EditExEntity_Click(object sender, RoutedEventArgs e)
+        {
+            if (Tree_Export.SelectedItem != null)
+            {
+                PropertyNodeItem i = Tree_Export.SelectedItem as PropertyNodeItem;
+                i.DisplayName = Txt_ExDisplayName.Text;
+                i.EntityName = Txt_ExEntityName.Text;
+                i.BuildJson = Select_ExBuildJson.SelectedIndex == 1;
+                i.Selectable = Select_ExSelectable.SelectedIndex == 1;
+                i.JsonName = Txt_ExJsonName.Text;
+                i.MultiReleationShip = Select_ExMultiRelation.SelectedIndex == 1;
+
+                if(new String(Txt_ExSQL.Text.SkipWhile(q => q == ' ').ToArray()) != String.Empty)
+                {
+                    i.HasCustomizedSql = true;
+                    i.CustomizedSql = Txt_ExSQL.Text;
+                    i.CustomizedSqlParameters = Txt_ExParameters.Text;
+                }
+
+                Btn_EditExEntity.IsEnabled = false;
+            }
+        }
+        /// <summary>
+        /// 添加实体
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Btn_ImNewImEntity_Click(object sender, RoutedEventArgs e)
+        {
+            if (Tree_Import.SelectedItem != null)
+            {
+                PropertyNodeItem i = Tree_Import.SelectedItem as PropertyNodeItem;
+                var j = PropertyNodeItem.Default;
+                j.Parent = i;
+                i.Childs.Add(j);
+                i.IsExpanded = true;
+                i.HasCustomizedSql = false;
+            }
+        }
+        private void Btn_NewExEntity_Click(object sender, RoutedEventArgs e)
+        {
+            if (Tree_Export.SelectedItem != null)
+            {
+                PropertyNodeItem i = Tree_Export.SelectedItem as PropertyNodeItem;
+                var j = PropertyNodeItem.Default;
+                j.Parent = i;
+                i.Childs.Add(j);
+                i.IsExpanded = true;
+                i.Selectable = false;
+                i.HasCustomizedSql = false;
+            }
+        }
+        /// <summary>
+        /// 删除实体
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Btn_ImDelImEntity_Click(object sender, RoutedEventArgs e)
+        {
+            PropertyNodeItem i = Tree_Import.SelectedItem as PropertyNodeItem;
+            if (i.Parent != null)
+                i.Parent.Childs.Remove(i);
+        }
+
+        private void Btn_DelExEntity_Click(object sender, RoutedEventArgs e)
+        {
+            PropertyNodeItem i = Tree_Export.SelectedItem as PropertyNodeItem;
+            if (i.Parent != null)
+                i.Parent.Childs.Remove(i);
+        }
+        /// <summary>
+        /// 载入记录
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadTreeView(Tree_Import, DBSettings.Default.ImportRoot);
+            LoadTreeView(Tree_Export, DBSettings.Default.ExportRoot);
+            Txt_DbConnectStr.Text = Default.DBConnectStr;
+            Txt_ExportDbConnectStr.Text = Default.ExportRoot.DbConnectStr;
+            Txt_ImportDbConnectStr.Text = Default.ImportRoot.DbConnectStr;
+            Txt_UserDbConnectStr.Text = Default.UserRoot.DbConnectStr;
+            Txt_UserDbTableName.Text = Default.UserRoot.TableName;
+            Txt_UsernameColumnName.Text = Default.UserRoot.UserName;
+            Txt_PasswordColumnName.Text = Default.UserRoot.Password;
+
+            LockInputForJsonObject();
+        }
+        /// <summary>
+        /// 取消操作，并退出
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Btn_Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+        /// <summary>
+        /// 确定并保存记录
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Btn_Ok_Click(object sender, RoutedEventArgs args)
+        {
+            try
+            {
+                Save();
+                this.Close();
+            }
+            catch (ArgumentException e)
+            {
+                WrongSetting?.Invoke(this, new WrongSettingEventArgs(e.Message, e.ParamName, e.StackTrace));
+            }
+            catch (Exception e)
+            {
+                UnKnowError?.Invoke(this, new StringEventArgs() { Str = e.Message });
+            }
+        }
+        /// <summary>
+        /// 保存记录
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Btn_Save_Click(object sender, RoutedEventArgs args)
+        {
+            try
+            {
+                Save();
+            }
+            catch (ArgumentException e)
+            {
+                WrongSetting?.Invoke(this, new WrongSettingEventArgs(e.Message, e.ParamName, e.StackTrace));
+            }
+            catch (Exception e)
+            {
+                UnKnowError?.Invoke(this, new StringEventArgs() { Str = e.Message });
+            }
+        }
+        /// <summary>
+        /// 保存记录并写入文件
+        /// </summary>
+        private void Save()
+        {
+            PropertyNodeItem importRoot = (Tree_Import.ItemsSource as ObservableCollection<PropertyNodeItem>)[0];
+            PropertyNodeItem exportRoot = (Tree_Export.ItemsSource as ObservableCollection<PropertyNodeItem>)[0];
+            String exdbStr = Txt_ExportDbConnectStr.Text;
+            String imdbStr = Txt_ImportDbConnectStr.Text;
+            Default.UpdateSetting(Default.UserRoot, BuildSetting(exportRoot, exdbStr), BuildSetting(importRoot, imdbStr));
+        }
+        /// <summary>
+        /// 用户改变了选择项，重新判断该项是否可写
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Tree_Import_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            var i = Tree_Import.SelectedItem as PropertyNodeItem;
+            if (i != null && i.Parent != null)
+            {
+                Txt_ImEntityName.Text = i.EntityName;
+                Txt_ImJsonName.Text = i.JsonName;
+                Txt_ImDisplayName.Text = i.DisplayName;
+                Select_ImMultiRelation.SelectedIndex = i.MultiReleationShip ? 1 : 0;
+                Select_ImBuildJson.SelectedIndex = i.BuildJson ? 1 : 0;
+                UnlockInputForJsonObject();
+            }
+            else
+            {
+                LockInputForJsonObject();
+            }
+            Btn_NewImEntity.IsEnabled = true;
+        }
+        private void Tree_Export_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            var i = Tree_Export.SelectedItem as PropertyNodeItem;
+            if (i != null && i.Parent != null)
+            {
+                Txt_ExEntityName.Text = i.EntityName;
+                Txt_ExJsonName.Text = i.JsonName;
+                Txt_ExDisplayName.Text = i.DisplayName;
+                Select_ExMultiRelation.SelectedIndex = i.MultiReleationShip ? 1 : 0;
+                Select_ExBuildJson.SelectedIndex = i.BuildJson ? 1 : 0;
+                Select_ExSelectable.SelectedIndex = i.Selectable ? 1 : 0;
+                Txt_ExSQL.Text = i.CustomizedSql;
+                Txt_ExParameters.Text = i.CustomizedSqlParameters;
+                UnlockInputForJsonObject();
+            }
+            else
+            {
+                LockInputForJsonObject();
+            }
+            Btn_NewExEntity.IsEnabled = true;
+        }
+        private void LockInputForJsonObject()
+        {
+            Txt_ImEntityName.IsEnabled = false;
+            Txt_ImJsonName.IsEnabled = false;
+            Txt_ImDisplayName.IsEnabled = false;
+            Select_ImMultiRelation.IsEnabled = false;
+            Select_ImBuildJson.IsEnabled = false;
+            Btn_EditImEntity.IsEnabled = false;
+            Btn_DelImEntity.IsEnabled = false;
+
+            Txt_ExEntityName.IsEnabled = false;
+            Txt_ExJsonName.IsEnabled = false;
+            Txt_ExDisplayName.IsEnabled = false;
+            Select_ExMultiRelation.IsEnabled = false;
+            Select_ExBuildJson.IsEnabled = false;
+            Btn_EditExEntity.IsEnabled = false;
+            Btn_DelExEntity.IsEnabled = false;
+            Select_ExSelectable.IsEnabled = false;
+        }
+        private void UnlockInputForJsonObject()
+        {
+            Txt_ImEntityName.IsEnabled = true;
+            Txt_ImJsonName.IsEnabled = true;
+            Txt_ImDisplayName.IsEnabled = true;
+            Select_ImMultiRelation.IsEnabled = true;
+            Select_ImBuildJson.IsEnabled = true;
+            Btn_EditImEntity.IsEnabled = true;
+            Btn_DelImEntity.IsEnabled = true;
+
+            Txt_ExEntityName.IsEnabled = true;
+            Txt_ExJsonName.IsEnabled = true;
+            Txt_ExDisplayName.IsEnabled = true;
+            Select_ExMultiRelation.IsEnabled = true;
+            Select_ExBuildJson.IsEnabled = true;
+            Btn_EditExEntity.IsEnabled = true;
+            Btn_DelExEntity.IsEnabled = true;
+            Select_ExSelectable.IsEnabled = true;
+        }
+
+    }
+}

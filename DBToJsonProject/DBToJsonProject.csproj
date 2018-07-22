@@ -42,7 +42,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -56,37 +55,56 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Controller\ApplicationControl.cs" />
+    <Compile Include="Controller\Events.cs" />
+    <Compile Include="Controller\IApplicationControl.cs" />
+    <Compile Include="Controller\SettingManager\AppSetting.cs" />
+    <Compile Include="Controller\Test.cs" />
     <Compile Include="Controller\UserValidation.cs" />
-    <Compile Include="ErrorBox.xaml.cs">
+    <Compile Include="Models\Selections.cs" />
+    <Compile Include="Views\ErrorBox.xaml.cs">
       <DependentUpon>ErrorBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Login\UserLoginEventArgs.cs" />
-    <Compile Include="SettingManager\DBSettings.cs" />
-    <Compile Include="TaskManager\DataBaseAccess.cs" />
-    <Compile Include="WorkSpace\DbSettingToolBox.xaml.cs">
+    <Compile Include="Models\EventArguments\UserLoginEventArgs.cs" />
+    <Compile Include="Controller\SettingManager\DataBase\CustomizedSqlDescriber.cs" />
+    <Compile Include="Controller\SettingManager\DataBase\CustomizedSqlParameters.cs" />
+    <Compile Include="Controller\SettingManager\DataBase\DBSettings.cs" />
+    <Compile Include="Controller\SettingManager\DataBase\ICustomizedSqlDescriber.cs" />
+    <Compile Include="Controller\SettingManager\DataBase\ICustomizedSqlParameters.cs" />
+    <Compile Include="Controller\SettingManager\DataBase\IJsonTreeNode.cs" />
+    <Compile Include="Controller\SettingManager\DataBase\IUserTableInfo.cs" />
+    <Compile Include="Controller\SettingManager\DataBase\TreeNode.cs" />
+    <Compile Include="Controller\SettingManager\UserActivitiesLog.cs" />
+    <Compile Include="Controller\SettingManager\XmlSettingManager.cs" />
+    <Compile Include="Controller\SettingManager\UserSetting.cs" />
+    <Compile Include="Controller\TaskManager\DataBaseAccess.cs" />
+    <Compile Include="Views\WorkSpace\DbSettingToolBox.xaml.cs">
       <DependentUpon>DbSettingToolBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WorkSpace\ExportPage.xaml.cs">
+    <Compile Include="Views\WorkSpace\ExportPage.xaml.cs">
       <DependentUpon>ExportPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WorkSpace\ImportPage.xaml.cs">
+    <Compile Include="Views\WorkSpace\ImportPage.xaml.cs">
       <DependentUpon>ImportPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WorkSpace\WelcomePage.xaml.cs">
+    <Compile Include="Models\NotifyProperty.cs" />
+    <Compile Include="Models\PropertyNodeItem.cs" />
+    <Compile Include="Models\SelectableJsonList.cs" />
+    <Compile Include="Models\SelectableJsonNode.cs" />
+    <Compile Include="Views\WorkSpace\WelcomePage.xaml.cs">
       <DependentUpon>WelcomePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WorkSpace\WorkWindow.xaml.cs">
+    <Compile Include="Views\WorkSpace\WorkWindow.xaml.cs">
       <DependentUpon>WorkWindow.xaml</DependentUpon>
     </Compile>
-    <Page Include="ErrorBox.xaml">
+    <Page Include="Views\ErrorBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Login\LoginWindow.xaml">
+    <Page Include="Views\Login\LoginWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Login\NewWindowTitle.xaml">
+    <Page Include="Views\Login\NewWindowTitle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -94,29 +112,29 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Login\LoginWindow.xaml.cs">
+    <Compile Include="Views\Login\LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Login\NewWindowTitle.xaml.cs">
+    <Compile Include="Views\Login\NewWindowTitle.xaml.cs">
       <DependentUpon>NewWindowTitle.xaml</DependentUpon>
     </Compile>
-    <Page Include="WorkSpace\DbSettingToolBox.xaml">
+    <Page Include="Views\WorkSpace\DbSettingToolBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WorkSpace\ExportPage.xaml">
+    <Page Include="Views\WorkSpace\ExportPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WorkSpace\ImportPage.xaml">
+    <Page Include="Views\WorkSpace\ImportPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WorkSpace\WelcomePage.xaml">
+    <Page Include="Views\WorkSpace\WelcomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WorkSpace\WorkWindow.xaml">
+    <Page Include="Views\WorkSpace\WorkWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -171,5 +189,6 @@
   <ItemGroup>
     <Resource Include="Images\icons\arrow.gif" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

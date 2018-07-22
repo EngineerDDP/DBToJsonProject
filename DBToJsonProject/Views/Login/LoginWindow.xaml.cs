@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DBToJsonProject.Controller;
+using DBToJsonProject.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,17 +13,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace DBToJsonProject.Login
+namespace DBToJsonProject.Views.Login
 {
     public delegate void UserloginEvent(object sender, UserLoginEventArgs args);
-    public delegate void LoginWindowExited(object sender, EventArgs args);
     /// <summary>
     /// LoginWindow.xaml 的交互逻辑
     /// </summary>
     public partial class LoginWindow : Window
     {
-        public event UserloginEvent OnLogin;
-        public event LoginWindowExited OnExit;
+        public event EventHandler<UserLoginEventArgs> OnLogin;
+        public event EventHandler OnExit;
 
         public LoginWindow()
         {
@@ -31,14 +32,17 @@ namespace DBToJsonProject.Login
 
         private void Btn_login_Click(object sender, RoutedEventArgs e)
         {
-            UserLoginEventArgs args = new UserLoginEventArgs()
+            if (!String.IsNullOrWhiteSpace(Txt_Username.Text) && !String.IsNullOrEmpty(Txt_Password.Password))
             {
-                Username = Txt_Username.Text,
-                Password = Txt_Password.Password,
-                AutomaticLogin = Chk_AutoLogin.IsChecked == true,
-                RememberPassword = Chk_RememberPassword.IsChecked == true
-            };
-            OnLogin?.Invoke(this, args);
+                UserLoginEventArgs args = new UserLoginEventArgs()
+                {
+                    Username = Txt_Username.Text,
+                    Password = Txt_Password.Password,
+                    AutomaticLogin = Chk_AutoLogin.IsChecked == true,
+                    RememberPassword = Chk_RememberPassword.IsChecked == true
+                };
+                OnLogin?.Invoke(this, args);
+            }
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)

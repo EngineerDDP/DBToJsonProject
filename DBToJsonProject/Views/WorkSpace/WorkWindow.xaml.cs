@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DBToJsonProject.Controller;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,13 +12,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace DBToJsonProject.WorkSpace
+namespace DBToJsonProject.Views.WorkSpace
 {
     /// <summary>
     /// WorkWindow.xaml 的交互逻辑
     /// </summary>
     public partial class WorkWindow : Window
     {
+        public event EventHandler OnWorkSpaceExited;
+        public event EventHandler OnDbSettingRequired;
+
         public WorkWindow()
         {
             InitializeComponent();
@@ -30,7 +34,7 @@ namespace DBToJsonProject.WorkSpace
 
         private void Opt_Exit_Click(object sender, RoutedEventArgs e)
         {
-
+            OnWorkSpaceExited?.Invoke(this, e);
         }
 
         private void Opt_ImportJob_Click(object sender, RoutedEventArgs e)
@@ -55,7 +59,7 @@ namespace DBToJsonProject.WorkSpace
 
         private void Opt_DBOption_Click(object sender, RoutedEventArgs e)
         {
-
+            OnDbSettingRequired?.Invoke(this, e);
         }
 
         private void Opt_Manual_Click(object sender, RoutedEventArgs e)
@@ -71,6 +75,16 @@ namespace DBToJsonProject.WorkSpace
         private void Opt_ToWelcomePage_Click(object sender, RoutedEventArgs e)
         {
             Frame_MainWorkSpace.Navigate(new WelcomePage());
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            OnWorkSpaceExited?.Invoke(this, e);
+        }
+
+        private void Opt_Logout_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

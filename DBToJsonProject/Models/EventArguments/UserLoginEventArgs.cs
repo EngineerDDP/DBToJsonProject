@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DBToJsonProject.Login
+namespace DBToJsonProject.Models
 {
-    public class UserLoginEventArgs
+    public class UserLoginEventArgs : EventArgs
     {
         public String Username { get; set; }
         public String Password { get; set; }

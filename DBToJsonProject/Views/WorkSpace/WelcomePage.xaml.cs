@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DBToJsonProject.WorkSpace
+namespace DBToJsonProject.Views.WorkSpace
 {
     /// <summary>
     /// WelcomePage.xaml 的交互逻辑

@@ -1,0 +1,279 @@
+﻿<Window x:Class="DBToJsonProject.Views.WorkSpace.DbSettingToolBox"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DBToJsonProject.Views.WorkSpace"
+        xmlns:models="clr-namespace:DBToJsonProject.Models"
+        mc:Ignorable="d"
+        WindowStyle="ToolWindow"
+        Background="#FFF0F0F0"
+        ResizeMode="NoResize"
+        Loaded="Window_Loaded"
+        Title="数据库设置" Height="720" Width="480">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <TabControl Name="Tab_" Grid.Row="0" Margin="3">
+            <TabItem Name="Tab_General" Header="常规">
+                <Grid Margin="12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="1"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="1"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Border  Grid.Row="0" Margin="3" VerticalAlignment="Center">
+                        <TextBlock FontSize="14" Foreground="#FF007ACC">常规配置</TextBlock>
+                    </Border>
+                    <Line Grid.Row="1" X1="0" X2="330" Y1="0" Y2="0" Stroke="Black" StrokeThickness="0.5"/>
+                    <Grid Grid.Row="2" Margin="12,12">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="5"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="5"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Row="0" Grid.Column="0">数据库连接字符串：</Label>
+                        <TextBox Grid.Row="0" Grid.Column="1" Name="Txt_DbConnectStr"></TextBox>
+                        <Label Grid.Row="2" Grid.Column="0">导出文件后执行命令：</Label>
+                        <TextBox Grid.Row="2" Grid.Column="1" Name="Txt_ExportCmd"></TextBox>
+                        <Label Grid.Row="4" Grid.Column="0">导入文件后执行命令：</Label>
+                        <TextBox Grid.Row="4" Grid.Column="1" Name="Txt_ImportCmd"></TextBox>
+                    </Grid>
+                    <Border  Grid.Row="3" Margin="3" VerticalAlignment="Center">
+                        <TextBlock FontSize="14" Foreground="#FF007ACC">用户验证设置</TextBlock>
+                    </Border>
+                    <Line Grid.Row="4" X1="0" X2="330" Y1="0" Y2="0" Stroke="Black" StrokeThickness="0.5"/>
+                    <Grid Grid.Row="5" Margin="12,12">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="5"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="5"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="5"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Row="0" Grid.Column="0">用户表数据库连接字符串：</Label>
+                        <TextBox Grid.Row="0" Grid.Column="1" Name="Txt_UserDbConnectStr"></TextBox>
+                        <Label Grid.Row="2" Grid.Column="0">用户表名称：</Label>
+                        <TextBox Grid.Row="2" Grid.Column="1" Name="Txt_UserDbTableName"></TextBox>
+                        <Label Grid.Row="4" Grid.Column="0">取用户名的列名：</Label>
+                        <TextBox Grid.Row="4" Grid.Column="1" Name="Txt_UsernameColumnName"></TextBox>
+                        <Label Grid.Row="6" Grid.Column="0">取密码的列名：</Label>
+                        <TextBox Grid.Row="6" Grid.Column="1" Name="Txt_PasswordColumnName"></TextBox>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <!--************************导入设置************************-->
+            <TabItem Name="Tab_Import" Header="导入设置">
+                <Grid Margin="12" Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="1"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="1"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Border  Grid.Row="0" Margin="3" VerticalAlignment="Center">
+                        <TextBlock FontSize="14" Foreground="#FF007ACC">数据库选项</TextBlock>
+                    </Border>
+                    <Line Grid.Row="1" X1="0" X2="330" Y1="0" Y2="0" Stroke="Black" StrokeThickness="0.5"/>
+                    <Grid Grid.Row="2" Margin="12,12">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="5"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Row="0" Grid.Column="0">数据库连接字符串（可选）：</Label>
+                        <TextBox Grid.Row="0" Grid.Column="1" Name="Txt_ImportDbConnectStr"></TextBox>
+                    </Grid>
+                    <Border  Grid.Row="3" Margin="3" VerticalAlignment="Center">
+                        <TextBlock FontSize="14" Foreground="#FF007ACC">Json文件结构</TextBlock>
+                    </Border>
+                    <Line Grid.Row="4" X1="0" X2="330" Y1="0" Y2="0" Stroke="Black" StrokeThickness="0.5"/>
+                    <Grid Margin="12" Grid.Row="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TreeView Name="Tree_Import" SelectedItemChanged="Tree_Import_SelectedItemChanged" Grid.Column="0">
+                            <TreeView.Resources>
+                                <Style TargetType="{x:Type TreeViewItem}">
+                                    <Setter Property="IsExpanded" Value="{Binding Path=IsExpanded, Mode=TwoWay}"></Setter>
+                                </Style>
+                            </TreeView.Resources>
+                            <TreeView.ItemTemplate>
+                                <HierarchicalDataTemplate DataType="{x:Type models:PropertyNodeItem}" ItemsSource="{Binding Path=Childs,Mode=TwoWay}">
+                                    <Grid>
+                                        <TextBlock VerticalAlignment="Center" Text="{Binding Path=DisplayName,Mode=TwoWay}"></TextBlock>
+                                    </Grid>
+                                </HierarchicalDataTemplate>
+                            </TreeView.ItemTemplate>
+                        </TreeView>
+                        <Grid Grid.Column="2" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="22"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="22"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock FontSize="14" Foreground="#FF007ACC">节点属性</TextBlock>
+                            <StackPanel Grid.Row="1" Margin="5,0" VerticalAlignment="Top">
+                                <Label>Json节点名称</Label>
+                                <TextBox Name="Txt_ImJsonName"></TextBox>
+                                <Label>数据库实体名称</Label>
+                                <TextBox Name="Txt_ImEntityName"></TextBox>
+                                <Label>显示名称</Label>
+                                <TextBox Name="Txt_ImDisplayName"></TextBox>
+                                <Label>对应关系</Label>
+                                <ComboBox Name="Select_ImMultiRelation">
+                                    <ComboBoxItem>一对一</ComboBoxItem>
+                                    <ComboBoxItem>一对多</ComboBoxItem>
+                                </ComboBox>
+                                <Label>是否为逻辑实体</Label>
+                                <ComboBox Name="Select_ImBuildJson">
+                                    <ComboBoxItem>否</ComboBoxItem>
+                                    <ComboBoxItem>是</ComboBoxItem>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                                <Button Name="Btn_EditImEntity" Click="Btn_ImEditImEntity_Click" Width="30" Margin="2,0" IsEnabled="False" HorizontalAlignment="Right">修改</Button>
+                                <Button Name="Btn_NewImEntity" Click="Btn_ImNewImEntity_Click" Width="30" Margin="2,0" IsEnabled="False" HorizontalAlignment="Right">新建</Button>
+                                <Button Name="Btn_DelImEntity" Click="Btn_ImDelImEntity_Click" Width="30" Margin="2,0" IsEnabled="False" HorizontalAlignment="Right">删除</Button>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <!--******************************导出设置****************************-->
+            <TabItem Name="Tab_Export" Header="导出设置">
+                <Grid Margin="12" Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="1"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="1"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Border  Grid.Row="0" Margin="3" VerticalAlignment="Center">
+                        <TextBlock FontSize="14" Foreground="#FF007ACC">数据库选项</TextBlock>
+                    </Border>
+                    <Line Grid.Row="1" X1="0" X2="330" Y1="0" Y2="0" Stroke="Black" StrokeThickness="0.5"/>
+                    <Grid Grid.Row="2" Margin="12,12">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="5"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Row="0" Grid.Column="0">数据库连接字符串（可选）：</Label>
+                        <TextBox Grid.Row="0" Grid.Column="1" Name="Txt_ExportDbConnectStr"></TextBox>
+                    </Grid>
+                    <Border  Grid.Row="3" Margin="3" VerticalAlignment="Center">
+                        <TextBlock FontSize="14" Foreground="#FF007ACC">Json文件结构</TextBlock>
+                    </Border>
+                    <Line Grid.Row="4" X1="0" X2="330" Y1="0" Y2="0" Stroke="Black" StrokeThickness="0.5"/>
+                    <Grid Margin="12" Grid.Row="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TreeView Name="Tree_Export" SelectedItemChanged="Tree_Export_SelectedItemChanged" Grid.Column="0">
+                            <TreeView.Resources>
+                                <Style TargetType="{x:Type TreeViewItem}">
+                                    <Setter Property="IsExpanded" Value="{Binding Path=IsExpanded, Mode=TwoWay}"></Setter>
+                                </Style>
+                            </TreeView.Resources>
+                            <TreeView.ItemTemplate>
+                                <HierarchicalDataTemplate DataType="{x:Type models:PropertyNodeItem}" ItemsSource="{Binding Path=Childs,Mode=TwoWay}">
+                                    <Grid>
+                                        <TextBlock VerticalAlignment="Center" Text="{Binding Path=DisplayName,Mode=TwoWay}"></TextBlock>
+                                    </Grid>
+                                </HierarchicalDataTemplate>
+                            </TreeView.ItemTemplate>
+                        </TreeView>
+                        <Grid Grid.Column="2" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="22"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="22"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="22"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock FontSize="14" Foreground="#FF007ACC">节点属性</TextBlock>
+                            <StackPanel Grid.Row="1" Margin="5,0,0,5" VerticalAlignment="Top">
+                                <Label>Json节点名称</Label>
+                                <TextBox Name="Txt_ExJsonName"></TextBox>
+                                <Label>数据库实体名称</Label>
+                                <TextBox Name="Txt_ExEntityName"></TextBox>
+                                <Label>显示名称</Label>
+                                <TextBox Name="Txt_ExDisplayName"></TextBox>
+                                <Label>对应关系</Label>
+                                <ComboBox Name="Select_ExMultiRelation">
+                                    <ComboBoxItem>一对一</ComboBoxItem>
+                                    <ComboBoxItem>一对多</ComboBoxItem>
+                                </ComboBox>
+                                <Label>是否为逻辑实体</Label>
+                                <ComboBox Name="Select_ExBuildJson">
+                                    <ComboBoxItem>否</ComboBoxItem>
+                                    <ComboBoxItem>是</ComboBoxItem>
+                                </ComboBox>
+                                <Label>可选实体</Label>
+                                <ComboBox Name="Select_ExSelectable">
+                                    <ComboBoxItem>否</ComboBoxItem>
+                                    <ComboBoxItem>是</ComboBoxItem>
+                                </ComboBox>
+                            </StackPanel>
+                            <TextBlock Grid.Row="2" FontSize="14" Foreground="#FF007ACC">实体属性</TextBlock>
+                            <StackPanel Grid.Row="3" Margin="5,0" VerticalAlignment="Top">
+                                <Label>自定义查询SQL</Label>
+                                <TextBox Name="Txt_ExSQL"></TextBox>
+                                <Label>调用关联项（用英文逗号隔开）</Label>
+                                <TextBox Name="Txt_ExParameters"></TextBox>
+                            </StackPanel>
+                            <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Name="Btn_EditExEntity" Click="Btn_EditExEntity_Click"  Width="30" Margin="2,0" IsEnabled="False" HorizontalAlignment="Right">修改</Button>
+                                <Button Name="Btn_NewExEntity" Click="Btn_NewExEntity_Click"  Width="30" Margin="2,0" IsEnabled="False" HorizontalAlignment="Right">新建</Button>
+                                <Button Name="Btn_DelExEntity" Click="Btn_DelExEntity_Click"  Width="30" Margin="2,0" IsEnabled="False" HorizontalAlignment="Right">删除</Button>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="2">
+            <Button Name="Btn_Save" Click="Btn_Save_Click"  Width="60">保存</Button>
+            <Label/>
+            <Button Name="Btn_Ok" Click="Btn_Ok_Click" Width="60">确定</Button>
+            <Label/>
+            <Button Name="Btn_Cancel" Click="Btn_Cancel_Click" Width="60">取消</Button>
+        </StackPanel>
+    </Grid>
+</Window>

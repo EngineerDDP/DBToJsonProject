@@ -15,14 +15,16 @@ namespace DBToJsonProject
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            Login.LoginWindow login = new Login.LoginWindow();
-            WorkSpace.WorkWindow work = new WorkSpace.WorkWindow();
-            Controller.ApplicationControl applicationControl = new Controller.ApplicationControl()
+            Controller.IApplicationControl applicationControl = null;
+            if (e.Args.Contains("-passlogin"))
+                applicationControl = new Controller.ApplicationControl();
+            else
+                applicationControl = new Controller.ApplicationControl();
+            if (e.Args.Contains("-devmode"))
             {
-                Login = login,
-                Work = work
-            };
-            applicationControl.Startup();
+
+            }
+            applicationControl?.Startup();
         }
     }
 }

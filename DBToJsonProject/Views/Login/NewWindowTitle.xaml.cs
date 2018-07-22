@@ -12,16 +12,15 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DBToJsonProject.Login
+namespace DBToJsonProject.Views.Login
 {
-    public delegate void NewWindowBtnClickEvent(object sender, RoutedEventArgs eventArgs);
     /// <summary>
     /// NewWindowTitle.xaml 的交互逻辑
     /// </summary>
     public partial class NewWindowTitle : UserControl
     {
-        public event NewWindowBtnClickEvent CloseBtn_Clicked;
-        public event NewWindowBtnClickEvent MinimumBtn_Clicked;
+        public event EventHandler<RoutedEventArgs> CloseBtn_Clicked;
+        public event EventHandler<RoutedEventArgs> MinimumBtn_Clicked;
         public NewWindowTitle()
         {
             InitializeComponent();

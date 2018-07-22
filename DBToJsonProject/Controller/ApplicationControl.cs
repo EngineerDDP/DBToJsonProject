@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using DBToJsonProject.Login;
 using System.Windows;
-using DBToJsonProject.WorkSpace;
+using DBToJsonProject.Views.Login;
+using DBToJsonProject.Views.WorkSpace;
+using DBToJsonProject.Models;
+using DBToJsonProject.Controller.SettingManager;
 
 namespace DBToJsonProject.Controller
 {
-    class ApplicationControl
+    class ApplicationControl : IApplicationControl
     {
         /// <summary>
         /// 登录窗口
@@ -17,12 +17,27 @@ namespace DBToJsonProject.Controller
         /// <summary>
         /// 工作窗口
         /// </summary>
-        private WorkSpace.WorkWindow work;
+        private WorkWindow work;
+        /// <summary>
+        /// 用户验证
+        /// </summary>
         private UserValidation user;
+        /// <summary>
+        /// 错误窗口
+        /// </summary>
         private ErrorBox errorBox;
+        /// <summary>
+        /// 数据库设置窗口
+        /// </summary>
+        private DbSettingToolBox dbSettingbox;
+        /// <summary>
+        /// 用户配置项
+        /// </summary>
+        private UserSetting userSetting;
         public ApplicationControl()
         {
-            
+            Login = new LoginWindow();
+            Work = new WorkWindow();
         }
         
         public LoginWindow Login { get => login; set => login = value; }
@@ -34,15 +49,39 @@ namespace DBToJsonProject.Controller
         {
             Login.OnLogin += Login_OnLogin;
             Login.OnExit += Login_OnExit;
+            Work.OnWorkSpaceExited += Work_OnWorkSpaceExited;
+            Work.OnDbSettingRequired += Work_OnDbSettingRequired;
             Login.Show();
         }
+
+        private void Work_OnDbSettingRequired(object sender, EventArgs args)
+        {
+            dbSettingbox = new DbSettingToolBox();
+            dbSettingbox.Owner = sender as Window;
+            try
+            {
+                dbSettingbox.ShowDialog();
+            }
+            catch(InvalidOperationException e)
+            {
+                PostAnCriticalError("无效操作", e.Message);
+                dbSettingbox?.Close();
+            }
+            dbSettingbox = null;
+        }
+
+        private void Work_OnWorkSpaceExited(object sender, EventArgs args)
+        {
+            CloseMainWindow();
+        }
+
         /// <summary>
         /// 关闭主要窗格
         /// </summary>
         private void CloseMainWindow()
         {
-            Login.Close();
-            work.Close();
+            Login?.Close();
+            work?.Close();
         }
 
         private void Login_OnExit(object sender, EventArgs args)
@@ -93,6 +132,7 @@ namespace DBToJsonProject.Controller
         {
             SetupErrorBox(title, msg);
             errorBox.Owner = login.IsActive ? (Window)login : work;
+            errorBox.Show();
         }
         private void PostAnErrorAndExit(String title, String msg)
         {

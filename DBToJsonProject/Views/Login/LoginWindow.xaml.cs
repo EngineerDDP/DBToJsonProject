@@ -29,8 +29,14 @@ namespace DBToJsonProject.Views.Login
             InitializeComponent();
             
         }
-
-        private void Btn_login_Click(object sender, RoutedEventArgs e)
+        public void FillInfo(UserLoginEventArgs args)
+        {
+            Txt_Username.Text = args.Username;
+            Txt_Password.Password = args.Password;
+            Chk_AutoLogin.IsChecked = args.AutomaticLogin;
+            Chk_RememberPassword.IsChecked = args.RememberPassword;
+        }
+        private void PostLoginEvent()
         {
             if (!String.IsNullOrWhiteSpace(Txt_Username.Text) && !String.IsNullOrEmpty(Txt_Password.Password))
             {
@@ -43,6 +49,10 @@ namespace DBToJsonProject.Views.Login
                 };
                 OnLogin?.Invoke(this, args);
             }
+        }
+        private void Btn_login_Click(object sender, RoutedEventArgs e)
+        {
+            PostLoginEvent();
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
@@ -58,6 +68,11 @@ namespace DBToJsonProject.Views.Login
         private void Btns_Ctrl_CloseBtn_Clicked(object sender, RoutedEventArgs eventArgs)
         {
             OnExit?.Invoke(sender, eventArgs);
+        }
+
+        private void Chk_AutoLogin_Checked(object sender, RoutedEventArgs e)
+        {
+            PostLoginEvent();
         }
     }
 }

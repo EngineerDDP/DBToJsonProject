@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Xml;
 
 namespace DBToJsonProject.Controller.SettingManager
 {
@@ -27,8 +26,8 @@ namespace DBToJsonProject.Controller.SettingManager
 
     class DBSettings : XmlSettingManager
     {
-        private readonly static String DBSettingDir = "dbsettings/";
-        private readonly static String DbSettingFile = "setting.xml";
+        protected override String SettingFolder => "dbsettings/";
+        protected override string SettingFile => "setting.xml";
         /// <summary>
         /// 导出Tree根节点名
         /// </summary>
@@ -105,58 +104,46 @@ namespace DBToJsonProject.Controller.SettingManager
         /// <summary>
         /// 初始化数据库配置文件
         /// </summary>
-        private DBSettings()
+        private DBSettings() : base() { }
+        private delegate void X(out JsonEntityDetial entityDetial, ref SettingNode n);
+        protected override void Load()
         {
-            if (base.ExistSettingXML(DBSettingDir, DbSettingFile)) 
-                LoadSetting();
-            else
-                CreateSetting();
-        }
-        private delegate void X(out JsonEntityDetial entityDetial, ref XmlNode n);
-        private void LoadSetting()
-        {
-            using (FileStream file = LoadSettingXML(DBSettingDir, DbSettingFile))
+            //获取XML跟元素
+            SettingNode root = LoadSettingXML(SettingFolder, SettingFile);
+            //读数据库属性
+            DBConnectArgs = root.Attributes[DbBaseTableConnectString];
+
+
+            X readEntities = (out JsonEntityDetial entityDetial, ref SettingNode ro) =>
             {
-                XmlDocument xml = new XmlDocument();
-                xml.Load(file);
-                //获取XML跟元素
-                XmlElement root = xml.DocumentElement;
-                //读数据库属性
-                DBConnectArgs = root.Attributes[DbBaseTableConnectString].Value;
-
-                
-                X readEntities = (out JsonEntityDetial entityDetial, ref XmlNode ro) =>
+                entityDetial = new JsonEntityDetial()
                 {
-                    entityDetial = new JsonEntityDetial()
-                    {
-                        roots = new List<IJsonTreeNode>()
-                    };
-                    //遍历每个Export实体
-                    foreach (XmlNode n in ro.ChildNodes)
-                        if (n.NodeType == XmlNodeType.Element)
-                            entityDetial.roots.Add(BuildTreeNodeFromXml(n, null));
-                    //读Export数据库信息
-                    entityDetial.DbConnectStr = ro.Attributes[DbBaseTableConnectString].Value;
+                    roots = new List<IJsonTreeNode>()
                 };
+                //遍历每个Export实体
+                foreach (SettingNode n in ro.ChildNodes)
+                    entityDetial.roots.Add(BuildTreeNode(n, null));
+                //读Export数据库信息
+                entityDetial.DbConnectStr = ro.Attributes[DbBaseTableConnectString];
+            };
 
-                XmlNode node = root.SelectSingleNode(ExportRootNodeName);
-                readEntities(out exportEntities,ref node);
-                node = root.SelectSingleNode(ImportRootNodeName);
-                readEntities(out importEntities, ref node);
+            SettingNode node = root.SelectSingleNode(ExportRootNodeName);
+            readEntities(out exportEntities, ref node);
+            node = root.SelectSingleNode(ImportRootNodeName);
+            readEntities(out importEntities, ref node);
 
-                //读User节点
-                node = root.SelectSingleNode(UserNodeName);
-                //读User属性
-                userRoot = new UserInfo()
-                {
-                    DbConnectStr = node.Attributes[DbBaseTableConnectString].Value,
-                    TableName = node.Attributes[UserTableName].Value,
-                    UserName = node.Attributes[UserNameAttrition].Value,
-                    Password = node.Attributes[PasswordAttrition].Value
-                };
-            }
-
+            //读User节点
+            node = root.SelectSingleNode(UserNodeName);
+            //读User属性
+            userRoot = new UserInfo()
+            {
+                DbConnectStr = node.Attributes[DbBaseTableConnectString],
+                TableName = node.Attributes[UserTableName],
+                UserName = node.Attributes[UserNameAttrition],
+                Password = node.Attributes[PasswordAttrition]
+            };
         }
+        
         /// <summary>
         /// 序列化新设置到设置文件
         /// </summary>
@@ -170,75 +157,67 @@ namespace DBToJsonProject.Controller.SettingManager
         }
         public override void Update()
         {
+            SettingNode root = new SettingNode(RootNodeName);
+            
+            root.SetAttribute(DbBaseTableConnectString, DBConnectArgs);
 
-            XmlDocument xml = new XmlDocument();
-            using (FileStream file = LoadSettingXML(DBSettingDir,DbSettingFile))
-            {
-                file.SetLength(0);
-                XmlDeclaration declaration = xml.CreateXmlDeclaration("1.0", "utf-8", "no");
-                xml.AppendChild(declaration);
-                XmlElement root = xml.CreateElement(RootNodeName);
-                root.SetAttribute(DbBaseTableConnectString, DBConnectArgs);
+            SettingNode exportTree = new SettingNode(ExportRootNodeName);
+            exportTree.SetAttribute(DbBaseTableConnectString, exportEntities.DbConnectStr);
 
-                XmlElement exportTree = xml.CreateElement(ExportRootNodeName);
-                exportTree.SetAttribute(DbBaseTableConnectString, exportEntities.DbConnectStr);
-                XmlElement importTree = xml.CreateElement(ImportRootNodeName);
-                importTree.SetAttribute(DbBaseTableConnectString, importEntities.DbConnectStr);
-                XmlElement userTable = xml.CreateElement(UserNodeName);
-                userTable.SetAttribute(DbBaseTableConnectString, userRoot.DbConnectStr);
-                userTable.SetAttribute(UserNameAttrition, userRoot.UserName);
-                userTable.SetAttribute(PasswordAttrition, userRoot.Password);
-                userTable.SetAttribute(UserTableName, userRoot.TableName);
+            SettingNode importTree = new SettingNode(ImportRootNodeName);
+            importTree.SetAttribute(DbBaseTableConnectString, importEntities.DbConnectStr);
+
+            SettingNode userTable = new SettingNode(UserNodeName);
+            userTable.SetAttribute(DbBaseTableConnectString, userRoot.DbConnectStr);
+            userTable.SetAttribute(UserNameAttrition, userRoot.UserName);
+            userTable.SetAttribute(PasswordAttrition, userRoot.Password);
+            userTable.SetAttribute(UserTableName, userRoot.TableName);
 
 
-                foreach (IJsonTreeNode n in exportEntities.roots)
-                    exportTree.AppendChild(BuildXmlFromTreeNode(xml, n));
+            foreach (IJsonTreeNode n in exportEntities.roots)
+                exportTree.AppendChild(BuildXmlFromTreeNode(n));
 
-                foreach (IJsonTreeNode n in importEntities.roots)
-                    importTree.AppendChild(BuildXmlFromTreeNode(xml, n));
+            foreach (IJsonTreeNode n in importEntities.roots)
+                importTree.AppendChild(BuildXmlFromTreeNode(n));
 
-                root.AppendChild(exportTree);
-                root.AppendChild(importTree);
-                root.AppendChild(userTable);
-                xml.AppendChild(root);
-                xml.Save(file);
-            }
+            root.AppendChild(exportTree);
+            root.AppendChild(importTree);
+            root.AppendChild(userTable);
+
+            SaveSettingXML(SettingFolder, SettingFile, root);
         }
         /// <summary>
         /// 从Xml设置文件建立数据库配置项
         /// </summary>
-        /// <param name="xmlNode"></param>
+        /// <param name="node"></param>
         /// <returns></returns>
-        private TreeNode BuildTreeNodeFromXml(XmlNode xmlNode, IJsonTreeNode parent)
+        private TreeNode BuildTreeNode(SettingNode node, IJsonTreeNode parent)
         {
 
             //创建对象
-            var node = new TreeNode(
-                xmlNode.Name, 
-                xmlNode.Attributes[DbEntityAttributeName].Value, 
-                xmlNode.Attributes[DbDisplayName].Value,
-                Boolean.Parse(xmlNode.Attributes[DbTableMultiRelated].Value),
-                Boolean.Parse(xmlNode.Attributes[BuildJsonFile].Value),
-                Boolean.Parse(xmlNode.Attributes[NodeSelectable].Value));          
+            var t = new TreeNode(
+                node.Name, 
+                node.Attributes[DbEntityAttributeName], 
+                node.Attributes[DbDisplayName],
+                Boolean.Parse(node.Attributes[DbTableMultiRelated]),
+                Boolean.Parse(node.Attributes[BuildJsonFile]),
+                Boolean.Parse(node.Attributes[NodeSelectable]));          
             //读子节点
             Dictionary<String, IJsonTreeNode> childs = new Dictionary<string, IJsonTreeNode>();
-            foreach (XmlNode n in xmlNode.ChildNodes)
+            foreach (SettingNode n in node.ChildNodes)
             {
-                if (n.NodeType == XmlNodeType.Element)
-                {
-                    TreeNode tn = BuildTreeNodeFromXml(n, node);
-                    childs.Add(tn.JsonNodeName, tn);
-                }
+                TreeNode tn = BuildTreeNode(n, t);
+                childs.Add(tn.JsonNodeName, tn);
             }
-            node.ChildNodes = childs;
+            t.ChildNodes = childs;
             //读属性
-            node.Sql = new CustomizedSqlDescriber(
-                xmlNode.Attributes[DbCustomizedSql].Value != String.Empty,
-                xmlNode.Attributes[DbCustomizedSql].Value,
-                xmlNode.Attributes[DbCustomizedSqlParameters].Value,
-                node);
+            t.Sql = new CustomizedSqlDescriber(
+                node.Attributes[DbCustomizedSql] != String.Empty,
+                node.Attributes[DbCustomizedSql],
+                node.Attributes[DbCustomizedSqlParameters],
+                t);
 
-            return node;
+            return t;
         }
         /// <summary>
         /// 从配置设置构建Xml
@@ -246,10 +225,10 @@ namespace DBToJsonProject.Controller.SettingManager
         /// <param name="xmlDoc"></param>
         /// <param name="root"></param>
         /// <returns></returns>
-        private XmlNode BuildXmlFromTreeNode(XmlDocument xmlDoc, IJsonTreeNode root)
+        private SettingNode BuildXmlFromTreeNode(IJsonTreeNode root)
         {
             //创建对象
-            XmlElement xml = xmlDoc.CreateElement(root.JsonNodeName);
+            SettingNode xml = new SettingNode(RootNodeName);
             //写属性
             xml.SetAttribute(DbEntityAttributeName, root.DbName);
             xml.SetAttribute(DbTableMultiRelated, root.MultiRelated.ToString());
@@ -262,12 +241,12 @@ namespace DBToJsonProject.Controller.SettingManager
             //写子节点
             foreach (String key in root.ChildNodes.Keys)
             {
-                xml.AppendChild(BuildXmlFromTreeNode(xmlDoc, root.ChildNodes[key]));
+                xml.AppendChild(BuildXmlFromTreeNode(root.ChildNodes[key]));
             }
 
             return xml;
         }
-        private void CreateSetting()
+        protected override void Init()
         {
             userRoot = new UserInfo()
             {
@@ -284,9 +263,9 @@ namespace DBToJsonProject.Controller.SettingManager
         /// <summary>
         /// 创建与前端交互的Selection对象
         /// </summary>
-        public Models.Selections BuildSelections()
+        public Models.SelectCollection BuildSelections()
         {
-            Models.Selections selections = new Models.Selections();
+            Models.SelectCollection selections = new Models.SelectCollection();
             foreach (IJsonTreeNode root in ExportRoot.roots)
             {
                 Models.SelectableJsonList list = new Models.SelectableJsonList(root.DisplayName);

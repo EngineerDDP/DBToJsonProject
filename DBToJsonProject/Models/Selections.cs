@@ -5,10 +5,10 @@ using System.Text;
 
 namespace DBToJsonProject.Models
 {
-    public class Selections : EventArgs
+    public class SelectCollection : EventArgs
     {
         public List<SelectableJsonList> Source { get; set; }
-        public Selections()
+        public SelectCollection()
         {
             Source = new List<SelectableJsonList>();
         }

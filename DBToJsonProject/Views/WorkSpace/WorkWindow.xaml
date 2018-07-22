@@ -50,7 +50,7 @@
                 </MenuItem>
             </Menu>
         </Border>
-        <Frame Name="Frame_MainWorkSpace" Grid.Row="1" Source="/Views/WorkSpace/WelcomePage.xaml" NavigationUIVisibility="Hidden"/>
+        <Frame Name="Frame_MainWorkSpace" Grid.Row="1" NavigationUIVisibility="Hidden"/>
         <Border Grid.Row="2" BorderBrush="Azure" BorderThickness="0,2,0,0">
             <StatusBar>
                 <StatusBar.ItemsPanel>

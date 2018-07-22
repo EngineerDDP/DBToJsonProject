@@ -35,6 +35,7 @@ namespace DBToJsonProject.Controller.SettingManager
                 String log = String.Format("{0} Info:{1}", d.ToString(), logs[d]);
                 stream.WriteLine(log);
             }
+            stream.Flush();
         }
     }
 }

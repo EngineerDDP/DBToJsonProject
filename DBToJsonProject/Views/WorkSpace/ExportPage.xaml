@@ -106,9 +106,9 @@
                         </Label>
                         <TextBox Grid.Row="4" Name="Txt_SelectedResult" IsReadOnly="True"></TextBox>
                         <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-                            <Button Name="Btn_ResetExportSetting" Width="60">重置</Button>
+                            <Button Name="Btn_ResetExportSetting" Click="Btn_ResetExportSetting_Click" Width="60">重置</Button>
                             <Label></Label>
-                            <Button Name="Btn_ExecuteExport" Width="60">导出</Button>
+                            <Button Name="Btn_ExecuteExport" Click="Btn_ExecuteExport_Click" Width="60">导出</Button>
                         </StackPanel>
                     </Grid>
                 </TabItem>
@@ -151,7 +151,7 @@
         </Grid>
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></GridSplitter>
         <Grid Grid.Row="2">
-            <TextBox Margin="1" FontSize="10" Foreground="Gray" x:Name="Txt_LogInfo" IsReadOnly="True" Text="准备就绪..."/>
+            <TextBox Margin="1" FontSize="12" Foreground="Gray" x:Name="Txt_LogInfo" IsReadOnly="True"/>
         </Grid>
     </Grid>
 </Page>

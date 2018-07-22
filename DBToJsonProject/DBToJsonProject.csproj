@@ -58,8 +58,11 @@
     <Compile Include="Controller\Events.cs" />
     <Compile Include="Controller\IApplicationControl.cs" />
     <Compile Include="Controller\SettingManager\AppSetting.cs" />
+    <Compile Include="Controller\TaskManager\ExportTask.cs" />
     <Compile Include="Controller\Test.cs" />
     <Compile Include="Controller\UserValidation.cs" />
+    <Compile Include="Models\EventArguments\ExportCmdExecuteArgs.cs" />
+    <Compile Include="Models\EventArguments\TaskPostBackEventArgs.cs" />
     <Compile Include="Models\Selections.cs" />
     <Compile Include="Views\ErrorBox.xaml.cs">
       <DependentUpon>ErrorBox.xaml</DependentUpon>
@@ -73,9 +76,9 @@
     <Compile Include="Controller\SettingManager\DataBase\IJsonTreeNode.cs" />
     <Compile Include="Controller\SettingManager\DataBase\IUserTableInfo.cs" />
     <Compile Include="Controller\SettingManager\DataBase\TreeNode.cs" />
-    <Compile Include="Controller\SettingManager\UserActivitiesLog.cs" />
+    <Compile Include="Controller\SettingManager\User\UserActivitiesLog.cs" />
     <Compile Include="Controller\SettingManager\XmlSettingManager.cs" />
-    <Compile Include="Controller\SettingManager\UserSetting.cs" />
+    <Compile Include="Controller\SettingManager\User\UserSetting.cs" />
     <Compile Include="Controller\TaskManager\DataBaseAccess.cs" />
     <Compile Include="Views\WorkSpace\DbSettingToolBox.xaml.cs">
       <DependentUpon>DbSettingToolBox.xaml</DependentUpon>

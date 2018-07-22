@@ -19,6 +19,8 @@ namespace DBToJsonProject.Views.WorkSpace
     /// </summary>
     public partial class WelcomePage : Page
     {
+        public event EventHandler OnNavigateToExport;
+        public event EventHandler OnNavigateToImPort;
         public WelcomePage()
         {
             InitializeComponent();
@@ -26,12 +28,12 @@ namespace DBToJsonProject.Views.WorkSpace
 
         private void Link_NewImportJob_Click(object sender, RoutedEventArgs e)
         {
-
+            OnNavigateToImPort?.Invoke(this, e);
         }
 
         private void Link_NewEXportJob_Click(object sender, RoutedEventArgs e)
         {
-
+            OnNavigateToExport?.Invoke(this, e);
         }
 
         private void Link_Help_Click(object sender, RoutedEventArgs e)

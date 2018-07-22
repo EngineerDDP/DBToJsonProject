@@ -1,4 +1,5 @@
 ﻿using DBToJsonProject.Controller;
+using DBToJsonProject.Models.EventArguments;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,12 +22,26 @@ namespace DBToJsonProject.Views.WorkSpace
     {
         public event EventHandler OnWorkSpaceExited;
         public event EventHandler OnDbSettingRequired;
+        public event EventHandler OnNavigateToExport;
+        public event EventHandler OnNavigateToImPort;
+        public event EventHandler OnNavigateToWelcomePage;
+        public event EventHandler OnLogout;
+        
 
         public WorkWindow()
         {
             InitializeComponent();
         }
-
+        public void SetNavigate(Page page)
+        {
+            Frame_MainWorkSpace.Navigate(page);
+        }
+        public void TaskPostBack(TaskPostBackEventArgs args)
+        {
+            Progress_Status.Value = args.Progress;
+            Txt_StatusA.Text = args.ProgressStage;
+            Txt_StatusB.Text = args.ProgressStageDetial;
+        }
         private void Opt_SeeLogInfo_Click(object sender, RoutedEventArgs e)
         {
 
@@ -39,12 +54,12 @@ namespace DBToJsonProject.Views.WorkSpace
 
         private void Opt_ImportJob_Click(object sender, RoutedEventArgs e)
         {
-            Frame_MainWorkSpace.Navigate(new ImportPage());
+            OnNavigateToImPort?.Invoke(this, e);
         }
 
         private void Opt_ExportJob_Click(object sender, RoutedEventArgs e)
         {
-            Frame_MainWorkSpace.Navigate(new ExportPage());
+            OnNavigateToExport?.Invoke(this, e);
         }
 
         private void Opt_SimpleMode_Click(object sender, RoutedEventArgs e)
@@ -74,7 +89,7 @@ namespace DBToJsonProject.Views.WorkSpace
 
         private void Opt_ToWelcomePage_Click(object sender, RoutedEventArgs e)
         {
-            Frame_MainWorkSpace.Navigate(new WelcomePage());
+            OnNavigateToWelcomePage?.Invoke(this, e);
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -84,7 +99,7 @@ namespace DBToJsonProject.Views.WorkSpace
 
         private void Opt_Logout_Click(object sender, RoutedEventArgs e)
         {
-
+            OnLogout?.Invoke(this, e);
         }
     }
 }

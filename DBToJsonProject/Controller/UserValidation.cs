@@ -1,4 +1,5 @@
 ﻿using DBToJsonProject.Controller.SettingManager;
+using DBToJsonProject.TaskManager;
 using System;
 using System.Collections.Generic;
 
@@ -23,7 +24,7 @@ namespace DBToJsonProject.Controller
                 { settings.UserRoot.UserName, Username },
                 { settings.UserRoot.Password, Password }
                 };
-            TaskManager.DataBaseAccess db = new TaskManager.DataBaseAccess(DBSettings.Default.DBConnectStr);
+            DataBaseAccess db = new DataBaseAccess(DBSettings.Default.DBConnectStr);
             IsUserValidated = db.MatchRow(settings.UserRoot.TableName, userDbRow);
             return IsUserValidated;
         }

@@ -17,38 +17,50 @@
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Border BorderBrush="Gray" BorderThickness="0,0,0,1">
-            <Menu Name="Menu_Top" Height="26" HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                <Menu.Resources>
-                    <Style TargetType="MenuItem">
-                        <Setter Property="Margin" Value="0"/>
-                        <Setter Property="Height" Value="24"/>
-                        <Setter Property="MinWidth" Value="40"/>
-                    </Style>
-                </Menu.Resources>
-                <MenuItem Header="文件(F)">
-                    <MenuItem x:Name="Opt_SeeLogInfo" Click="Opt_SeeLogInfo_Click" Header="查看任务记录(L)"></MenuItem>
-                    <MenuItem x:Name="Opt_ToWelcomePage" Click="Opt_ToWelcomePage_Click" Header="起始页"></MenuItem>
-                    <Separator/>
-                    <MenuItem x:Name="Opt_Logout" Click="Opt_Logout_Click" Header="登出..."/>
-                    <Separator/>
-                    <MenuItem x:Name="Opt_Exit" Click="Opt_Exit_Click" Header="退出" InputGestureText="Alt+F4"></MenuItem>
-                </MenuItem>
-                <MenuItem Header="任务(T)">
-                    <MenuItem x:Name="Opt_InportJob" Click="Opt_ImportJob_Click" Header="设备数据导入计算机(I)"></MenuItem>
-                    <MenuItem x:Name="Opt_ExportJob" Click="Opt_ExportJob_Click" Header="计算机数据导入移动设备(E)"></MenuItem>
-                </MenuItem>
-                <MenuItem Header="设置(O)">
-                    <MenuItem x:Name="Opt_SimpleMode" Click="Opt_SimpleMode_Click" Header="简单模式(S)"></MenuItem>
-                    <Separator/>
-                    <MenuItem x:Name="Opt_JobOption" Click="Opt_JobOption_Click" Header="任务选项..."></MenuItem>
-                    <MenuItem x:Name="Opt_DBOption" Click="Opt_DBOption_Click" Header="数据库表选项..."></MenuItem>
-                </MenuItem>
-                <MenuItem Header="帮助(H)">
-                    <MenuItem x:Name="Opt_Manual" Click="Opt_Manual_Click" Header="帮助手册..."></MenuItem>
-                    <Separator/>
-                    <MenuItem x:Name="Opt_About" Click="Opt_About_Click" Header="关于(A)"></MenuItem>
-                </MenuItem>
-            </Menu>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <Menu Grid.Column="0" Name="Menu_Top" Height="26" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                    <Menu.Resources>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="Margin" Value="0"/>
+                            <Setter Property="Height" Value="24"/>
+                            <Setter Property="MinWidth" Value="40"/>
+                        </Style>
+                    </Menu.Resources>
+                    <MenuItem Header="文件(F)">
+                        <MenuItem x:Name="Opt_SeeLogInfo" Click="Opt_SeeLogInfo_Click" Header="查看任务记录(L)"></MenuItem>
+                        <MenuItem x:Name="Opt_ToWelcomePage" Click="Opt_ToWelcomePage_Click" Header="起始页"></MenuItem>
+                        <Separator/>
+                        <MenuItem x:Name="Opt_Logout" Click="Opt_Logout_Click" Header="登出..."/>
+                        <Separator/>
+                        <MenuItem x:Name="Opt_Exit" Click="Opt_Exit_Click" Header="退出" InputGestureText="Alt+F4"></MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="任务(T)">
+                        <MenuItem x:Name="Opt_InportJob" Click="Opt_ImportJob_Click" Header="设备数据导入计算机(I)"></MenuItem>
+                        <MenuItem x:Name="Opt_ExportJob" Click="Opt_ExportJob_Click" Header="计算机数据导入移动设备(E)"></MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="设置(O)">
+                        <MenuItem x:Name="Opt_SimpleMode" Click="Opt_SimpleMode_Click" Header="简单模式(S)"></MenuItem>
+                        <Separator/>
+                        <MenuItem x:Name="Opt_JobOption" Click="Opt_JobOption_Click" Header="任务选项..."></MenuItem>
+                        <MenuItem x:Name="Opt_DBOption" Click="Opt_DBOption_Click" Header="数据库表选项..."></MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="帮助(H)">
+                        <MenuItem x:Name="Opt_Manual" Click="Opt_Manual_Click" Header="帮助手册..."></MenuItem>
+                        <Separator/>
+                        <MenuItem x:Name="Opt_About" Click="Opt_About_Click" Header="关于(A)"></MenuItem>
+                    </MenuItem>
+                </Menu>
+                <StackPanel Grid.Column="1" Margin="10,0" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Border VerticalAlignment="Center">
+                        <TextBlock FontSize="13" TextAlignment="Right" Name="Txt_LoginUser"/>
+                    </Border>
+                    <Image Margin="10,0" Height="24" Source="/Images/icons/img_face.png" Width="28"></Image>
+                </StackPanel>
+            </Grid>
         </Border>
         <Frame Name="Frame_MainWorkSpace" Grid.Row="1" NavigationUIVisibility="Hidden"/>
         <Border Grid.Row="2" BorderBrush="Azure" BorderThickness="0,2,0,0">

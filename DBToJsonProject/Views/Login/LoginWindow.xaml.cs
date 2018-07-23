@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -35,6 +37,13 @@ namespace DBToJsonProject.Views.Login
             Txt_Password.Password = args.Password;
             Chk_AutoLogin.IsChecked = args.AutomaticLogin;
             Chk_RememberPassword.IsChecked = args.RememberPassword;
+
+            new Task(() =>
+            {
+                Thread.Sleep(500);
+                if (args.AutomaticLogin)
+                    this.Dispatcher.Invoke(new Action(PostLoginEvent));
+            }).Start();
         }
         private void PostLoginEvent()
         {

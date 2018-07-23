@@ -8,9 +8,28 @@ using DBToJsonProject.Controller;
 using DBToJsonProject.Controller.SettingManager;
 using DBToJsonProject.Models;
 using static DBToJsonProject.Controller.SettingManager.DBSettings;
+using System.Windows.Input;
+using System.Windows.Data;
 
 namespace DBToJsonProject.Views.WorkSpace
 {
+    class TreeViewLineConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType,
+        object parameter, System.Globalization.CultureInfo culture)
+        {
+            TreeViewItem item = (TreeViewItem)value;
+            ItemsControl ic = ItemsControl.ItemsControlFromItemContainer(item);
+            return ic.ItemContainerGenerator.IndexFromContainer(item) == ic.Items.Count - 1;
+        }
+
+        public object ConvertBack(object value, Type targetType,
+        object parameter, System.Globalization.CultureInfo culture)
+        {
+            return false;
+        }
+    }
+
     /// <summary>
     /// DbSettingToolBox.xaml 的交互逻辑
     /// </summary>
@@ -21,6 +40,15 @@ namespace DBToJsonProject.Views.WorkSpace
         public DbSettingToolBox()
         {
             InitializeComponent();
+            EventManager.RegisterClassHandler(typeof(TextBox), 
+                TextBox.PreviewMouseDownEvent, 
+                new MouseButtonEventHandler(TextBox_PreviewMouseDown));
+            EventManager.RegisterClassHandler(typeof(TextBox),
+                TextBox.GotFocusEvent,
+                new RoutedEventHandler(TextBox_GotFocus));
+            EventManager.RegisterClassHandler(typeof(TextBox),
+                TextBox.LostFocusEvent,
+                new RoutedEventHandler(TextBox_LostFocus));
         }
         /// <summary>
         /// 将填充树载入View
@@ -59,6 +87,7 @@ namespace DBToJsonProject.Views.WorkSpace
             item.Selectable = root.Selectable;
             item.CustomizedSql = root.Sql.CustomizeSQLString;
             item.CustomizedSqlParameters = root.Sql.Params?.ToString();
+            item.VirtualNode = root.VirtualNode;
             
             foreach(IJsonTreeNode n in root.ChildNodes.Values)
             {
@@ -86,7 +115,8 @@ namespace DBToJsonProject.Views.WorkSpace
                 root.DisplayName,
                 root.MultiReleationShip,
                 root.BuildJson,
-                root.Selectable
+                root.Selectable,
+                root.VirtualNode
                 );
 
             Dictionary<String, IJsonTreeNode> list = new Dictionary<string, IJsonTreeNode>();
@@ -104,48 +134,6 @@ namespace DBToJsonProject.Views.WorkSpace
             return node;
         }
         /// <summary>
-        /// 编辑实体
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Btn_ImEditImEntity_Click(object sender, RoutedEventArgs e)
-        {
-            if (Tree_Import.SelectedItem != null)
-            {
-                PropertyNodeItem i = Tree_Import.SelectedItem as PropertyNodeItem;
-                i.DisplayName = Txt_ImDisplayName.Text;
-                i.EntityName = Txt_ImEntityName.Text;
-                i.BuildJson = Select_ImBuildJson.SelectedIndex == 1;
-                i.JsonName = Txt_ImJsonName.Text;
-                i.MultiReleationShip = Select_ImMultiRelation.SelectedIndex == 1;
-
-                Btn_EditImEntity.IsEnabled = false;
-            }
-        }
-
-        private void Btn_EditExEntity_Click(object sender, RoutedEventArgs e)
-        {
-            if (Tree_Export.SelectedItem != null)
-            {
-                PropertyNodeItem i = Tree_Export.SelectedItem as PropertyNodeItem;
-                i.DisplayName = Txt_ExDisplayName.Text;
-                i.EntityName = Txt_ExEntityName.Text;
-                i.BuildJson = Select_ExBuildJson.SelectedIndex == 1;
-                i.Selectable = Select_ExSelectable.SelectedIndex == 1;
-                i.JsonName = Txt_ExJsonName.Text;
-                i.MultiReleationShip = Select_ExMultiRelation.SelectedIndex == 1;
-
-                if(new String(Txt_ExSQL.Text.SkipWhile(q => q == ' ').ToArray()) != String.Empty)
-                {
-                    i.HasCustomizedSql = true;
-                    i.CustomizedSql = Txt_ExSQL.Text;
-                    i.CustomizedSqlParameters = Txt_ExParameters.Text;
-                }
-
-                Btn_EditExEntity.IsEnabled = false;
-            }
-        }
-        /// <summary>
         /// 添加实体
         /// </summary>
         /// <param name="sender"></param>
@@ -160,6 +148,7 @@ namespace DBToJsonProject.Views.WorkSpace
                 i.Childs.Add(j);
                 i.IsExpanded = true;
                 i.HasCustomizedSql = false;
+                Tree_Import.Focus();
             }
         }
         private void Btn_NewExEntity_Click(object sender, RoutedEventArgs e)
@@ -173,6 +162,7 @@ namespace DBToJsonProject.Views.WorkSpace
                 i.IsExpanded = true;
                 i.Selectable = false;
                 i.HasCustomizedSql = false;
+                Tree_Export.Focus();
             }
         }
         /// <summary>
@@ -209,8 +199,6 @@ namespace DBToJsonProject.Views.WorkSpace
             Txt_UserDbTableName.Text = Default.UserRoot.TableName;
             Txt_UsernameColumnName.Text = Default.UserRoot.UserName;
             Txt_PasswordColumnName.Text = Default.UserRoot.Password;
-
-            LockInputForJsonObject();
         }
         /// <summary>
         /// 取消操作，并退出
@@ -228,19 +216,8 @@ namespace DBToJsonProject.Views.WorkSpace
         /// <param name="e"></param>
         private void Btn_Ok_Click(object sender, RoutedEventArgs args)
         {
-            try
-            {
-                Save();
-                this.Close();
-            }
-            catch (ArgumentException e)
-            {
-                WrongSetting?.Invoke(this, new WrongSettingEventArgs(e.Message, e.ParamName, e.StackTrace));
-            }
-            catch (Exception e)
-            {
-                UnKnowError?.Invoke(this, new StringEventArgs() { Str = e.Message });
-            }
+            Btn_Save_Click(sender, args);
+            Btn_Cancel_Click(sender, args);
         }
         /// <summary>
         /// 保存记录
@@ -280,81 +257,25 @@ namespace DBToJsonProject.Views.WorkSpace
         /// <param name="e"></param>
         private void Tree_Import_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            var i = Tree_Import.SelectedItem as PropertyNodeItem;
-            if (i != null && i.Parent != null)
-            {
-                Txt_ImEntityName.Text = i.EntityName;
-                Txt_ImJsonName.Text = i.JsonName;
-                Txt_ImDisplayName.Text = i.DisplayName;
-                Select_ImMultiRelation.SelectedIndex = i.MultiReleationShip ? 1 : 0;
-                Select_ImBuildJson.SelectedIndex = i.BuildJson ? 1 : 0;
-                UnlockInputForJsonObject();
-            }
-            else
-            {
-                LockInputForJsonObject();
-            }
-            Btn_NewImEntity.IsEnabled = true;
         }
         private void Tree_Export_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            var i = Tree_Export.SelectedItem as PropertyNodeItem;
-            if (i != null && i.Parent != null)
-            {
-                Txt_ExEntityName.Text = i.EntityName;
-                Txt_ExJsonName.Text = i.JsonName;
-                Txt_ExDisplayName.Text = i.DisplayName;
-                Select_ExMultiRelation.SelectedIndex = i.MultiReleationShip ? 1 : 0;
-                Select_ExBuildJson.SelectedIndex = i.BuildJson ? 1 : 0;
-                Select_ExSelectable.SelectedIndex = i.Selectable ? 1 : 0;
-                Txt_ExSQL.Text = i.CustomizedSql;
-                Txt_ExParameters.Text = i.CustomizedSqlParameters;
-                UnlockInputForJsonObject();
-            }
-            else
-            {
-                LockInputForJsonObject();
-            }
-            Btn_NewExEntity.IsEnabled = true;
         }
-        private void LockInputForJsonObject()
+        void TextBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            Txt_ImEntityName.IsEnabled = false;
-            Txt_ImJsonName.IsEnabled = false;
-            Txt_ImDisplayName.IsEnabled = false;
-            Select_ImMultiRelation.IsEnabled = false;
-            Select_ImBuildJson.IsEnabled = false;
-            Btn_EditImEntity.IsEnabled = false;
-            Btn_DelImEntity.IsEnabled = false;
-
-            Txt_ExEntityName.IsEnabled = false;
-            Txt_ExJsonName.IsEnabled = false;
-            Txt_ExDisplayName.IsEnabled = false;
-            Select_ExMultiRelation.IsEnabled = false;
-            Select_ExBuildJson.IsEnabled = false;
-            Btn_EditExEntity.IsEnabled = false;
-            Btn_DelExEntity.IsEnabled = false;
-            Select_ExSelectable.IsEnabled = false;
+            (sender as TextBox).PreviewMouseDown += new MouseButtonEventHandler(TextBox_PreviewMouseDown);
         }
-        private void UnlockInputForJsonObject()
+
+        void TextBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            Txt_ImEntityName.IsEnabled = true;
-            Txt_ImJsonName.IsEnabled = true;
-            Txt_ImDisplayName.IsEnabled = true;
-            Select_ImMultiRelation.IsEnabled = true;
-            Select_ImBuildJson.IsEnabled = true;
-            Btn_EditImEntity.IsEnabled = true;
-            Btn_DelImEntity.IsEnabled = true;
-
-            Txt_ExEntityName.IsEnabled = true;
-            Txt_ExJsonName.IsEnabled = true;
-            Txt_ExDisplayName.IsEnabled = true;
-            Select_ExMultiRelation.IsEnabled = true;
-            Select_ExBuildJson.IsEnabled = true;
-            Btn_EditExEntity.IsEnabled = true;
-            Btn_DelExEntity.IsEnabled = true;
-            Select_ExSelectable.IsEnabled = true;
+            (sender as TextBox).Focus();
+            e.Handled = true;
         }
 
+        void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            (sender as TextBox).SelectAll();
+            (sender as TextBox).PreviewMouseDown -= new MouseButtonEventHandler(TextBox_PreviewMouseDown);
+        }
     }
 }

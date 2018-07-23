@@ -6,7 +6,7 @@ namespace DBToJsonProject.Controller.SettingManager
 {
     public class TreeNode : IJsonTreeNode
     {
-        public TreeNode(string jsonNodeName, string dbName, string displayName, bool multiRelated, bool buildSingleFile, bool selectable)
+        public TreeNode(string jsonNodeName, string dbName, string displayName, bool multiRelated, bool buildSingleFile, bool selectable, bool virtualNode)
         {
             JsonNodeName = jsonNodeName;
             DbName = dbName;
@@ -14,12 +14,17 @@ namespace DBToJsonProject.Controller.SettingManager
             MultiRelated = multiRelated;
             BuildSingleFile = buildSingleFile;
             Selectable = selectable;
+            VirtualNode = virtualNode;
         }
 
         /// <summary>
         /// 生成的Json文件中该节点属性名
         /// </summary>
         public String JsonNodeName { get; set; }
+        /// <summary>
+        /// 虚结点，不写入Json
+        /// </summary>
+        public Boolean VirtualNode { get; set; }
         /// <summary>
         /// 数据库中该节点对应实体名
         /// </summary>

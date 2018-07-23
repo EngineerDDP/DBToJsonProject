@@ -63,7 +63,7 @@ namespace DBToJsonProject.Controller
         /// </summary>
         public void Startup()
         {
-            Register();
+            RegisterWindows();
             Login.Show();
 
             //初始化用户记录
@@ -84,9 +84,30 @@ namespace DBToJsonProject.Controller
             }
         }
         /// <summary>
+        /// 重载页面
+        /// </summary>
+        private void ReLoadPages()
+        {
+            welcomePage = new WelcomePage();
+            importPage = new ImportPage();
+            exportPage = new ExportPage();
+            RegisterPages();
+        }
+        /// <summary>
+        /// 注册页面事件监听器
+        /// </summary>
+        private void RegisterPages()
+        {
+            welcomePage.OnNavigateToExport += NavigateToExport;
+            welcomePage.OnNavigateToImPort += NavigateToImPort;
+
+            exportPage.ExecuteExportCmd += ExecuteExportCmd;
+            exportPage.SelectionUpdated += Export_SelectionUpdated;
+        }
+        /// <summary>
         /// 注册事件监听器
         /// </summary>
-        private void Register()
+        private void RegisterWindows()
         {
             Login.OnLogin += Login_OnLogin;
             Login.OnExit += Login_OnExit;
@@ -98,20 +119,28 @@ namespace DBToJsonProject.Controller
             work.OnNavigateToWelcomePage += NavigateToWelcomePage;
             Work.OnLogout += Logout;
 
-            welcomePage.OnNavigateToExport += NavigateToExport;
-            welcomePage.OnNavigateToImPort += NavigateToImPort;
-
-            exportPage.ExecuteExportCmd += ExecuteExportCmd;
+            RegisterPages();
         }
-
+        /// <summary>
+        /// 记录选项
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Export_SelectionUpdated(object sender, SelectCollection e)
+        {
+            userSetting.SaveSelections(e);
+        }
+        /// <summary>
+        /// 执行导出
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ExecuteExportCmd(object sender, ExportCmdExecuteArgs e)
         {
             //执行数据库操作
             var t = new ExportTask();
             t.UpdateProgressInfo += T_UpdateProgressInfo;
             t.Run();
-            //记录操作结果
-            userSetting.SaveSelections(e.Selections);
         }
 
         private void T_UpdateProgressInfo(object sender, TaskPostBackEventArgs e)
@@ -159,11 +188,17 @@ namespace DBToJsonProject.Controller
                 userSetting = new UserSetting(user.Username);
                 if (args.RememberPassword)
                     userSetting.RememberedPass(args.Password);
+                else
+                    userSetting.ForgetPass();
                 userSetting.AutoLogin = args.AutomaticLogin;
                 AppSetting.Default.ActiveUser = args.Username;
 
                 login.Hide();
                 work.Show();
+                UseDispatcher(work, () =>
+                {
+                    work.SetUsername(userSetting.Name);
+                });
                 NavigateToWelcomePage(this, new EventArgs());
             }
         }
@@ -205,13 +240,29 @@ namespace DBToJsonProject.Controller
         /// <param name="e"></param>
         private void NavigateToExport(object sender, EventArgs e)
         {
+            //初始化选项集合
             SelectCollection selections = DBSettings.Default.BuildSelections();
+            //使用用户设置预选集合
             userSetting.LoadSelections(ref selections);
-            UseDispatcher(work, () => { work.SetNavigate(exportPage); });
+            //更新选择集合
             UseDispatcher(exportPage, () =>
             {
                 exportPage.SetupSelections(selections);
+                exportPage.UpdatePageInfos(new ExportPageInfoEventArgs()
+                {
+                    UserName = userSetting.Name,
+                    DeviceList = new System.Collections.Generic.List<DeviceTag>()
+                    {
+                        new DeviceTag()
+                        {
+                            Name = "Default device",
+                            ID = "0x0000"
+                        }
+                    }
+                });
             });
+            //导航至ExportPage
+            UseDispatcher(work, () => { work.SetNavigate(exportPage); });
         }
         /// <summary>
         /// 设置数据库
@@ -240,9 +291,7 @@ namespace DBToJsonProject.Controller
         /// </summary>
         private void RefreshWorkWindow()
         {
-            welcomePage = new WelcomePage();
-            importPage = new ImportPage();
-            exportPage = new ExportPage();
+            ReLoadPages();
             NavigateToWelcomePage(this, new EventArgs());
         }
         /// <summary>
@@ -276,15 +325,8 @@ namespace DBToJsonProject.Controller
         }
         private void Login_OnExit(object sender, EventArgs args)
         {
-            if(userSetting != null)
-            {
-                Login.Hide();
-                work.Show();
-            }
-            else
-            {
-                CloseMainWindow();
-            }
+            CloseMainWindow();
+            
         }
 
         /// <summary>

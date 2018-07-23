@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using DBToJsonProject.Models;
 using DBToJsonProject.Controller.SettingManager;
 using DBToJsonProject.Models.EventArguments;
+using WpfAnimatedGif;
 
 namespace DBToJsonProject.Views.WorkSpace
 {
@@ -21,7 +22,9 @@ namespace DBToJsonProject.Views.WorkSpace
             InitializeComponent();
             selections = new SelectCollection();
         }
-
+        public void UpdatePageInfos(ExportPageInfoEventArgs args)
+        {
+        }
         private void Opt_OpenFileEx_Click(object sender, RoutedEventArgs e)
         {
 
@@ -43,10 +46,17 @@ namespace DBToJsonProject.Views.WorkSpace
         {
             selections = s;
             Panel_Selections.ItemsSource = selections.Source;
+            UpdateSelectionResult();
         }
         public void TaskPostBack(TaskPostBackEventArgs args)
         {
             Txt_LogInfo.Text += args.LogInfo + "\n";
+            if(args.Progress == 100)
+            {
+                Img_Working.Visibility = Visibility.Hidden;
+                Btn_ExecuteExport.IsEnabled = true;
+                Btn_ResetExportSetting.IsEnabled = true;
+            }
         }
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
@@ -54,17 +64,6 @@ namespace DBToJsonProject.Views.WorkSpace
         }
         private void UpdateSelectionResult()
         {
-            Txt_SelectedResult.Clear();
-            foreach (SelectableJsonList l in selections.Source)
-            {
-                Txt_SelectedResult.Text += String.Format("{0}:\n", l.Name);
-                foreach (SelectableJsonNode n in l.Nodes)
-                {
-                    if(n.IsChecked)
-                        Txt_SelectedResult.Text += String.Format("\t[{0}]\t", n.Name);
-                }
-                Txt_SelectedResult.Text += "\n";
-            }
             SelectionUpdated?.Invoke(this, selections);
         }
 
@@ -85,6 +84,9 @@ namespace DBToJsonProject.Views.WorkSpace
                 Selections = selections,
                 SpecifiedQuaryString = ""
             });
+            Img_Working.Visibility = Visibility.Visible;
+            Btn_ExecuteExport.IsEnabled = false;
+            Btn_ResetExportSetting.IsEnabled = false;
         }
     }
 }

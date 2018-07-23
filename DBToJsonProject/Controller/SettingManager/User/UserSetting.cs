@@ -47,6 +47,9 @@ namespace DBToJsonProject.Controller.SettingManager
                 Init();
             }
         }
+        /// <summary>
+        /// 载入
+        /// </summary>
         protected override void Load()
         {
             //获取根元素
@@ -61,11 +64,14 @@ namespace DBToJsonProject.Controller.SettingManager
                 SelectableJsonList list = new SelectableJsonList(s.Name);
                 foreach (SettingNode n in s.ChildNodes)
                 {
-                    list.Nodes.Add(new SelectableJsonNode(n.Name, null));
+                    list.Nodes.Add(new SelectableJsonNode(n.Name.Substring(1), null));
                 }
                 Sel.Source.Add(list);
             }
         }
+        /// <summary>
+        /// 更新
+        /// </summary>
         public override void Update()
         {
             SettingNode root = new SettingNode(Xml_BaseSettingRoot);
@@ -79,7 +85,8 @@ namespace DBToJsonProject.Controller.SettingManager
                 SettingNode n = new SettingNode(i.Name);
                 foreach (SelectableJsonNode j in i.Nodes)
                 {
-                    n.AppendChild(new SettingNode(j.Name));
+                    if(j.IsChecked)
+                        n.AppendChild(new SettingNode("a" + j.Name));
                 }
                 sel.AppendChild(n);
             }
@@ -134,6 +141,10 @@ namespace DBToJsonProject.Controller.SettingManager
         public void RememberedPass(String password)
         {
             Savedpass = password;
+        }
+        public void ForgetPass()
+        {
+            Savedpass = "";
         }
         public void SetAutoLogin()
         {

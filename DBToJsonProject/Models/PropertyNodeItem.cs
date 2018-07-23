@@ -35,6 +35,7 @@ namespace DBToJsonProject.Models
             }
         }
         public String JsonName { get; set; }
+        public Boolean VirtualNode { get; set; }
         public String EntityName { get; set; }
         public Boolean MultiReleationShip { get; set; }
         public Boolean BuildJson { get; set; }
@@ -57,16 +58,20 @@ namespace DBToJsonProject.Models
             }
         }
         public PropertyNodeItem Parent { get; set; }
-        
+        /// <summary>
+        /// 按照默认模板新建
+        /// </summary>
+        private static int C = 0;
         public static PropertyNodeItem Default
         {
             get
             {
+                C += 1;
                 return new PropertyNodeItem()
                 {
-                    DisplayName = "DisplayName",
-                    JsonName = "JsonName",
-                    EntityName = "EntityName",
+                    DisplayName = String.Format("DisplayName{0}", C),
+                    JsonName = String.Format("JsonName{0}", C),
+                    EntityName = String.Format("EntityName{0}", C),
                     IsExpanded = true,
                     MultiReleationShip = false,
                     BuildJson = false,

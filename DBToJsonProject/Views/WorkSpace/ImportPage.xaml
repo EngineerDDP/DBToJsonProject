@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:DBToJsonProject.Views.WorkSpace"
+      xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="700"
       Title="ImportPage">
@@ -25,28 +26,17 @@
                 <TabItem Header="常规">
                     <Grid Margin="12,12">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="24"/>
-                            <RowDefinition Height="24"/>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="24"/>
+                            <RowDefinition Height="auto"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="22"/>
                         </Grid.RowDefinitions>
-                        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,2">
-                            <TextBlock >
-                                目标设备:
-                            </TextBlock>
-                            <ComboBox Name="Select_Device" Width="140">
-
-                            </ComboBox>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,2">
-                            <TextBlock >
-                                操作用户:
-                            </TextBlock>
-                            <TextBox IsReadOnly="True" Name="Txt_VerifyUsername" Width="140"></TextBox>
-                        </StackPanel>
-
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Image Name="Img_Working" Grid.Column="1" gif:AnimationBehavior.SourceUri="/Images/icons/phone2PC.gif" Height="50"></Image>
+                        </Grid>
                         <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
                             <Button Name="Btn_ResetExportSetting" Width="60">重置</Button>
                             <Label></Label>

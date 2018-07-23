@@ -85,6 +85,10 @@ namespace DBToJsonProject.Controller.SettingManager
         /// </summary>
         private readonly static String NodeSelectable = "NodeSelectable";
         /// <summary>
+        /// 
+        /// </summary>
+        private readonly static String IsVirtual = "IsVirtual";
+        /// <summary>
         /// 自定义Sql语句中的参数绑定
         /// </summary>
         private readonly static String DbCustomizedSqlParameters = "DbCustomizedSqlParameters";
@@ -193,7 +197,6 @@ namespace DBToJsonProject.Controller.SettingManager
         /// <returns></returns>
         private TreeNode BuildTreeNode(SettingNode node, IJsonTreeNode parent)
         {
-
             //创建对象
             var t = new TreeNode(
                 node.Name, 
@@ -201,7 +204,9 @@ namespace DBToJsonProject.Controller.SettingManager
                 node.Attributes[DbDisplayName],
                 Boolean.Parse(node.Attributes[DbTableMultiRelated]),
                 Boolean.Parse(node.Attributes[BuildJsonFile]),
-                Boolean.Parse(node.Attributes[NodeSelectable]));          
+                Boolean.Parse(node.Attributes[NodeSelectable]),
+                Boolean.Parse(node.Attributes[IsVirtual])
+                );          
             //读子节点
             Dictionary<String, IJsonTreeNode> childs = new Dictionary<string, IJsonTreeNode>();
             foreach (SettingNode n in node.ChildNodes)
@@ -228,7 +233,7 @@ namespace DBToJsonProject.Controller.SettingManager
         private SettingNode BuildXmlFromTreeNode(IJsonTreeNode root)
         {
             //创建对象
-            SettingNode xml = new SettingNode(RootNodeName);
+            SettingNode xml = new SettingNode(root.JsonNodeName);
             //写属性
             xml.SetAttribute(DbEntityAttributeName, root.DbName);
             xml.SetAttribute(DbTableMultiRelated, root.MultiRelated.ToString());
@@ -237,6 +242,7 @@ namespace DBToJsonProject.Controller.SettingManager
             xml.SetAttribute(NodeSelectable, root.Selectable.ToString());
             xml.SetAttribute(DbCustomizedSql, root.Sql.CustomizeSQLString);
             xml.SetAttribute(DbCustomizedSqlParameters, root.Sql.Params.ToString());
+            xml.SetAttribute(IsVirtual, root.VirtualNode.ToString());
 
             //写子节点
             foreach (String key in root.ChildNodes.Keys)

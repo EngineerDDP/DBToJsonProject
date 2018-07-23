@@ -36,6 +36,10 @@ namespace DBToJsonProject.Views.WorkSpace
         {
             Frame_MainWorkSpace.Navigate(page);
         }
+        public void SetUsername(String name)
+        {
+            Txt_LoginUser.Text = name;
+        }
         public void TaskPostBack(TaskPostBackEventArgs args)
         {
             Progress_Status.Value = args.Progress;

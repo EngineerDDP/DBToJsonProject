@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Data;
+using System.Data.SqlClient;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,16 +11,17 @@ namespace DBToJsonProject.TaskManager
 {
     class DataBaseAccess
     {
+        private SqlConnection sqlCon;
+        public DataBaseAccess(String connectStr)
+        {
+            sqlCon.ConnectionString = connectStr;
+        }
         private void SomeDBWorks()
         {
             Task.Factory.StartNew(() =>
             {
                 Thread.Sleep(200);
             });
-        }
-        public DataBaseAccess(String dbConnectStr)
-        {
-
         }
         /// <summary>
         /// 匹配一个数据库中的指定项
@@ -28,6 +31,8 @@ namespace DBToJsonProject.TaskManager
         /// <returns></returns>
         public bool MatchRow(String tableName, Dictionary<String,object> dbRow)
         {
+            sqlCon.Open();
+
             return true;
         }
         /// <summary>

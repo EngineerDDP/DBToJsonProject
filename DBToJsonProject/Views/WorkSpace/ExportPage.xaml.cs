@@ -46,7 +46,6 @@ namespace DBToJsonProject.Views.WorkSpace
         {
             selections = s;
             Panel_Selections.ItemsSource = selections.Source;
-            UpdateSelectionResult();
         }
         public void TaskPostBack(TaskPostBackEventArgs args)
         {
@@ -97,6 +96,7 @@ namespace DBToJsonProject.Views.WorkSpace
             {
                 list.Nodes[i].IsChecked = true;
             }
+            UpdateSelectionResult();
         }
 
         private void CheckBox_CheckAll_Unchecked(object sender, RoutedEventArgs e)
@@ -106,6 +106,7 @@ namespace DBToJsonProject.Views.WorkSpace
             {
                 list.Nodes[i].IsChecked = false;
             }
+            UpdateSelectionResult();
         }
     }
 }

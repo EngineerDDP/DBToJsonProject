@@ -9,14 +9,16 @@ using System.Threading.Tasks;
 
 namespace DBToJsonProject.TaskManager
 {
-    public class DBColumnDosentExistException : Exception
+    public class DBColumnDosentExistEvent : EventArgs
     {
+        public String TableName { get; set; }
         public String[] ColumnNames { get; set; }
     }
 
     class DataBaseAccess
     {
         private SqlConnection sqlCon;
+        public event EventHandler<DBColumnDosentExistEvent> DBColumnDosentExist;
         public DataBaseAccess(String connectStr)
         {
             sqlCon.ConnectionString = connectStr;
@@ -62,8 +64,9 @@ namespace DBToJsonProject.TaskManager
         /// <param name="dbColumnNames">数据库表的列名</param>
         /// <exception cref="DBColumnDosentExistException">异常，如果存在列名找不到</exception>
         /// <returns></returns>
-        public void FillDictionary(String sqlCommand, ref List<Dictionary<String,String>> targetDic)
+        public List<Dictionary<String, String>> FillDictionary(String sqlCommand, string[] sampleColumns)
         {
+            List<Dictionary<String, String>> result = new List<Dictionary<string, string>>();
             List<String> crruptedColumName = new List<string>();
 
             sqlCon.Open();
@@ -74,16 +77,16 @@ namespace DBToJsonProject.TaskManager
 
             SqlDataReader reader = cmd.ExecuteReader();
             
-            foreach(Dictionary<String,String> dic in targetDic)
+            while(reader.Read())
             {
-                reader.Read();
-                foreach(String key in dic.Keys)
+                Dictionary<String, String> row = new Dictionary<string, string>();
+                foreach(String key in sampleColumns)
                 {
                     if (!crruptedColumName.Contains(key))
                     {
                         try
                         {
-                            dic[key] = reader.GetString(reader.GetOrdinal(key));
+                            row.Add(key, reader.GetString(reader.GetOrdinal(key)));
                         }
                         catch (IndexOutOfRangeException)
                         {
@@ -91,16 +94,19 @@ namespace DBToJsonProject.TaskManager
                         }
                     }
                 }
+                result.Add(row);
             }
 
             reader.Close();
             sqlCon.Close();
 
             if (crruptedColumName.Count != 0)
-                throw new DBColumnDosentExistException()
+                DBColumnDosentExist?.Invoke(this, new DBColumnDosentExistEvent()
                 {
                     ColumnNames = crruptedColumName.ToArray()
-                };
+                });
+
+            return result;
         }
         /// <summary>
         /// 将字典列表写入数据库

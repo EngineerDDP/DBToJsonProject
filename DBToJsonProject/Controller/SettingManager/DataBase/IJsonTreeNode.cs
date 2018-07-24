@@ -12,9 +12,12 @@ namespace DBToJsonProject.Controller.SettingManager
         Boolean MultiRelated { get; }
         Boolean BuildSingleFile { get; }
         Boolean Selectable { get; }
-        ICustomizedSqlDescriber Sql { get; }
+        ICustomizedSqlDescriber Sql { get; set; }
         Dictionary<String, IJsonTreeNode> ChildNodes { get; }
         IJsonTreeNode Parent { get; }
+        bool IsDBColumn { get; }
         bool Equals(IJsonTreeNode obj);
+        bool HasVirtualNode { get; }
+        bool IsDbTable { get; }
     }
 }

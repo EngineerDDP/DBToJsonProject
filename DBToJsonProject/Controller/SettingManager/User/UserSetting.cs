@@ -1,6 +1,7 @@
 ﻿using DBToJsonProject.Models;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace DBToJsonProject.Controller.SettingManager
 {
@@ -95,26 +96,17 @@ namespace DBToJsonProject.Controller.SettingManager
             }
         }
         /// <summary>
-        /// 这什么辣鸡代码？？？
+        /// 写上次记录的用户设置
         /// </summary>
         /// <param name="selections"></param>
         public void LoadSelections(ref SelectCollection selections)
         {
-            foreach(SelectableJsonList l in Sel.Source)
+            foreach(PlainSelectableJsonNode l in Sel.Childs)
             {
-                for(int i = 0;i < selections.Source.Count;++i)
+                foreach(PlainSelectableJsonNode n in l.Childs)
                 {
-                    if(l.Name == selections.Source[i].Name)
-                    {
-                        foreach(SelectableJsonNode k in l.Nodes)
-                        {
-                            for(int j = 0;j < selections.Source[i].Nodes.Count;++j)
-                            {
-                                if (selections.Source[i].Nodes[j].Name == k.Name)
-                                    selections.Source[i].Nodes[j].IsChecked = true;
-                            }
-                        }
-                    }
+                    (selections.Source.FirstOrDefault(q => q.Name == l.Name)?.
+                        Nodes.FirstOrDefault(q => q.Name == n.Name)).IsChecked = true;
                 }
             }
         }
@@ -124,12 +116,17 @@ namespace DBToJsonProject.Controller.SettingManager
         /// <param name="selections"></param>
         public void SaveSelections(SelectCollection selections)
         {
+            Sel.Childs = new System.Collections.Generic.List<PlainSelectableJsonNode>();
             foreach(SelectableJsonList list in selections.Source)
             {
-                Sel.Childs.Add(list);
-
+                PlainSelectableJsonNode l = new PlainSelectableJsonNode(list.Name);
+                foreach(SelectableJsonNode node in list.Nodes)
+                {
+                    if (node.IsChecked)
+                        l.Childs.Add(node);
+                }
+                Sel.Childs.Add(l);
             }
-            Sel = selections;
         }
         /// <summary>
         /// 初始化新对象

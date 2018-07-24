@@ -4,8 +4,7 @@ namespace DBToJsonProject.Controller.SettingManager
 {
     public interface ICustomizedSqlParameters
     {
-        List<IJsonTreeNode> Parameters { get; }
-
+        List<Parameter> Parameters { get; }
         string ToString();
     }
 }

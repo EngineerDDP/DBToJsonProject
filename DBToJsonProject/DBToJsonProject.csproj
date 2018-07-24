@@ -102,7 +102,7 @@
     <Compile Include="Models\EventArguments\ExportCmdExecuteArgs.cs" />
     <Compile Include="Models\EventArguments\ExportPageInfoEventArgs.cs" />
     <Compile Include="Models\EventArguments\TaskPostBackEventArgs.cs" />
-    <Compile Include="Models\Selections.cs" />
+    <Compile Include="Models\SelectCollection.cs" />
     <Compile Include="Views\ErrorBox.xaml.cs">
       <DependentUpon>ErrorBox.xaml</DependentUpon>
     </Compile>

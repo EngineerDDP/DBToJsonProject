@@ -5,7 +5,7 @@ using System.Linq;
 namespace DBToJsonProject.Controller.SettingManager
 {
     /// <summary>
-    /// 自定义参数标定名称，参数标定格式为"paraA///,paraB/"，其中反斜线数目为父级层次数目，字符串写在最前，代表该表下属性的Json标记名称（注意：不是数据库列名），多个标记之间用逗号隔开
+    /// 自定义参数标定名称，参数标定格式为"paraA>childB///,paraB/"，其中反斜线数目为父级层次数目，字符串写在最前，代表该表下属性的Json标记名称（注意：不是数据库列名），多个标记之间用逗号隔开
     /// </summary>
     public class CustomizedSqlParameters : ICustomizedSqlParameters
     {
@@ -29,12 +29,19 @@ namespace DBToJsonProject.Controller.SettingManager
                 foreach (string argv in paras)
                 {
                     IJsonTreeNode n = current;
-                    for (int parentlv = argv.Count(q => q == '/'); parentlv != 0 && n != null; parentlv--)
+                    for (int parentlv = argv.Count(q => q == '/'); parentlv != -1 && n != null; parentlv--)
                     {
                         n = n.Parent;
                     }
+                    string[] s = new String(argv.TakeWhile(q => q != '/').ToArray()).Split('>');
+                    foreach (string i in s)
+                    {
+                        if (n == null)
+                            break;
+                        n = n.ChildNodes[i];
+                    }
                     if (n != null)
-                        Parameters.Add(n.ChildNodes[argv.Split('/').First()]);
+                        Parameters.Add(n);
                 }
             }
         }

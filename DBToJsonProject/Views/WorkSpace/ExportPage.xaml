@@ -11,6 +11,7 @@
       d:DesignHeight="400" d:DesignWidth="700"
       Title="ExportPage">
     <Page.Resources>
+        <!--绑定选择子项-->
         <DataTemplate x:Key="xNodeItemTemplate" DataType="{x:Type models:SelectableJsonNode}">
             <DataTemplate.Resources>
                 <Style TargetType="CheckBox">
@@ -23,29 +24,24 @@
                     </Style.Triggers>
                 </Style>
             </DataTemplate.Resources>
-            <Border Margin="5,0,0,0">
-                <CheckBox Content="{Binding Path=Name}" IsChecked="{Binding Path=IsChecked,Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked"/>
+            <Border Margin="5">
+                <CheckBox Name="Select_CheckPart" Content="{Binding Path=Name}" IsChecked="{Binding Path=IsChecked,Mode=TwoWay}"/>
             </Border>
         </DataTemplate>
+        <!--绑定选择类别-->
         <DataTemplate x:Key="xListItemTemplate" DataType="{x:Type models:SelectableJsonList}">
             <DataTemplate.Resources>
                 <Style TargetType="TextBlock">
                     <Setter Property="Foreground" Value="DarkSlateGray"/>
-                    <Setter Property="FontSize" Value="12"/>
+                    <Setter Property="FontSize" Value="14"/>
                 </Style>
             </DataTemplate.Resources>
-            <Grid Margin="0,0,0,12">
+            <Grid Margin="12">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="24"/>
-                    <RowDefinition Height="10"/>
-                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="16"/>
                 </Grid.RowDefinitions>
-
-                <Border Grid.Row="0" Margin="5,0,0,3">
-                    <TextBlock Text="{Binding Path=Name}" VerticalAlignment="Center"/>
-                </Border>
-                <Line Grid.Row="1" X1="0" Y1="0" X2="220" Y2="0" Stroke="Black" StrokeThickness="1"/>
-                <Border Grid.Row="2" Margin="5" BorderBrush="Gray" BorderThickness="0">
+                <Border Grid.Row="0" Margin="5">
                     <ItemsControl ItemsSource="{Binding Path=Nodes,Mode=TwoWay}" 
                                       ItemTemplate="{StaticResource xNodeItemTemplate}">
                         <ItemsControl.ItemsPanel>
@@ -55,7 +51,14 @@
                         </ItemsControl.ItemsPanel>
                     </ItemsControl>
                 </Border>
+                <Grid Grid.Row="1" HorizontalAlignment="Right">
+                    <CheckBox Checked="CheckBox_CheckAll_Checked" Unchecked="CheckBox_CheckAll_Unchecked">全选</CheckBox>
+                </Grid>
             </Grid>
+        </DataTemplate>
+        <!--类别名-->
+        <DataTemplate x:Key="xListItemHeadTemplate" DataType="{x:Type models:SelectableJsonList}">
+            <TextBlock FontSize="13" Foreground="#003366" Text="{Binding Path=Name}"/>
         </DataTemplate>
     </Page.Resources>
     <Grid Margin="5">
@@ -71,8 +74,16 @@
                 <ColumnDefinition Width="3"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TabControl Grid.Column="0" Name="Tab_ExportSetting">
-                <TabItem Header="常规">
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="21"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Margin="5,0,0,0" Grid.Row="0" Height="21">配置选项</TextBlock>
+                <Border Grid.Row="1" BorderThickness="1" Background="White">
+                    <Border.BorderBrush>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
+                    </Border.BorderBrush>
                     <Grid Margin="12,12">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>
@@ -95,16 +106,11 @@
                             <Image Grid.Column="1" Visibility="{Binding ElementName=Btn_ExecuteExport,Path=IsEnabled}" Source="/Images/icons/PC2phone_static.png" Height="50"></Image>
                             <Image Grid.Column="1" Name="Img_Working" Visibility="Hidden" gif:AnimationBehavior.SourceUri="/Images/icons/PC2phone.gif" Height="50"></Image>
                         </Grid>
-                        <Border Grid.Row="1" BorderBrush="LightGray" BorderThickness="0.75">
-                            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                <ItemsControl x:Name="Panel_Selections" ItemTemplate="{StaticResource xListItemTemplate}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Vertical" Margin="12"/>
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                </ItemsControl>
-                            </ScrollViewer>
+
+                        <Border Grid.Row="1">
+                            <TabControl x:Name="Panel_Selections" ItemTemplate="{StaticResource xListItemHeadTemplate}" 
+                                        ContentTemplate="{StaticResource xListItemTemplate}">
+                            </TabControl>
                         </Border>
                         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
                             <Button Name="Btn_ResetExportSetting" Click="Btn_ResetExportSetting_Click" Width="60">重置</Button>
@@ -112,8 +118,8 @@
                             <Button Name="Btn_ExecuteExport" Click="Btn_ExecuteExport_Click" Width="60">导出</Button>
                         </StackPanel>
                     </Grid>
-                </TabItem>
-            </TabControl>
+                </Border>
+            </Grid>
             <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>

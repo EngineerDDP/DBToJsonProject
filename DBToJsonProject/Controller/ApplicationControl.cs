@@ -137,10 +137,10 @@ namespace DBToJsonProject.Controller
         /// <param name="e"></param>
         private void ExecuteExportCmd(object sender, ExportCmdExecuteArgs e)
         {
-            //执行数据库操作
-            var t = new ExportTask();
-            t.UpdateProgressInfo += T_UpdateProgressInfo;
-            t.Run();
+            ////执行数据库操作
+            //var t = new ExportTask();
+            //t.UpdateProgressInfo += T_UpdateProgressInfo;
+            //t.Run();
         }
 
         private void T_UpdateProgressInfo(object sender, TaskPostBackEventArgs e)

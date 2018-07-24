@@ -22,11 +22,7 @@ namespace DBToJsonProject.Controller.SettingManager
         private String savedpass;
         private bool autoLogin;
         private UserActivitiesLog log;
-        private SelectCollection Sel;
-        public SelectCollection UserSelections
-        {
-            set => Sel = value;
-        }
+        private PlainSelectableJsonNode Sel;
         public string Name { get => name; set => name = value; }
         public string Savedpass { get => savedpass; set => savedpass = value; }
         public bool AutoLogin { get => autoLogin; set => autoLogin = value; }
@@ -36,7 +32,7 @@ namespace DBToJsonProject.Controller.SettingManager
             Name = username;
             UserFolder = String.Format("{0}/", Name);
             log = new UserActivitiesLog();
-            Sel = new SelectCollection();
+            Sel = new PlainSelectableJsonNode(Xml_ExportSettingNode);
 
             if(ExistSettingXML(SettingFolder,SettingFile))
             {
@@ -58,15 +54,15 @@ namespace DBToJsonProject.Controller.SettingManager
             Savedpass = root.Attributes[Xml_PasswordAttr];
 
             //读上次保存的选项集合
-            root = root.SelectSingleNode(Xml_ExportSettingNode);
+            root = root.SelectSingleNode(Sel.Name);
             foreach (SettingNode s in root.ChildNodes)
             {
-                SelectableJsonList list = new SelectableJsonList(s.Name);
+                PlainSelectableJsonNode list = new PlainSelectableJsonNode(s.Value);
                 foreach (SettingNode n in s.ChildNodes)
                 {
-                    list.Nodes.Add(new SelectableJsonNode(n.Name.Substring(1), null));
+                    list.Childs.Add(new PlainSelectableJsonNode(n.Value));
                 }
-                Sel.Source.Add(list);
+                Sel.Childs.Add(list);
             }
         }
         /// <summary>
@@ -78,15 +74,14 @@ namespace DBToJsonProject.Controller.SettingManager
             root.SetAttribute(Xml_AutoLogAttr, AutoLogin.ToString());
             root.SetAttribute(Xml_PasswordAttr, Savedpass);
 
-            SettingNode sel = new SettingNode(Xml_ExportSettingNode);
+            SettingNode sel = new SettingNode(Sel.Name);
             //写选项集合
-            foreach (SelectableJsonList i in Sel.Source)
+            foreach (PlainSelectableJsonNode i in Sel.Childs)
             {
-                SettingNode n = new SettingNode(i.Name);
-                foreach (SelectableJsonNode j in i.Nodes)
+                SettingNode n = new SettingNode(i.Tag) { Value = i.Name };
+                foreach (PlainSelectableJsonNode j in i.Childs)
                 {
-                    if(j.IsChecked)
-                        n.AppendChild(new SettingNode("a" + j.Name));
+                    n.AppendChild(new SettingNode(j.Tag) { Value = j.Name });
                 }
                 sel.AppendChild(n);
             }
@@ -129,6 +124,11 @@ namespace DBToJsonProject.Controller.SettingManager
         /// <param name="selections"></param>
         public void SaveSelections(SelectCollection selections)
         {
+            foreach(SelectableJsonList list in selections.Source)
+            {
+                Sel.Childs.Add(list);
+
+            }
             Sel = selections;
         }
         /// <summary>

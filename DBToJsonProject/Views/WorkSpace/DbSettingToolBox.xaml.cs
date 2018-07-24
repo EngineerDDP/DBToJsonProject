@@ -85,6 +85,7 @@ namespace DBToJsonProject.Views.WorkSpace
             item.HasChildren = root.ChildNodes.Count != 0;
             item.BuildJson = root.BuildSingleFile;
             item.Selectable = root.Selectable;
+            item.HasCustomizedSql = root.Sql.HasCustomizeSQLString;
             item.CustomizedSql = root.Sql.CustomizeSQLString;
             item.CustomizedSqlParameters = root.Sql.Params?.ToString();
             item.VirtualNode = root.VirtualNode;

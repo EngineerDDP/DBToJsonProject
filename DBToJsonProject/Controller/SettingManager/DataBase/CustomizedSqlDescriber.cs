@@ -2,7 +2,7 @@
 {
     public class CustomizedSqlDescriber : ICustomizedSqlDescriber
     {
-        private bool HasCustomizeSQLString { get; set; }
+        public bool HasCustomizeSQLString { get; private set; }
         private string customizedsql;
         public string CustomizeSQLString
         {

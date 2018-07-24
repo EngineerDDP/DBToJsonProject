@@ -1,4 +1,6 @@
-﻿using DBToJsonProject.Models.EventArguments;
+﻿using DBToJsonProject.Models;
+using DBToJsonProject.Models.EventArguments;
+using DBToJsonProject.TaskManager;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +13,14 @@ namespace DBToJsonProject.Controller.TaskManager
     class ExportTask
     {
         public event EventHandler<TaskPostBackEventArgs> UpdateProgressInfo;
+
+        DataBaseAccess dataBaseAccess;
+        SelectCollection selectCollection;
+        public ExportTask(String dbConStr, SelectCollection select)
+        {
+            dataBaseAccess = new DataBaseAccess(dbConStr);
+            selectCollection = select;
+        }
         public void Run()
         {
             Task t = new Task(Execution);
@@ -18,6 +28,7 @@ namespace DBToJsonProject.Controller.TaskManager
         }
         private void Execution()
         {
+
             Thread.Sleep(1000);
             UpdateProgressInfo?.Invoke(this, new TaskPostBackEventArgs()
             {

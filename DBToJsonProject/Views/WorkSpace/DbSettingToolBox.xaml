@@ -10,7 +10,7 @@
         Background="#FFF0F0F0"
         ResizeMode="NoResize"
         Loaded="Window_Loaded"
-        Title="数据库设置" Height="720" Width="480">
+        Title="数据库设置" Height="720" Width="540">
     <Window.Resources>
         <!-- Toggle Button -->
         <Style x:Key="ExpandCollapseToggleStyle" TargetType="ToggleButton">
@@ -93,6 +93,11 @@
             </Setter>
         </Style>
         <local:TreeViewLineConverter x:Key="LineConverter"/>
+        <Style TargetType="TextBox">
+            <Setter Property="MinWidth" Value="120"/>
+            <Setter Property="MaxWidth" Value="180"/>
+            <Setter Property="MaxLines" Value="4"/>
+        </Style>
     </Window.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
@@ -199,7 +204,7 @@
                             <ColumnDefinition Width="30"/>
                             <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
-                        <TreeView Name="Tree_Import" SelectedItemChanged="Tree_Import_SelectedItemChanged" Grid.Column="0">
+                        <TreeView Name="Tree_Import" MinWidth="200" SelectedItemChanged="Tree_Import_SelectedItemChanged" Grid.Column="0">
                             <TreeView.Resources>
                                 <Style TargetType="{x:Type TreeViewItem}">
                                     <Setter Property="IsExpanded" Value="{Binding Path=IsExpanded, Mode=TwoWay}"></Setter>
@@ -275,7 +280,7 @@
                             <ColumnDefinition Width="12"/>
                             <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
-                        <TreeView Name="Tree_Export" SelectedItemChanged="Tree_Export_SelectedItemChanged" Grid.Column="0">
+                        <TreeView Name="Tree_Export" MinWidth="200" SelectedItemChanged="Tree_Export_SelectedItemChanged" Grid.Column="0">
                             <TreeView.Resources>
                                 <Style TargetType="{x:Type TreeViewItem}">
                                     <Setter Property="IsExpanded" Value="{Binding Path=IsExpanded, Mode=TwoWay}"></Setter>
@@ -322,7 +327,7 @@
                                     <Label>自定义查询SQL</Label>
                                     <CheckBox VerticalAlignment="Center" Name="Select_UseCustomizedSql" IsChecked="{Binding ElementName=Tree_Export,Path=SelectedItem.HasCustomizedSql,Mode=TwoWay}"></CheckBox>
                                 </StackPanel>
-                                <TextBox Name="Txt_ExSQL" IsEnabled="{Binding ElementName=Select_UseCustomizedSql,Path=IsChecked,Mode=OneWay}" Text="{Binding ElementName=Tree_Export,Path=SelectedItem.CustomizedSql,Mode=TwoWay}"></TextBox>
+                                <TextBox Name="Txt_ExSQL" TextWrapping="Wrap" IsEnabled="{Binding ElementName=Select_UseCustomizedSql,Path=IsChecked,Mode=OneWay}" Text="{Binding ElementName=Tree_Export,Path=SelectedItem.CustomizedSql,Mode=TwoWay}"></TextBox>
                                 <Label>调用关联项（用英文逗号隔开）</Label>
                                 <TextBox Name="Txt_ExParameters" Text="{Binding ElementName=Tree_Export,Path=SelectedItem.CustomizedSqlParameters,Mode=TwoWay}"></TextBox>
                             </StackPanel>

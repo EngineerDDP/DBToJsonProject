@@ -9,6 +9,11 @@ using System.Threading.Tasks;
 
 namespace DBToJsonProject.TaskManager
 {
+    public class DBColumnDosentExistException : Exception
+    {
+        public String[] ColumnNames { get; set; }
+    }
+
     class DataBaseAccess
     {
         private SqlConnection sqlCon;
@@ -29,45 +34,103 @@ namespace DBToJsonProject.TaskManager
         /// <param name="tableName">表名</param>
         /// <param name="dbRow">数据库行的一部分</param>
         /// <returns></returns>
-        public bool MatchRow(String tableName, Dictionary<String,object> dbRow)
+        public bool MatchRow(String tableName, Dictionary<String,string> dbRow)
         {
             sqlCon.Open();
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = sqlCon;
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = String.Format("Select * From {0} Where ", tableName);
 
-            return true;
+            foreach(string key in dbRow.Keys)
+            {
+                cmd.CommandText += String.Format("{0} = '{1}' AND ", key, dbRow[key]);
+            }
+            cmd.CommandText += "1 = 1";
+
+            SqlDataReader reader = cmd.ExecuteReader();
+            bool result = reader.HasRows;
+            reader.Close();
+            sqlCon.Close();
+
+            return result;
         }
         /// <summary>
-        /// 依照指定的列名称匹配并填充字典
+        /// 查询并填充字典
         /// </summary>
         /// <param name="tableName">数据库表名</param>
         /// <param name="dbColumnNames">数据库表的列名</param>
+        /// <exception cref="DBColumnDosentExistException">异常，如果存在列名找不到</exception>
         /// <returns></returns>
-        public List<Dictionary<String,object>> FillDictionary(String tableName, List<String> dbColumnNames)
+        public void FillDictionary(String sqlCommand, ref List<Dictionary<String,String>> targetDic)
         {
-            List<Dictionary<String, object>> resultList = new List<Dictionary<string, object>>();       //创建空结果集
-            Random r = new Random();
+            List<String> crruptedColumName = new List<string>();
 
-            int rCount = r.Next(0, 100);
-            for (int i = 0; i < rCount; ++i)        //依照对应关系，将数据库中每一行中元素映射到目标Json标签下
+            sqlCon.Open();
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = sqlCon;
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = sqlCommand;
+
+            SqlDataReader reader = cmd.ExecuteReader();
+            
+            foreach(Dictionary<String,String> dic in targetDic)
             {
-                Dictionary<String, object> dataRow = new Dictionary<string, object>();
-                int value = r.Next(0x00, 0x7fffffff);
-                foreach (String key in dbColumnNames)
+                reader.Read();
+                foreach(String key in dic.Keys)
                 {
-                    dataRow.Add(key, String.Format("{0:X000}", value));
+                    if (!crruptedColumName.Contains(key))
+                    {
+                        try
+                        {
+                            dic[key] = reader.GetString(reader.GetOrdinal(key));
+                        }
+                        catch (IndexOutOfRangeException)
+                        {
+                            crruptedColumName.Add(key);
+                        }
+                    }
                 }
-                resultList.Add(dataRow);
             }
-            return resultList;
+
+            reader.Close();
+            sqlCon.Close();
+
+            if (crruptedColumName.Count != 0)
+                throw new DBColumnDosentExistException()
+                {
+                    ColumnNames = crruptedColumName.ToArray()
+                };
         }
         /// <summary>
-        /// 将数据库行写入数据库
+        /// 将字典列表写入数据库
         /// </summary>
         /// <param name="tableName"></param>
         /// <param name="dbRow"></param>
         /// <returns></returns>
-        public int WriteToDB(String tableName,Dictionary<String,object> dbRow)
+        public void WriteToDB(String tableName, ref List<Dictionary<String, String>> targetDic)
         {
-            return dbRow.Count;
+            DataTable dt = new DataTable();
+            foreach(String key in targetDic[0].Keys)
+            {
+                dt.Columns.Add(new DataColumn(key));
+            }
+            foreach(Dictionary<String,String> dic in targetDic)
+            {
+                DataRow dr = dt.NewRow();
+                foreach(String key in dic.Keys)
+                {
+                    dr[key] = dic[key];
+                }
+                dt.Rows.Add(dr);
+            }
+
+            SqlBulkCopy sqlBulkCopy = new SqlBulkCopy(sqlCon);
+            sqlBulkCopy.DestinationTableName = tableName;
+            sqlBulkCopy.BatchSize = dt.Rows.Count;
+            sqlCon.Open();
+            sqlBulkCopy.WriteToServer(dt);
+            sqlCon.Close();
         }
     }
 }

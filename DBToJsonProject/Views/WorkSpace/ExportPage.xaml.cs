@@ -51,6 +51,7 @@ namespace DBToJsonProject.Views.WorkSpace
         public void TaskPostBack(TaskPostBackEventArgs args)
         {
             Txt_LogInfo.Text += args.LogInfo + "\n";
+            Txt_LogInfo.ScrollToEnd();
             if(args.Progress == 100)
             {
                 Img_Working.Visibility = Visibility.Hidden;
@@ -87,6 +88,24 @@ namespace DBToJsonProject.Views.WorkSpace
             Img_Working.Visibility = Visibility.Visible;
             Btn_ExecuteExport.IsEnabled = false;
             Btn_ResetExportSetting.IsEnabled = false;
+        }
+
+        private void CheckBox_CheckAll_Checked(object sender, RoutedEventArgs e)
+        {
+            var list = ((sender as CheckBox).DataContext as SelectableJsonList);
+            for(int i = 0;i < list.Nodes.Count;++i)
+            {
+                list.Nodes[i].IsChecked = true;
+            }
+        }
+
+        private void CheckBox_CheckAll_Unchecked(object sender, RoutedEventArgs e)
+        {
+            var list = ((sender as CheckBox).DataContext as SelectableJsonList);
+            for (int i = 0; i < list.Nodes.Count; ++i)
+            {
+                list.Nodes[i].IsChecked = false;
+            }
         }
     }
 }

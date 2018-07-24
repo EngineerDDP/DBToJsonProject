@@ -14,6 +14,10 @@ namespace DBToJsonProject.Controller.SettingManager
         /// </summary>
         protected class SettingNode
         {
+            public String Value
+            {
+                get; set;
+            }
             public String Name
             {
                 get; set;
@@ -35,6 +39,7 @@ namespace DBToJsonProject.Controller.SettingManager
             public SettingNode(XmlElement node)
             {
                 Name = node.Name;
+                Value = node.Value;
                 //记录子节点
                 ChildNodes = new List<SettingNode>();
                 foreach (XmlNode i in node.ChildNodes)
@@ -50,6 +55,7 @@ namespace DBToJsonProject.Controller.SettingManager
             public XmlElement ToXmlElement(XmlDocument doc)
             {
                 XmlElement element = doc.CreateElement(Name);
+                element.Value = Value;
                 foreach (String n in Attributes.Keys)
                 {
                     element.SetAttribute(n, Attributes[n]);

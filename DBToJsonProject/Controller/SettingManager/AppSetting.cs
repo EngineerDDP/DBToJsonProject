@@ -12,15 +12,10 @@ namespace DBToJsonProject.Controller.SettingManager
 
         private static readonly string Xml_SettingRootName = "Settings";
         private static readonly string Xml_ActiveUserNodeName = "ActiveUser";
-        private static readonly string Xml_ExportFolder = "ExportFolder";
 
         public String ActiveUser
         {
             get; set;
-        }
-        public String ExportWorkFolder
-        {
-            get;set;
         }
         private static AppSetting obj;
         public static AppSetting Default
@@ -37,18 +32,15 @@ namespace DBToJsonProject.Controller.SettingManager
         {
             SettingNode root = LoadSettingXML(SettingFile);
             ActiveUser = root.Attributes[Xml_ActiveUserNodeName];
-            ExportWorkFolder = root.Attributes[Xml_ExportFolder];
         }
         protected override void Init()
         {
             ActiveUser = "";
-            ExportWorkFolder = "ExportResult/";
         }
         public override void Update()
         {
             SettingNode root = new SettingNode(Xml_SettingRootName);
             root.SetAttribute(Xml_ActiveUserNodeName, ActiveUser);
-            root.SetAttribute(Xml_ExportFolder, ExportWorkFolder);
             SaveSettingXML(SettingFile, root);
         }
     }

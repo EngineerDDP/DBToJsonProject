@@ -58,35 +58,6 @@ namespace DBToJsonProject.Controller.SettingManager
         /// </summary>
         public ICustomizedSqlDescriber Sql { get; set; }
 
-        public bool IsDBColumn
-        {
-            get
-            {
-                bool r = true;
-                foreach (IJsonTreeNode n in this.ChildNodes.Values)
-                    if (!n.VirtualNode)
-                        r = false;
-                return r && !this.VirtualNode;
-            }
-        }
-        public bool HasVirtualNode
-        {
-            get
-            {
-                bool r = false;
-                foreach (IJsonTreeNode n in this.ChildNodes.Values)
-                    if (n.VirtualNode)
-                        r = true;
-                return r;
-            }
-        }
-        public bool IsDbTable
-        {
-            get
-            {
-                return !IsDBColumn && !VirtualNode;
-            }
-        }
         public bool Equals(IJsonTreeNode obj)
         {
             if (this.JsonNodeName == obj.JsonNodeName)

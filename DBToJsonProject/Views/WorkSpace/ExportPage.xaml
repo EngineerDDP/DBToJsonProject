@@ -15,7 +15,7 @@
         <DataTemplate x:Key="xNodeItemTemplate" DataType="{x:Type models:SelectableJsonNode}">
             <DataTemplate.Resources>
                 <Style TargetType="CheckBox">
-                    <Setter Property="MinWidth" Value="340"/>
+                    <Setter Property="MinWidth" Value="100"/>
                     <Setter Property="IsEnabled" Value="{Binding ElementName=Btn_ExecuteExport,Path=IsEnabled}"/>
                     <Style.Triggers>
                         <Trigger Property="IsChecked" Value="False">
@@ -25,7 +25,7 @@
                 </Style>
             </DataTemplate.Resources>
             <Border Margin="5">
-                <CheckBox Name="Select_CheckPart" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked" Content="{Binding Path=Name}" IsChecked="{Binding Path=IsChecked,Mode=TwoWay}"/>
+                <CheckBox Name="Select_CheckPart" Content="{Binding Path=Name}" IsChecked="{Binding Path=IsChecked,Mode=TwoWay}"/>
             </Border>
         </DataTemplate>
         <!--绑定选择类别-->
@@ -41,18 +41,16 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="16"/>
                 </Grid.RowDefinitions>
-                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-                    <Border Margin="5">
-                        <ItemsControl ItemsSource="{Binding Path=Nodes,Mode=TwoWay}" 
-                                          ItemTemplate="{StaticResource xNodeItemTemplate}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel Orientation="Horizontal"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                        </ItemsControl>
-                    </Border>
-                </ScrollViewer>
+                <Border Grid.Row="0" Margin="5">
+                    <ItemsControl ItemsSource="{Binding Path=Nodes,Mode=TwoWay}" 
+                                      ItemTemplate="{StaticResource xNodeItemTemplate}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </Border>
                 <Grid Grid.Row="1" HorizontalAlignment="Right">
                     <CheckBox Checked="CheckBox_CheckAll_Checked" Unchecked="CheckBox_CheckAll_Unchecked">全选</CheckBox>
                 </Grid>
@@ -63,7 +61,6 @@
             <TextBlock FontSize="13" Foreground="#003366" Text="{Binding Path=Name}"/>
         </DataTemplate>
     </Page.Resources>
-    
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="7*"/>

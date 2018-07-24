@@ -44,9 +44,6 @@
     <Reference Include="Microsoft.Threading.Tasks.Extensions.Desktop, Version=1.0.168.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.IO, Version=2.6.10.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -105,7 +102,6 @@
     <Compile Include="Models\EventArguments\ExportCmdExecuteArgs.cs" />
     <Compile Include="Models\EventArguments\ExportPageInfoEventArgs.cs" />
     <Compile Include="Models\EventArguments\TaskPostBackEventArgs.cs" />
-    <Compile Include="Models\PlainSelectableJsonNode.cs" />
     <Compile Include="Models\SelectCollection.cs" />
     <Compile Include="Views\ErrorBox.xaml.cs">
       <DependentUpon>ErrorBox.xaml</DependentUpon>

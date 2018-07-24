@@ -5,8 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DBToJsonProject.Views.WorkSpace"
         mc:Ignorable="d"
-        WindowStartupLocation="Manual"
-        Title="WorkWindow" Height="677" Width="1062" MinHeight="611" MinWidth="760" Background="#FFF0F0F0"
+        Title="WorkWindow" Height="550" Width="760" MinHeight="511" MinWidth="642" Background="#FFF0F0F0"
         Closed="Window_Closed">
     <Grid>
         <Grid.RowDefinitions>

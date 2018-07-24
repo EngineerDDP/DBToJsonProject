@@ -16,7 +16,17 @@ namespace DBToJsonProject.Controller.SettingManager
         {
             public String Value
             {
-                get; set;
+                get
+                {
+                    return Attributes["Value"];
+                }
+                set
+                {
+                    if (Attributes.Keys.Contains("Value"))
+                        Attributes["Value"] = value;
+                    else
+                        Attributes.Add("Value", value);
+                }
             }
             public String Name
             {
@@ -39,7 +49,6 @@ namespace DBToJsonProject.Controller.SettingManager
             public SettingNode(XmlElement node)
             {
                 Name = node.Name;
-                Value = node.Value;
                 //记录子节点
                 ChildNodes = new List<SettingNode>();
                 foreach (XmlNode i in node.ChildNodes)
@@ -55,7 +64,6 @@ namespace DBToJsonProject.Controller.SettingManager
             public XmlElement ToXmlElement(XmlDocument doc)
             {
                 XmlElement element = doc.CreateElement(Name);
-                element.Value = Value;
                 foreach (String n in Attributes.Keys)
                 {
                     element.SetAttribute(n, Attributes[n]);

@@ -16,7 +16,7 @@
             <DataTemplate.Resources>
                 <Style TargetType="CheckBox">
                     <Setter Property="MinWidth" Value="340"/>
-                    <Setter Property="IsEnabled" Value="{Binding ElementName=Btn_ExecuteExport,Path=IsEnabled}"/>
+                    <Setter Property="IsEnabled" Value="{Binding ElementName=Btn_ExecuteExport,Path=IsEnabled,Mode=OneWay}"/>
                     <Style.Triggers>
                         <Trigger Property="IsChecked" Value="False">
                             <Setter Property="Foreground" Value="Gray"/>
@@ -54,7 +54,7 @@
                     </Border>
                 </ScrollViewer>
                 <Grid Grid.Row="1" HorizontalAlignment="Right">
-                    <CheckBox Checked="CheckBox_CheckAll_Checked" Unchecked="CheckBox_CheckAll_Unchecked">全选</CheckBox>
+                    <CheckBox IsEnabled="{Binding ElementName=Btn_ExecuteExport,Path=IsEnabled,Mode=OneWay}" Checked="CheckBox_CheckAll_Checked" Unchecked="CheckBox_CheckAll_Unchecked">全选</CheckBox>
                 </Grid>
             </Grid>
         </DataTemplate>
@@ -100,14 +100,13 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel Orientation="Vertical">
                                 <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,2">
-                                    <Label>需要导出从</Label>
-                                    <DatePicker Name="Date_DBDateBegin" IsEnabled="{Binding ElementName=Btn_ExecuteExport,Path=IsEnabled}" DisplayDateEnd="{Binding Path=SelectedDate,ElementName=Date_DBDateEnd}"></DatePicker>
-                                    <Label>开始的记录</Label>
+                                    <Label>选择导出的起始时间：</Label>
+                                    <DatePicker Name="Date_DBDateBegin" IsEnabled="{Binding ElementName=Btn_ExecuteExport,Path=IsEnabled,Mode=OneWay}"></DatePicker>
                                 </StackPanel>
                                 <Label>选择要导出的类别</Label>
                             </StackPanel>
-                            <Image Grid.Column="1" Visibility="{Binding ElementName=Btn_ExecuteExport,Path=IsEnabled}" Source="/Images/icons/PC2phone_static.png" Height="50"></Image>
-                            <Image Grid.Column="1" Name="Img_Working" Visibility="Hidden" gif:AnimationBehavior.SourceUri="/Images/icons/PC2phone.gif" Height="50"></Image>
+                            <Image Grid.Column="1" Visibility="{Binding ElementName=Btn_ExecuteExport,Path=IsEnabled,Mode=OneWay}" Source="/Images/icons/PC2phone_static.png" Height="50"></Image>
+                            <Image Grid.Column="1" Name="Img_Working" Visibility="Hidden" gif:AnimationBehavior.AutoStart="False" gif:AnimationBehavior.SourceUri="/Images/icons/PC2phone.gif" Height="50"></Image>
                         </Grid>
 
                         <Border Grid.Row="1">
@@ -116,6 +115,8 @@
                             </TabControl>
                         </Border>
                         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                            <Button Name="Btn_Cancel" Click="Btn_Cancel_Click" Width="60">取消</Button>
+                            <Label></Label>
                             <Button Name="Btn_ResetExportSetting" Click="Btn_ResetExportSetting_Click" Width="60">重置</Button>
                             <Label></Label>
                             <Button Name="Btn_ExecuteExport" Click="Btn_ExecuteExport_Click" Width="60">导出</Button>

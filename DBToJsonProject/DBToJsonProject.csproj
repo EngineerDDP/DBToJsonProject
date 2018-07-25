@@ -99,6 +99,7 @@
     <Compile Include="Controller\IApplicationControl.cs" />
     <Compile Include="Controller\SettingManager\AppSetting.cs" />
     <Compile Include="Controller\TaskManager\ExportTask.cs" />
+    <Compile Include="Controller\TaskManager\ITask.cs" />
     <Compile Include="Controller\Test.cs" />
     <Compile Include="Controller\UserValidation.cs" />
     <Compile Include="Models\DeviceTag.cs" />
@@ -246,6 +247,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\icons\PC2phone_static.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons\phone2PC_static.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />

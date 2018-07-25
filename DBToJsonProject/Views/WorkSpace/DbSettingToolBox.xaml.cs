@@ -13,23 +13,6 @@ using System.Windows.Data;
 
 namespace DBToJsonProject.Views.WorkSpace
 {
-    class TreeViewLineConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType,
-        object parameter, System.Globalization.CultureInfo culture)
-        {
-            TreeViewItem item = (TreeViewItem)value;
-            ItemsControl ic = ItemsControl.ItemsControlFromItemContainer(item);
-            return ic.ItemContainerGenerator.IndexFromContainer(item) == ic.Items.Count - 1;
-        }
-
-        public object ConvertBack(object value, Type targetType,
-        object parameter, System.Globalization.CultureInfo culture)
-        {
-            return false;
-        }
-    }
-
     /// <summary>
     /// DbSettingToolBox.xaml 的交互逻辑
     /// </summary>
@@ -98,6 +81,12 @@ namespace DBToJsonProject.Views.WorkSpace
             }
             return item;
         }
+        /// <summary>
+        /// 从选项建立新设置
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="constr"></param>
+        /// <returns></returns>
         private JsonEntityDetial BuildSetting(PropertyNodeItem root, String constr)
         {
             JsonEntityDetial detial = new JsonEntityDetial();
@@ -114,19 +103,19 @@ namespace DBToJsonProject.Views.WorkSpace
                 root.JsonName,
                 root.EntityName,
                 root.DisplayName,
+                parent,
                 root.MultiReleationShip,
                 root.BuildJson,
                 root.Selectable,
                 root.VirtualNode
                 );
 
-            Dictionary<String, IJsonTreeNode> list = new Dictionary<string, IJsonTreeNode>();
             foreach(PropertyNodeItem n in root.Childs)
             {
-                list.Add(n.JsonName, BuildNode(n, node));
-            }
+                node.ChildNodes.Add(n.JsonName, BuildNode(n, node));
 
-            node.ChildNodes = list;
+            }
+            
             node.Parent = parent;
             node.Sql = new CustomizedSqlDescriber(
                 root.HasCustomizedSql, 

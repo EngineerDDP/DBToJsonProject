@@ -56,10 +56,17 @@
                     </MenuItem>
                 </Menu>
                 <StackPanel Grid.Column="1" Margin="10,0" HorizontalAlignment="Right" Orientation="Horizontal">
-                    <Border VerticalAlignment="Center">
-                        <TextBlock FontSize="13" TextAlignment="Right" Name="Txt_LoginUser"/>
+                    <Border VerticalAlignment="Center" Margin="12,0">
+                        <TextBlock FontSize="13" TextAlignment="Right" Foreground="#FF0054a7" Name="Txt_LoginUser"/>
                     </Border>
-                    <Image Margin="10,0" Height="24" Source="/Images/icons/img_face.png" Width="28"></Image>
+
+                    <Border VerticalAlignment="Center">
+                        <TextBlock>
+                            <Hyperlink Click="Opt_Logout_Click">登出</Hyperlink>
+                        </TextBlock>
+                    </Border>
+                    <Image Margin="10,0" Height="24" Source="/Images/icons/img_face.png" Width="28">
+                    </Image>
                 </StackPanel>
             </Grid>
         </Border>
@@ -70,7 +77,7 @@
                     <ItemsPanelTemplate>
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="auto" />
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
@@ -80,11 +87,23 @@
                     </ItemsPanelTemplate>
                 </StatusBar.ItemsPanel>
                 <StatusBarItem>
-                    <TextBlock Name="Txt_StatusA" Text="Status A"/>
+                    <TextBlock Name="Txt_StatusA"/>
                 </StatusBarItem>
-                <Separator Grid.Column="1" />
                 <StatusBarItem Grid.Column="2">
-                    <TextBlock Name="Txt_StatusB" Text="Status B" />
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.Resources>
+                            <Style TargetType="ProgressBar">
+                                <Style.Triggers>
+                                    <Trigger Property="Value" Value="100">
+                                        <Setter Property="Visibility" Value="Hidden"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Resources>
+                        <TextBlock Visibility="{Binding ElementName=Progress_Status_B,Path=Visibility,Mode=OneWay}">，进度 :</TextBlock>
+                        <Label></Label>
+                        <ProgressBar Name="Progress_Status_B" Width="90" Height="13" Value="100"/>
+                    </StackPanel>
                 </StatusBarItem>
                 <Separator Grid.Column="3" />
                 <StatusBarItem Grid.Column="4">

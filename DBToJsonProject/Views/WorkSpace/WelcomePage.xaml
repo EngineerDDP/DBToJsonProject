@@ -14,18 +14,18 @@
     <Grid>
         <Grid Grid.Column="0" Margin="12,12">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
                 <RowDefinition Height="3*"/>
+                <RowDefinition Height="6*"/>
                 <RowDefinition Height="2*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Margin="12" FontFamily="微软雅黑" FontSize="20">
+            <TextBlock Margin="30,0,0,0" FontFamily="微软雅黑" FontSize="20">
                  <Run >
                     <Run.Foreground>
                         <SolidColorBrush Color="#FF0054a7"/>
@@ -33,43 +33,38 @@
                     开始
                  </Run>
             </TextBlock>
-            <StackPanel Margin="12" Grid.Row="1" Grid.Column="0">
-                
+            <StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" Margin="12,12">
+                <StackPanel.Resources>
+                    <Style TargetType="Hyperlink">
+                        <Setter Property="FontSize" Value="14"/>
+                        <Setter Property="FontFamily" Value="微软雅黑"/>
+                    </Style>
+                </StackPanel.Resources>
+                <Button Margin="12" Click="Link_NewImportJob_Click">
+                    <StackPanel Margin="12" Orientation="Horizontal">
+                        <Image Source="/Images/icons/phone2PC_static.png" Margin="2,0,0,0" Height="70" VerticalAlignment="Center"></Image>
+
+                        <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">
+                        <Hyperlink Name="Link_NewImportJob" Click="Link_NewImportJob_Click">巡检数据导入</Hyperlink>
+                        </TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Margin="12" Click="Link_NewEXportJob_Click">
+                    <StackPanel Margin="12" Orientation="Horizontal">
+                        <Image Source="/Images/icons/PC2phone_static.png" Height="70" VerticalAlignment="Center"></Image>
+                        <TextBlock VerticalAlignment="Center" Margin="12,0,0,0">
+                            <Hyperlink Name="Link_NewEXportJob" Click="Link_NewEXportJob_Click">巡检记录导出</Hyperlink>
+                        </TextBlock>
+                    </StackPanel>
+                </Button>
             </StackPanel>
-            <Button Grid.Row="1" Grid.Column="0" Click="Link_NewEXportJob_Click">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="30"/>
-                    </Grid.RowDefinitions>
-                    <Image Grid.Row="0" gif:AnimationBehavior.SourceUri="/Images/icons/PC2phone.gif" Width="100"></Image>
-                    <TextBlock Grid.Row="1" FontFamily="微软雅黑" FontSize="14">
-                        <Run >
-                            <Run.Foreground>
-                                <SolidColorBrush Color="#FF0054a7"/>
-                            </Run.Foreground>
-                            巡检数据导入平板电脑
-                        </Run>
-                    </TextBlock>
-                </Grid>
-            </Button>
-            <Button Grid.Row="1" Grid.Column="3" Click="Link_NewImportJob_Click">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="30"/>
-                    </Grid.RowDefinitions>
-                    <Image Grid.Row="0" gif:AnimationBehavior.SourceUri="/Images/icons/phone2PC.gif" Width="100"></Image>
-                    <TextBlock Grid.Row="1" FontFamily="微软雅黑" FontSize="14">
-                        <Run >
-                            <Run.Foreground>
-                                <SolidColorBrush Color="#FF0054a7"/>
-                            </Run.Foreground>
-                            巡检数据导入计算机
-                        </Run>
-                    </TextBlock>
-                </Grid>
-            </Button>
+            <StackPanel Grid.Row="3" Grid.Column="5" Margin="12" Orientation="Horizontal" Height="30">
+                <Image Source="/Images/icons/arrow.gif" Height="20" Width="18" VerticalAlignment="Center"></Image>
+
+                <TextBlock VerticalAlignment="Center">
+                        <Hyperlink Name="Link_Help" Click="Link_Help_Click">帮助手册</Hyperlink>
+                </TextBlock>
+            </StackPanel>
         </Grid>
     </Grid>
 </Page>

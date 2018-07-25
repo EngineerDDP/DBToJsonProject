@@ -6,15 +6,17 @@ namespace DBToJsonProject.Controller.SettingManager
 {
     public class TreeNode : IJsonTreeNode
     {
-        public TreeNode(string jsonNodeName, string dbName, string displayName, bool multiRelated, bool buildSingleFile, bool selectable, bool virtualNode)
+        public TreeNode(string jsonNodeName, string dbName, string displayName,IJsonTreeNode parent, bool multiRelated, bool buildSingleFile, bool selectable, bool virtualNode)
         {
             JsonNodeName = jsonNodeName;
             DbName = dbName;
             DisplayName = displayName;
+            Parent = parent;
             MultiRelated = multiRelated;
             BuildSingleFile = buildSingleFile;
             Selectable = selectable;
             VirtualNode = virtualNode;
+            ChildNodes = new Dictionary<string, IJsonTreeNode>();
         }
 
         /// <summary>

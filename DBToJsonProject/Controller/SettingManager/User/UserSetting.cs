@@ -105,8 +105,10 @@ namespace DBToJsonProject.Controller.SettingManager
             {
                 foreach(PlainSelectableJsonNode n in l.Childs)
                 {
-                    (selections.Source.FirstOrDefault(q => q.Name == l.Name)?.
-                        Nodes.FirstOrDefault(q => q.Name == n.Name)).IsChecked = true;
+                    var t = (selections.Source.FirstOrDefault(q => q.Name == l.Name)?.
+                        Nodes.FirstOrDefault(q => q.Name == n.Name));
+                    if (t != null)
+                        t.IsChecked = true;
                 }
             }
         }

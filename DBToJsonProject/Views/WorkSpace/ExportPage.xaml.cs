@@ -15,8 +15,10 @@ namespace DBToJsonProject.Views.WorkSpace
     public partial class ExportPage : Page
     {
         private SelectCollection selections;
-        public event EventHandler<SelectCollection> SelectionUpdated;
-        public event EventHandler<ExportCmdExecuteArgs> ExecuteExportCmd;
+
+        public event EventHandler<SelectCollection> SelectionUpdated;           //更新选项集合
+        public event EventHandler<ExportCmdExecuteArgs> ExecuteExportCmd;       //执行导出任务
+        public event EventHandler CancelExcution;                               //取消任务
         public ExportPage()
         {
             InitializeComponent();
@@ -79,10 +81,15 @@ namespace DBToJsonProject.Views.WorkSpace
 
         private void Btn_ExecuteExport_Click(object sender, RoutedEventArgs e)
         {
+            String date;
+            if (Date_DBDateBegin.SelectedDate == null)
+                date = "1990/01/01";
+            else
+                date = Date_DBDateBegin.SelectedDate?.ToShortDateString();
             ExecuteExportCmd?.Invoke(this, new ExportCmdExecuteArgs()
             {
                 Selections = selections,
-                SpecifiedQuaryString = ""
+                SpecifiedQuaryStringArgs = new string[] { String.Format("'{0}'",date) }
             });
             Img_Working.Visibility = Visibility.Visible;
             Btn_ExecuteExport.IsEnabled = false;
@@ -107,6 +114,16 @@ namespace DBToJsonProject.Views.WorkSpace
                 list.Nodes[i].IsChecked = false;
             }
             UpdateSelectionResult();
+        }
+
+        private void Btn_Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            CancelExcution?.Invoke(this, e);
+        }
+
+        private void Txt_LogInfo_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+
         }
     }
 }

@@ -11,7 +11,7 @@ namespace DBToJsonProject.Models.EventArguments
         {
             get;set;
         }
-        public String SpecifiedQuaryString
+        public String[] SpecifiedQuaryStringArgs
         {
             get;set;
         }

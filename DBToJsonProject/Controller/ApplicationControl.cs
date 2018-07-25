@@ -7,6 +7,7 @@ using DBToJsonProject.Models;
 using DBToJsonProject.Controller.SettingManager;
 using DBToJsonProject.Models.EventArguments;
 using DBToJsonProject.Controller.TaskManager;
+using System.Collections.Generic;
 
 namespace DBToJsonProject.Controller
 {
@@ -45,12 +46,17 @@ namespace DBToJsonProject.Controller
         /// </summary>
         private UserSetting userSetting;
         /// <summary>
+        /// 任务
+        /// </summary>
+        private ITask task;
+        /// <summary>
         /// 初始化资源
         /// </summary>
         public ApplicationControl()
         {
             Login = new LoginWindow();
             Work = new WorkWindow();
+            errorBox = new ErrorBox();
             welcomePage = new WelcomePage();
             importPage = new ImportPage();
             exportPage = new ExportPage();
@@ -103,14 +109,21 @@ namespace DBToJsonProject.Controller
 
             exportPage.ExecuteExportCmd += ExecuteExportCmd;
             exportPage.SelectionUpdated += Export_SelectionUpdated;
+            exportPage.CancelExcution += ExportPage_CancelExcution;
         }
+
+        private void ExportPage_CancelExcution(object sender, EventArgs e)
+        {
+            task?.Cancel();
+        }
+
         /// <summary>
         /// 注册事件监听器
         /// </summary>
         private void RegisterWindows()
         {
             Login.OnLogin += Login_OnLogin;
-            Login.OnExit += Login_OnExit;
+            Login.OnExit += AppExited;
 
             Work.OnWorkSpaceExited += AppExited;
             Work.OnDbSettingRequired += Work_OnDbSettingRequired;
@@ -137,16 +150,43 @@ namespace DBToJsonProject.Controller
         /// <param name="e"></param>
         private void ExecuteExportCmd(object sender, ExportCmdExecuteArgs e)
         {
-            ////执行数据库操作
-            //var t = new ExportTask();
-            //t.UpdateProgressInfo += T_UpdateProgressInfo;
-            //t.Run();
+            if (task == null || task.Complete)
+            {
+                String con = String.IsNullOrWhiteSpace(DBSettings.Default.ExportRoot.DbConnectStr) ?
+                                DBSettings.Default.DBConnectStr :
+                                DBSettings.Default.ExportRoot.DbConnectStr;
+                List<SelectableJsonNode> sel = new List<SelectableJsonNode>();
+                foreach (SelectableJsonList l in e.Selections.Source)
+                    sel.AddRange(l.Nodes);
+                task = new ExportTask(con, sel.ToArray(), DBSettings.Default.ExportRoot, e.SpecifiedQuaryStringArgs);
+                task.UpdateProgressInfo += T_UpdateProgressInfo;
+                task.PostErrorAndAbort += T_PostErrorAndAbort;
+                task.Run();
+            }
+            else
+            {
+                PostAnCriticalError("有任务进行中，无法启动新任务。");
+            }
         }
-
+        /// <summary>
+        /// 任务中止
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void T_PostErrorAndAbort(object sender, StringEventArgs e)
+        {
+            PostAnCriticalError(e.Str);
+            task = null;
+            userSetting.PostLog("操作失败 " + e.Str);
+            T_UpdateProgressInfo(this, new TaskPostBackEventArgs(100, "操作失败", 100, "准备就绪"));
+        }
+        /// <summary>
+        /// 更新任务进度
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void T_UpdateProgressInfo(object sender, TaskPostBackEventArgs e)
         {
-            e.LogInfo = userSetting.PostLog(e.LogInfo);
-            
             UseDispatcher(work, () =>
             {
                 work.TaskPostBack(e);
@@ -155,6 +195,7 @@ namespace DBToJsonProject.Controller
             {
                 exportPage.TaskPostBack(e);
             });
+
         }
 
         /// <summary>
@@ -165,6 +206,15 @@ namespace DBToJsonProject.Controller
         private void UseDispatcher(UIElement e, Action action)
         {
             e.Dispatcher.Invoke(action);
+        }
+        /// <summary>
+        /// 将任务添加到UIElement的线程队列
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="action"></param>
+        private void UseDispatcher(System.Windows.Threading.Dispatcher e, Action action)
+        {
+            e.Invoke(action);
         }
         /// <summary>
         /// 登录
@@ -180,7 +230,7 @@ namespace DBToJsonProject.Controller
             }
             catch (NullReferenceException e)
             {
-                PostAnErrorAndExit("数据库异常", new String(e.Message.Take(48).ToArray()));
+                PostAnErrorAndExit(new String(e.Message.Take(48).ToArray()));
             }
             //登入成功
             if (user.IsUserValidated)
@@ -200,6 +250,10 @@ namespace DBToJsonProject.Controller
                     work.SetUsername(userSetting.Name);
                 });
                 NavigateToWelcomePage(this, new EventArgs());
+            }
+            else
+            {
+                UseDispatcher(login, login.LoginFailure);
             }
         }
         /// <summary>
@@ -273,19 +327,32 @@ namespace DBToJsonProject.Controller
         {
             dbSettingbox = new DbSettingToolBox();
             dbSettingbox.Owner = sender as Window;
+            dbSettingbox.WrongSetting += DbSettingbox_WrongSetting;
+            dbSettingbox.UnKnowError += DbSettingbox_UnKnowError;
             try
             {
                 dbSettingbox.ShowDialog();
             }
             catch(InvalidOperationException e)
             {
-                PostAnCriticalError("无效操作", e.Message);
+                PostAnCriticalError(e.Message);
                 dbSettingbox?.Close();
             }
             dbSettingbox = null;
 
             RefreshWorkWindow();
         }
+
+        private void DbSettingbox_UnKnowError(object sender, StringEventArgs e)
+        {
+            PostAnCriticalError(e.Str);
+        }
+
+        private void DbSettingbox_WrongSetting(object sender, WrongSettingEventArgs e)
+        {
+            PostAnCriticalError(String.Format("值:{0}，建议:{1}", e.wrongValue, e.WrongTip));
+        }
+
         /// <summary>
         /// 刷新工作空间
         /// </summary>
@@ -301,6 +368,7 @@ namespace DBToJsonProject.Controller
         /// <param name="args"></param>
         private void AppExited(object sender, EventArgs args)
         {
+            task?.Cancel();
             CloseMainWindow();
             SaveData();
         }
@@ -313,6 +381,7 @@ namespace DBToJsonProject.Controller
             Login?.Close();
             work?.Close();
             dbSettingbox?.Close();
+            errorBox?.Close();
         }
         /// <summary>
         /// 保存设置
@@ -323,11 +392,6 @@ namespace DBToJsonProject.Controller
             AppSetting.Default.Update();
             userSetting?.Update();
         }
-        private void Login_OnExit(object sender, EventArgs args)
-        {
-            CloseMainWindow();
-            
-        }
 
         /// <summary>
         /// 设置错误窗格
@@ -336,44 +400,40 @@ namespace DBToJsonProject.Controller
         /// <param name="msg"></param>
         private void SetupErrorBox(String title, String msg)
         {
-            if (errorBox == null)
+            try
             {
-                errorBox = new ErrorBox();
+                
+                UseDispatcher(App.Current.Dispatcher, () =>
+                {
+                    errorBox.SetErrorMsg(msg);
+                    errorBox.SetErrorTitle(title);
+                    errorBox.Owner = work;
+                    errorBox.Show();
+                });
             }
-            errorBox.SetErrorMsg(msg);
-            errorBox.SetErrorTitle(title);
-        }
-        /// <summary>
-        /// 报普通错误
-        /// </summary>
-        /// <param name="title"></param>
-        /// <param name="msg"></param>
-        private void PostAnrevivableError(String title,String msg)
-        {
-            SetupErrorBox(title,msg);
-            errorBox.Show();
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
         /// <summary>
         /// 报严重错误
         /// </summary>
         /// <param name="title"></param>
         /// <param name="msg"></param>
-        private void PostAnCriticalError(String title, String msg)
+        private void PostAnCriticalError(String msg)
         {
-            SetupErrorBox(title, msg);
-            errorBox.Owner = login.IsActive ? (Window)login : work;
-            errorBox.Show();
+            SetupErrorBox("错误", msg);
         }
         /// <summary>
         /// 死球了，再见
         /// </summary>
         /// <param name="title"></param>
         /// <param name="msg"></param>
-        private void PostAnErrorAndExit(String title, String msg)
+        private void PostAnErrorAndExit(String msg)
         {
-            SetupErrorBox(title, msg);
+            SetupErrorBox("严重错误", msg);
             CloseMainWindow();
-            errorBox.Show();
         }
     }
 }

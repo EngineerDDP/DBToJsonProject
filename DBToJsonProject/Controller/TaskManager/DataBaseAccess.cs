@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace DBToJsonProject.TaskManager
 {
@@ -21,6 +22,7 @@ namespace DBToJsonProject.TaskManager
         public event EventHandler<DBColumnDosentExistEvent> DBColumnDosentExist;
         public DataBaseAccess(String connectStr)
         {
+            sqlCon = new SqlConnection();
             sqlCon.ConnectionString = connectStr;
         }
         private void SomeDBWorks()
@@ -30,6 +32,14 @@ namespace DBToJsonProject.TaskManager
                 Thread.Sleep(200);
             });
         }
+        public void OpenConnection()
+        {
+            sqlCon.Open();
+        }
+        public void CloseConnection()
+        {
+            sqlCon.Close();
+        }
         /// <summary>
         /// 匹配一个数据库中的指定项
         /// </summary>
@@ -38,7 +48,6 @@ namespace DBToJsonProject.TaskManager
         /// <returns></returns>
         public bool MatchRow(String tableName, Dictionary<String,string> dbRow)
         {
-            sqlCon.Open();
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = sqlCon;
             cmd.CommandType = CommandType.Text;
@@ -53,7 +62,6 @@ namespace DBToJsonProject.TaskManager
             SqlDataReader reader = cmd.ExecuteReader();
             bool result = reader.HasRows;
             reader.Close();
-            sqlCon.Close();
 
             return result;
         }
@@ -64,49 +72,43 @@ namespace DBToJsonProject.TaskManager
         /// <param name="dbColumnNames">数据库表的列名</param>
         /// <exception cref="DBColumnDosentExistException">异常，如果存在列名找不到</exception>
         /// <returns></returns>
-        public List<Dictionary<String, String>> FillDictionary(String sqlCommand, string[] sampleColumns)
+        public void FillDictionary(String sqlCommand, string[] sampleColumns, string[] targetColumns, out JArray arr)
         {
-            List<Dictionary<String, String>> result = new List<Dictionary<string, string>>();
-            List<String> crruptedColumName = new List<string>();
+            arr = new JArray();
 
-            sqlCon.Open();
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = sqlCon;
             cmd.CommandType = CommandType.Text;
             cmd.CommandText = sqlCommand;
+            List<String> crruptedColumName = new List<string>();
 
             SqlDataReader reader = cmd.ExecuteReader();
-            
-            while(reader.Read())
+
+            while (reader.Read())
             {
-                Dictionary<String, String> row = new Dictionary<string, string>();
-                foreach(String key in sampleColumns)
+                JObject obj = new JObject();
+                for (int i = 0; i < sampleColumns.Count() && !String.IsNullOrEmpty(sampleColumns[i]); ++i)
                 {
-                    if (!crruptedColumName.Contains(key))
+                    try
                     {
-                        try
-                        {
-                            row.Add(key, reader.GetString(reader.GetOrdinal(key)));
-                        }
-                        catch (IndexOutOfRangeException)
-                        {
-                            crruptedColumName.Add(key);
-                        }
+                        obj.Add(targetColumns[i], reader[sampleColumns[i]].ToString());
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        crruptedColumName.Add(sampleColumns[i]);
+                        sampleColumns[i] = String.Empty;
                     }
                 }
-                result.Add(row);
+                arr.Add(obj);
             }
 
             reader.Close();
-            sqlCon.Close();
 
             if (crruptedColumName.Count != 0)
                 DBColumnDosentExist?.Invoke(this, new DBColumnDosentExistEvent()
                 {
                     ColumnNames = crruptedColumName.ToArray()
                 });
-
-            return result;
         }
         /// <summary>
         /// 将字典列表写入数据库
@@ -134,9 +136,7 @@ namespace DBToJsonProject.TaskManager
             SqlBulkCopy sqlBulkCopy = new SqlBulkCopy(sqlCon);
             sqlBulkCopy.DestinationTableName = tableName;
             sqlBulkCopy.BatchSize = dt.Rows.Count;
-            sqlCon.Open();
             sqlBulkCopy.WriteToServer(dt);
-            sqlCon.Close();
         }
     }
 }

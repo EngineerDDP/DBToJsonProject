@@ -8,11 +8,11 @@ namespace DBToJsonProject.Controller.SettingManager
     {
         public IJsonTreeNode nvalue;
         public String svalue;
-        public bool IsStatic
+        public bool IsString
         {
             get
             {
-                return nvalue != null;
+                return nvalue == null;
             }
         }
     }
@@ -44,11 +44,14 @@ namespace DBToJsonProject.Controller.SettingManager
                     if (c > 0)
                     {
                         IJsonTreeNode n = current;
-                        for (int parentlv = c; parentlv != -1 && n != null; parentlv--)
+                        for (int parentlv = c; parentlv != 0 && n != null; parentlv--)
                         {
                             n = n.Parent;
                         }
-                        string[] s = new String(argv.TakeWhile(q => q != '/').ToArray()).Split('>');
+                        string[] s = argv
+                            .Substring(0, argv.Length - c).Split('>')
+                            .SkipWhile(q => String.IsNullOrEmpty(q))
+                            .ToArray();
                         foreach (string i in s)
                         {
                             if (n == null)

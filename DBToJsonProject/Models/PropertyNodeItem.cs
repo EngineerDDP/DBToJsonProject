@@ -72,7 +72,7 @@ namespace DBToJsonProject.Models
                     DisplayName = String.Format("DisplayName{0}", C),
                     JsonName = String.Format("JsonName{0}", C),
                     EntityName = String.Format("EntityName{0}", C),
-                    IsExpanded = true,
+                    IsExpanded = false,
                     MultiReleationShip = false,
                     BuildJson = false,
                     HasChildren = false,

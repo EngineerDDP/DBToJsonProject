@@ -72,6 +72,7 @@ namespace DBToJsonProject.Views.WorkSpace
             item.CustomizedSql = root.Sql.CustomizeSQLString;
             item.CustomizedSqlParameters = root.Sql.Params?.ToString();
             item.VirtualNode = root.VirtualNode;
+            item.IsExpanded = root.Parent == null;
             
             foreach(IJsonTreeNode n in root.ChildNodes.Values)
             {

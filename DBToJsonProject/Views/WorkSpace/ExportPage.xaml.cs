@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using DBToJsonProject.Models;
 using DBToJsonProject.Controller.SettingManager;
 using DBToJsonProject.Models.EventArguments;
-using WpfAnimatedGif;
+
 
 namespace DBToJsonProject.Views.WorkSpace
 {

@@ -16,7 +16,7 @@ namespace DBToJsonProject.TaskManager
         public String[] ColumnNames { get; set; }
     }
 
-    class DataBaseAccess
+    class DataBaseAccess : IDisposable
     {
         private SqlConnection sqlCon;
         public event EventHandler<DBColumnDosentExistEvent> DBColumnDosentExist;
@@ -65,6 +65,7 @@ namespace DBToJsonProject.TaskManager
 
             return result;
         }
+
         /// <summary>
         /// 查询并填充字典
         /// </summary>
@@ -72,43 +73,56 @@ namespace DBToJsonProject.TaskManager
         /// <param name="dbColumnNames">数据库表的列名</param>
         /// <exception cref="DBColumnDosentExistException">异常，如果存在列名找不到</exception>
         /// <returns></returns>
-        public void FillDictionary(String sqlCommand, string[] sampleColumns, string[] targetColumns, out JArray arr)
+        public async Task<JArray> FillDictionaryAsync(String sqlCommand, string[] sampleColumns, string[] targetColumns)
         {
-            arr = new JArray();
-
+            JArray arr = new JArray();
+            SqlDataReader reader;
+            if (String.IsNullOrEmpty(sqlCommand))
+                return arr;
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = sqlCon;
             cmd.CommandType = CommandType.Text;
             cmd.CommandText = sqlCommand;
             List<String> crruptedColumName = new List<string>();
 
-            SqlDataReader reader = cmd.ExecuteReader();
-
-            while (reader.Read())
+            try
             {
-                JObject obj = new JObject();
-                for (int i = 0; i < sampleColumns.Count() && !String.IsNullOrEmpty(sampleColumns[i]); ++i)
+                reader = await cmd.ExecuteReaderAsync();
+
+                while (reader.Read())
                 {
-                    try
+                    JObject obj = new JObject();
+                    for (int i = 0; i < sampleColumns.Count(); ++i)
                     {
-                        obj.Add(targetColumns[i], reader[sampleColumns[i]].ToString());
+                        try
+                        {
+                            obj.Add(targetColumns[i], reader[sampleColumns[i]].ToString());
+                        }
+                        catch (IndexOutOfRangeException)
+                        {
+                            crruptedColumName.Add(sampleColumns[i]);
+                            sampleColumns[i] = String.Empty;
+                        }
                     }
-                    catch (IndexOutOfRangeException)
-                    {
-                        crruptedColumName.Add(sampleColumns[i]);
-                        sampleColumns[i] = String.Empty;
-                    }
+                    arr.Add(obj);
                 }
-                arr.Add(obj);
+
+                reader.Close();
+
+                if (crruptedColumName.Count != 0)
+                    DBColumnDosentExist?.Invoke(this, new DBColumnDosentExistEvent()
+                    {
+                        ColumnNames = crruptedColumName.ToArray()
+                    });
+
+                
+
             }
-
-            reader.Close();
-
-            if (crruptedColumName.Count != 0)
-                DBColumnDosentExist?.Invoke(this, new DBColumnDosentExistEvent()
-                {
-                    ColumnNames = crruptedColumName.ToArray()
-                });
+            catch (SqlException)
+            {
+                Console.WriteLine(sqlCommand);
+            }
+            return arr;
         }
         /// <summary>
         /// 将字典列表写入数据库
@@ -137,6 +151,11 @@ namespace DBToJsonProject.TaskManager
             sqlBulkCopy.DestinationTableName = tableName;
             sqlBulkCopy.BatchSize = dt.Rows.Count;
             sqlBulkCopy.WriteToServer(dt);
+        }
+
+        public void Dispose()
+        {
+            sqlCon?.Dispose();
         }
     }
 }

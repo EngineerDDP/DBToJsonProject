@@ -48,7 +48,7 @@ namespace DBToJsonProject.Controller.TaskManager
     }
     public class DBSettingErrorException : Exception
     { }
-    class ExportTask : ITask
+    class ExportTask : ITask, IDisposable
     {
         public event EventHandler<StringEventArgs> PostErrorAndAbort;           //报告错误并退出运行
         public event EventHandler<TaskPostBackEventArgs> UpdateProgressInfo;    //更新执行信息
@@ -110,7 +110,7 @@ namespace DBToJsonProject.Controller.TaskManager
 
             ReportThread = new Task(KeepUpdate);
             ReportThread.Start();
-
+            
             workingThread = new Task(Execution);
             workingThread.Start();
         }
@@ -124,14 +124,14 @@ namespace DBToJsonProject.Controller.TaskManager
         }
         private void KeepUpdate()
         {
-            while(!CancelProcess || totalProgress != 100)
+            while(!CancelProcess && totalProgress != 100)
             {
-                Thread.Sleep(1000);
                 if (!String.IsNullOrEmpty(loginfo))
                 {
                     Update(loginfo);
                     loginfo = String.Empty;
                 }
+                Thread.Sleep(1000);
             }
         }
         private void Update(String loginfo)
@@ -144,17 +144,17 @@ namespace DBToJsonProject.Controller.TaskManager
             try
             {
                 dataBaseAccess.OpenConnection();
-                BuildJsonFiles();
-                dataBaseAccess.CloseConnection();
+                BuildJsonFilesAsync().Wait();
             }
-            catch (Exception e)
+            catch (AggregateException e)
             {
                 totalProgress = 100;
                 PostErrorAndAbort?.Invoke(this, new StringEventArgs()
                 {
-                    Str = "信息:" + e.Message
+                    Str = "信息:" + e.InnerException.GetType().ToString() + e.InnerException.Message
                 });
             }
+            dataBaseAccess.CloseConnection();
         }
         /// <summary>
         /// 填充JsonObject
@@ -162,7 +162,7 @@ namespace DBToJsonProject.Controller.TaskManager
         /// <param name="columns"></param>
         /// <param name="sqlcmd"></param>
         /// <returns></returns>
-        private JObject FillJsonObject(IJsonTreeNode node, string sqlcmd)
+        private async Task<JObject> FillJsonObjectAsync(IJsonTreeNode node, string sqlcmd)
         {
             JArray arr;
             JObject obj;
@@ -170,7 +170,7 @@ namespace DBToJsonProject.Controller.TaskManager
             String[] target;
 
             GetColumnNamesFunc(node, out sample, out target);
-            DataBaseAccess.FillDictionary(sqlcmd, sample, target, out arr);
+            arr = await DataBaseAccess.FillDictionaryAsync(sqlcmd, sample, target);
 
             if (arr.Count >= 1)
                 obj = arr[0] as JObject;
@@ -185,17 +185,18 @@ namespace DBToJsonProject.Controller.TaskManager
         /// <param name="columns"></param>
         /// <param name="sqlcmd"></param>
         /// <returns></returns>
-        private JArray FillJsonArray(IJsonTreeNode node, string sqlcmd)
+        private async Task<JArray> FillJsonArrayAsync(IJsonTreeNode node, string sqlcmd)
         {
             JArray arr;
             String[] sample;
             String[] target;
 
             GetColumnNamesFunc(node, out sample, out target);
-            DataBaseAccess.FillDictionary(sqlcmd, sample, target, out arr);
+            arr = await DataBaseAccess.FillDictionaryAsync(sqlcmd, sample, target);
             
             return arr;
         }
+        private Dictionary<IJsonTreeNode, string[][]> columnNameCache = new Dictionary<IJsonTreeNode, string[][]>();
         /// <summary>
         /// 建立数据库列名到Json属性名的映射
         /// </summary>
@@ -203,17 +204,30 @@ namespace DBToJsonProject.Controller.TaskManager
         /// <returns></returns>
         private void GetColumnNamesFunc(IJsonTreeNode node, out string[] sample, out string[] target)
         {
-            int i = 0;
-            sample = new string[node.ChildNodes.Count];
-            target = new string[node.ChildNodes.Count];
-            foreach(IJsonTreeNode child in node.ChildNodes.Values)
+            string[][] cache;
+            if (!columnNameCache.TryGetValue(node, out cache))
             {
-                if(child.IsDBColumn)
+                List<string> smp = new List<string>();
+                List<string> tgt = new List<string>();
+
+                foreach (IJsonTreeNode child in node.ChildNodes.Values)
                 {
-                    sample[i] = child.DbName;
-                    target[i] = child.JsonNodeName;
-                    i++;
+                    if (child.IsDBColumn)
+                    {
+                        smp.Add(child.DbName);
+                        tgt.Add(child.JsonNodeName);
+                    }
                 }
+
+                sample = smp.ToArray();
+                target = tgt.ToArray();
+
+                columnNameCache.Add(node, new string[][] { sample, target });
+            }
+            else
+            {
+                sample = cache[0];
+                target = cache[1];
             }
         }
         /// <summary>
@@ -244,7 +258,7 @@ namespace DBToJsonProject.Controller.TaskManager
         /// <summary>
         /// 根据设置构建Json文件
         /// </summary>
-        private void BuildJsonFiles()
+        private async Task BuildJsonFilesAsync()
         {
             int i = 0;
             foreach(IJsonTreeNode node in detial.roots)
@@ -261,21 +275,21 @@ namespace DBToJsonProject.Controller.TaskManager
                     progressStage = UpdateStrings.BuildObj(node.JsonNodeName);
                     if (node.MultiRelated)
                     {
-                        obj = FillJsonArray(node, s);
+                        obj = await FillJsonArrayAsync(node, s);
                         foreach (JObject o in obj as JArray)
                         {
                             totalProgress = (100 / detial.roots.Count) * c / (obj as JArray).Count;
                             stageProgress = 100 * c++ / (obj as JArray).Count;
 
-                            buildstate = buildChilds(node, o);
+                            buildstate = await buildChildsAsync(node, o);
                             if (!buildstate)
                                 break;
                         }
                     }
                     else
                     {
-                        obj = FillJsonObject(node, s);
-                        buildstate = buildChilds(node, obj as JObject);
+                        obj = await FillJsonObjectAsync(node, s);
+                        buildstate = await buildChildsAsync(node, obj as JObject);
                     }
                 }
                 if(buildstate)
@@ -310,11 +324,11 @@ namespace DBToJsonProject.Controller.TaskManager
         /// </summary>
         /// <param name="currentNode"></param>
         /// <param name="currentObj"></param>
-        private bool buildChilds(IJsonTreeNode currentNode, JArray currentObj)
+        private async Task<bool> buildChildsAsync(IJsonTreeNode currentNode, JArray currentObj)
         {
             foreach (JObject o in currentObj)
             {
-                if (!buildChilds(currentNode, o))
+                if (!await buildChildsAsync(currentNode, o))
                     return false;
             }
             return true;
@@ -324,25 +338,22 @@ namespace DBToJsonProject.Controller.TaskManager
         /// </summary>
         /// <param name="currentNode"></param>
         /// <param name="currentObj"></param>
-        private bool buildChilds(IJsonTreeNode currentNode, JObject currentObj)
+        private async Task<bool> buildChildsAsync(IJsonTreeNode currentNode, JObject currentObj)
         {
-            bool isEndNode = true;
             bool build = false;
+            bool EndNode = true;
             
             foreach (IJsonTreeNode k in currentNode.ChildNodes.Values)
             {
                 if (k.IsDbTable)
                 {
-                    JToken t = BuildJsonNode(k, currentObj, currentNode);
-                    if (t != null)
-                    {
-                        currentObj.Add(k.JsonNodeName, t);
-                        build = true;
-                    }
+                    JToken t = await BuildJsonNodeAsync(k, currentObj, currentNode);
+                    currentObj.Add(k.JsonNodeName, t);
+                    build = true;
+                    EndNode = false;
                 }
-                isEndNode &= k.IsDBColumn;
             }
-            return isEndNode || build;
+            return build || EndNode;
         }
         /// <summary>
         /// 构建子结构
@@ -351,9 +362,9 @@ namespace DBToJsonProject.Controller.TaskManager
         /// <param name="parentObj"></param>
         /// <param name="parentNode"></param>
         /// <returns></returns>
-        private JToken BuildJsonNode(IJsonTreeNode node, JObject parentObj, IJsonTreeNode parentNode)
+        private async Task<JToken> BuildJsonNodeAsync(IJsonTreeNode node, JObject parentObj, IJsonTreeNode parentNode)
         {
-            JToken result = null;
+            JToken result = new JObject();
             bool? check = Selections.FirstOrDefault(q => q.Node.Equals(node))?.IsChecked;
             if (check == false || parentObj == null)
                 return result;
@@ -373,27 +384,64 @@ namespace DBToJsonProject.Controller.TaskManager
                     arr = new JArray();
                     foreach (IJsonTreeNode i in j)
                     {
-                        arr = new JArray(arr.Concat(FillJsonArray(node, 
-                                BuildSqlString(parentObj, i, parentNode)))
-                                        .ToArray());      //针对每个选项构造查找字符串，并用查找结果数组填充本节点
+                        JToken t = await FillJsonArrayAsync(node, BuildSqlString(parentObj, i, parentNode));
+                        arr = new JArray(arr.Concat(t));
                     }
                 }
                 else
                 {
-                    arr = FillJsonArray(node, BuildSqlString(parentObj, node, parentNode));
+                    arr = await FillJsonArrayAsync(node, BuildSqlString(parentObj, node, parentNode));
                 }
-                if (buildChilds(node, arr))
+                if (await buildChildsAsync(node, arr))
                     result = arr;
             }
             else        //单元关系，生成对象
             {
-                JObject obj = FillJsonObject(node, BuildSqlString(parentObj, node, parentNode));
-                if (buildChilds(node, obj))
+                JObject obj = await FillJsonObjectAsync(node, BuildSqlString(parentObj, node, parentNode));
+                if (await buildChildsAsync(node, obj))
                     result = obj;
             }
             if (node.BuildSingleFile)
                 WriteFile(result, node.JsonNodeName);
             return result;
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // 要检测冗余调用
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: 释放托管状态(托管对象)。
+                    dataBaseAccess.Dispose();
+                    workingThread.Dispose();
+                    ReportThread.Dispose();
+                }
+
+                // TODO: 释放未托管的资源(未托管的对象)并在以下内容中替代终结器。
+                // TODO: 将大型字段设置为 null。
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: 仅当以上 Dispose(bool disposing) 拥有用于释放未托管资源的代码时才替代终结器。
+        // ~ExportTask() {
+        //   // 请勿更改此代码。将清理代码放入以上 Dispose(bool disposing) 中。
+        //   Dispose(false);
+        // }
+
+        // 添加此代码以正确实现可处置模式。
+        public void Dispose()
+        {
+            // 请勿更改此代码。将清理代码放入以上 Dispose(bool disposing) 中。
+            Dispose(true);
+            // TODO: 如果在以上内容中替代了终结器，则取消注释以下行。
+            // GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

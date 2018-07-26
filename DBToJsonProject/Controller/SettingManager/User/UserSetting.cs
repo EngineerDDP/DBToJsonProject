@@ -35,14 +35,7 @@ namespace DBToJsonProject.Controller.SettingManager
             log = new UserActivitiesLog();
             Sel = new PlainSelectableJsonNode(Xml_ExportSettingNode);
 
-            if(ExistSettingXML(SettingFolder,SettingFile))
-            {
-                Load();
-            }
-            else
-            {
-                Init();
-            }
+            base.Start();
         }
         /// <summary>
         /// 载入

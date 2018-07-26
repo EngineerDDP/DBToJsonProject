@@ -155,9 +155,14 @@ namespace DBToJsonProject.Controller
                 String con = String.IsNullOrWhiteSpace(DBSettings.Default.ExportRoot.DbConnectStr) ?
                                 DBSettings.Default.DBConnectStr :
                                 DBSettings.Default.ExportRoot.DbConnectStr;
+
                 List<SelectableJsonNode> sel = new List<SelectableJsonNode>();
                 foreach (SelectableJsonList l in e.Selections.Source)
+                {
                     sel.AddRange(l.Nodes);
+                }
+                DBSettings.Default.SetupBuildFiles(e.Selections);
+
                 task = new ExportTask(con, sel.ToArray(), DBSettings.Default.ExportRoot, e.SpecifiedQuaryStringArgs);
                 task.UpdateProgressInfo += T_UpdateProgressInfo;
                 task.PostErrorAndAbort += T_PostErrorAndAbort;

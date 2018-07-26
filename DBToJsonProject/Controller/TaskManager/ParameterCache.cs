@@ -7,51 +7,6 @@ using Newtonsoft.Json.Linq;
 namespace DBToJsonProject.Controller.TaskManager
 {
     /// <summary>
-    /// 缓存Sql查询语句
-    /// </summary>
-    internal class SqlCommandCache
-    {
-        private static readonly string Nonsence = String.Empty;
-        private ParameterCache[] paras;
-        private string sqlTemplate;
-
-        public SqlCommandCache(ICustomizedSqlDescriber describer, IJsonTreeNode parent, String dbname)
-        {
-            sqlTemplate = describer.HasCustomizeSQLString ?
-                describer.CustomizeSQLString :
-                String.Format("Select * From {0} Where ", dbname) + "{0} = {1};";
-            
-            int i = 0;
-            paras = new ParameterCache[describer.Params.Parameters.Count];
-            foreach(Parameter p in describer.Params.Parameters)
-            {
-                paras[i] = new ParameterCache(p, parent);
-                i++;
-            }
-        }
-        public string GetInstance(JObject obj)
-        {
-            int i = 0;
-            string[] args = new string[paras.Length];
-
-            foreach (ParameterCache para in paras)
-            {
-                args[i] = para.GetParam(obj);
-                if(String.IsNullOrEmpty(args[i]))
-                {
-                    return String.Empty;
-                }
-                i++;
-            }
-
-            return String.Format(sqlTemplate, args);
-        }
-        public string GetInstance(String[] args)
-        {
-            return String.Format(sqlTemplate, args);
-        }
-    }
-    /// <summary>
     /// 缓存参数回溯路径
     /// </summary>
     internal class ParameterCache
@@ -114,9 +69,13 @@ namespace DBToJsonProject.Controller.TaskManager
                 if (v.Count() == 0)
                     return String.Empty;
                 if (v.Type == JTokenType.Array)             //目标是数组，取所有值
+                {
                     return ConcatStringParas(v as JArray, ChildRoute[i]);
+                }
                 else
-                    return (string)v[ChildRoute[i]];
+                {
+                    return String.Format("({0})", (string)v[ChildRoute[i]]);
+                }
             }
         }
     }

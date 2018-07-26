@@ -108,7 +108,10 @@ namespace DBToJsonProject.Controller.SettingManager
         /// <summary>
         /// 初始化数据库配置文件
         /// </summary>
-        private DBSettings() : base() { }
+        private DBSettings()
+        {
+            base.Start();
+        }
         private delegate void X(out JsonEntityDetial entityDetial, ref SettingNode n);
         protected override void Load()
         {
@@ -280,8 +283,7 @@ namespace DBToJsonProject.Controller.SettingManager
             Models.SelectCollection selections = new Models.SelectCollection();
             foreach (IJsonTreeNode root in ExportRoot.roots)
             {
-                Models.SelectableJsonList list = new Models.SelectableJsonList(root.DisplayName);
-                selections.Source.Add(list);
+                Models.SelectableJsonList list = new Models.SelectableJsonList(root.DisplayName, root);
 
                 //使用宽度优先搜索遴选出可选节点并标记
                 Queue<IJsonTreeNode> que = new Queue<IJsonTreeNode>();
@@ -296,8 +298,22 @@ namespace DBToJsonProject.Controller.SettingManager
                     if (n.Selectable)
                         list.Nodes.Add(new Models.SelectableJsonNode(n.DisplayName, n));
                 }
+                if(list.Nodes.Count != 0)
+                    selections.Source.Add(list);
             }
             return selections;
+        }
+        public void SetupBuildFiles(Models.SelectCollection selections)
+        {
+            foreach(Models.SelectableJsonList l in selections.Source)
+            {
+                bool toBuild = false;
+                foreach(Models.SelectableJsonNode n in l.Nodes)
+                {
+                    toBuild |= n.IsChecked;
+                }
+                (l.Node as TreeNode).BuildSingleFile  = toBuild;
+            }
         }
         /// <summary>
         /// 获取默认设置对象

@@ -81,7 +81,7 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="auto" />
                             </Grid.ColumnDefinitions>
                         </Grid>
                     </ItemsPanelTemplate>
@@ -116,7 +116,20 @@
                             </Style.Triggers>
                         </Style>
                     </StatusBarItem.Resources>
-                    <ProgressBar Name="Progress_Status" Value="100" Width="90" Height="13" />
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.Resources>
+                            <Style TargetType="ProgressBar">
+                                <Style.Triggers>
+                                    <Trigger Property="Value" Value="100">
+                                        <Setter Property="Visibility" Value="Hidden"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Resources>
+                        <TextBlock Visibility="{Binding ElementName=Progress_Status,Path=Visibility,Mode=OneWay}">总体进度 :</TextBlock>
+                        <Label></Label>
+                        <ProgressBar Name="Progress_Status" Value="100" Width="90" Height="13" />
+                    </StackPanel>
                 </StatusBarItem>
             </StatusBar>
         </Border>

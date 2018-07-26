@@ -32,7 +32,10 @@ namespace DBToJsonProject.Controller.SettingManager
                 return obj;
             }
         }
-        private AppSetting() : base() { }
+        private AppSetting()
+        {
+            base.Start();
+        }
         protected override void Load()
         {
             SettingNode root = LoadSettingXML(SettingFile);

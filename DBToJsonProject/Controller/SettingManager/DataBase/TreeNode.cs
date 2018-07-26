@@ -96,5 +96,9 @@ namespace DBToJsonProject.Controller.SettingManager
             else
                 return false;
         }
+        public override int GetHashCode()
+        {
+            return JsonNodeName.GetHashCode();
+        }
     }
 }

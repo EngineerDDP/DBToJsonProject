@@ -100,6 +100,7 @@
     <Compile Include="Controller\SettingManager\AppSetting.cs" />
     <Compile Include="Controller\TaskManager\ExportTask.cs" />
     <Compile Include="Controller\TaskManager\ITask.cs" />
+    <Compile Include="Controller\TaskManager\ParameterCache.cs" />
     <Compile Include="Controller\Test.cs" />
     <Compile Include="Controller\UserValidation.cs" />
     <Compile Include="Models\DeviceTag.cs" />

@@ -106,7 +106,7 @@
                                 <Label>选择要导出的类别</Label>
                             </StackPanel>
                             <Image Grid.Column="1" Visibility="{Binding ElementName=Btn_ExecuteExport,Path=IsEnabled,Mode=OneWay}" Source="/Images/icons/PC2phone_static.png" Height="50"></Image>
-                            <Image Grid.Column="1" Name="Img_Working" Visibility="Hidden" gif:AnimationBehavior.AutoStart="False" gif:AnimationBehavior.SourceUri="/Images/icons/PC2phone.gif" Height="50"></Image>
+                            <Image Grid.Column="1" Name="Img_Working" Visibility="Hidden" gif:AnimationBehavior.SourceUri="/Images/icons/PC2phone2.gif" Height="50"></Image>
                         </Grid>
 
                         <Border Grid.Row="1">

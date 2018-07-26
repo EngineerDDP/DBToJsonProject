@@ -15,6 +15,7 @@ using System.IO;
 
 namespace DBToJsonProject.Controller.TaskManager
 {
+    
     public class UpdateStrings
     {
         public static readonly string DBColumnsNotFound = "数据库表 {0} 中，找不到名为 {1} 的列.";
@@ -164,7 +165,7 @@ namespace DBToJsonProject.Controller.TaskManager
         private JObject FillJsonObject(IJsonTreeNode node, string sqlcmd)
         {
             JArray arr;
-            JObject obj = null;
+            JObject obj;
             String[] sample;
             String[] target;
 
@@ -173,6 +174,8 @@ namespace DBToJsonProject.Controller.TaskManager
 
             if (arr.Count >= 1)
                 obj = arr[0] as JObject;
+            else
+                obj = new JObject();
             
             return obj;
         }
@@ -214,6 +217,10 @@ namespace DBToJsonProject.Controller.TaskManager
             }
         }
         /// <summary>
+        /// 节点参数速查缓存
+        /// </summary>
+        private Dictionary<IJsonTreeNode, SqlCommandCache> parameterCache = new Dictionary<IJsonTreeNode, SqlCommandCache>();
+        /// <summary>
         /// 使用回溯搜索参数列表中的参数，并取出对应的值
         /// </summary>
         /// <param name="parentObject"></param>
@@ -223,61 +230,16 @@ namespace DBToJsonProject.Controller.TaskManager
         /// <returns></returns>
         private string BuildSqlString(JObject parentObject, IJsonTreeNode currentNode, IJsonTreeNode parentNode)
         {
-            string sqlcmd = currentNode.Sql.HasCustomizeSQLString ?
-                currentNode.Sql.CustomizeSQLString : 
-                String.Format("Select * From {0} Where ", currentNode.DbName) + "{0} = {1};";
-            String result = String.Format("Select * From {0} Where 1=0", currentNode.DbName);
-
-            List<String> args = new List<string>();
-
-            foreach (Parameter i in currentNode.Sql.Params.Parameters)
+            SqlCommandCache sql;
+            if(!parameterCache.TryGetValue(currentNode,out sql))
             {
-                if (!i.IsString)
-                {
-                    Stack<String> trace = new Stack<string>();          //使用回溯，寻找调用路径
-                    IJsonTreeNode tracker = i.nvalue;
-                    while (tracker != parentNode)
-                    {
-                        trace.Push(tracker.JsonNodeName);
-                        tracker = tracker.Parent;
-                        if (tracker == null)
-                            throw new DBSettingErrorException();
-                    }
-                    JToken v = parentObject;
-                    while (trace.Count != 1)
-                    {
-                        v = v[trace.Pop()];
-                        if (v == null)
-                            throw new DBSettingErrorException();
-                    }
-                    if (v.Count() == 0)
-                        return result;
-                    if (v.Type == JTokenType.Array)             //目标是数组，取所有值
-                    {
-                        ConcatStringParas(v as JArray, trace.Pop());
-                        sqlcmd.Replace("=", "IN");
-                    }
-                    else
-                        args.Add((String)v[trace.Pop()]);
-                }
-                else
-                    args.Add(i.svalue);
+                sql = new SqlCommandCache(currentNode.Sql, parentNode, currentNode.DbName);
+                parameterCache.Add(currentNode, sql);
             }
-            if(args.Count == 0)
-                return String.Format(sqlcmd, SpecifiedQuaryStringsArgs);
+            if (currentNode.Sql.Params.Parameters.Count == 0)               //无参数
+                return sql.GetInstance(SpecifiedQuaryStringsArgs);          //填充系统参数
             else
-                return String.Format(sqlcmd, args.ToArray());
-        }
-        private string ConcatStringParas(JArray array, String paraName)
-        {
-            String result = String.Empty;
-            foreach (JObject i in array)
-            {
-                result += i[paraName] + ",";
-            }
-            result = "(" + result.Substring(0, result.Length - 1) + ")";
-
-            return result;
+                return sql.GetInstance(parentObject);                       //填充动态参数
         }
         /// <summary>
         /// 根据设置构建Json文件

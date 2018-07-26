@@ -43,8 +43,8 @@ namespace DBToJsonProject.Views.WorkSpace
         public void TaskPostBack(TaskPostBackEventArgs args)
         {
             Progress_Status.Value = args.Progress;
-            Txt_StatusA.Text = args.ProgressStage;
-            Txt_StatusB.Text = args.ProgressStageDetial;
+            Txt_StatusA.Text = args.ProgressStageDetial;
+            Progress_Status_B.Value = args.ProgressStage;
         }
         private void Opt_SeeLogInfo_Click(object sender, RoutedEventArgs e)
         {

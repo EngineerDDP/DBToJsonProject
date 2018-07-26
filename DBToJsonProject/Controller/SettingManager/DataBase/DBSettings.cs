@@ -202,19 +202,19 @@ namespace DBToJsonProject.Controller.SettingManager
                 node.Name, 
                 node.Attributes[DbEntityAttributeName], 
                 node.Attributes[DbDisplayName],
+                parent,
                 Boolean.Parse(node.Attributes[DbTableMultiRelated]),
                 Boolean.Parse(node.Attributes[BuildJsonFile]),
                 Boolean.Parse(node.Attributes[NodeSelectable]),
                 Boolean.Parse(node.Attributes[IsVirtual])
-                );          
+                );
             //读子节点
             Dictionary<String, IJsonTreeNode> childs = new Dictionary<string, IJsonTreeNode>();
             foreach (SettingNode n in node.ChildNodes)
             {
                 TreeNode tn = BuildTreeNode(n, t);
-                childs.Add(tn.JsonNodeName, tn);
+                t.ChildNodes.Add(tn.JsonNodeName, tn);
             }
-            t.ChildNodes = childs;
             //读属性
             t.Sql = new CustomizedSqlDescriber(
                 node.Attributes[DbCustomizedSql] != String.Empty,
@@ -244,12 +244,18 @@ namespace DBToJsonProject.Controller.SettingManager
             xml.SetAttribute(DbCustomizedSqlParameters, root.Sql.Params.ToString());
             xml.SetAttribute(IsVirtual, root.VirtualNode.ToString());
 
-            //写子节点
+            //先写实节点
             foreach (String key in root.ChildNodes.Keys)
             {
-                xml.AppendChild(BuildXmlFromTreeNode(root.ChildNodes[key]));
+                if(root.ChildNodes[key].IsDBColumn)
+                    xml.AppendChild(BuildXmlFromTreeNode(root.ChildNodes[key]));
             }
-
+            //虚结点做右子节点
+            foreach (String key in root.ChildNodes.Keys)
+            {
+                if (!root.ChildNodes[key].IsDBColumn)
+                    xml.AppendChild(BuildXmlFromTreeNode(root.ChildNodes[key]));
+            }
             return xml;
         }
         protected override void Init()

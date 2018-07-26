@@ -45,10 +45,15 @@ namespace DBToJsonProject.Views.Login
                     this.Dispatcher.Invoke(new Action(PostLoginEvent));
             }).Start();
         }
+        public void LoginFailure()
+        {
+            Txt_loginFailure.Visibility = Visibility.Visible;
+        }
         private void PostLoginEvent()
         {
             if (!String.IsNullOrWhiteSpace(Txt_Username.Text) && !String.IsNullOrEmpty(Txt_Password.Password))
             {
+                Txt_loginFailure.Visibility = Visibility.Hidden;
                 UserLoginEventArgs args = new UserLoginEventArgs()
                 {
                     Username = Txt_Username.Text,

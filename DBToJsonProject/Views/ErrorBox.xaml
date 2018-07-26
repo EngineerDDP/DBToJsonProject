@@ -5,20 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DBToJsonProject"
         mc:Ignorable="d"
-        WindowStyle="ToolWindow"
-        Title="错误" Height="150" Width="330">
-    <Grid>
-        <Grid VerticalAlignment="Center" Margin="18">
+        WindowStyle="SingleBorderWindow"
+        ResizeMode="NoResize"
+        Background="#FFF0F0F0"
+        Title="错误" Height="200" Width="400">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="24"/>
+        </Grid.RowDefinitions>
+        <Grid VerticalAlignment="Stretch" Margin="0,5" Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="4*"/>
             </Grid.ColumnDefinitions>
-            <Image Grid.Column="0" Margin="0,20,20,20" Height="35" Source="/Images/icons/error.png"/>
-            <Border Grid.Column="1">
-                <Grid VerticalAlignment="Center">
-                    <TextBlock Name="Txt_ErrorMsg">Error Message</TextBlock>
+            <Image Grid.Column="0" Margin="12" Height="40" Source="/Images/icons/error.png"/>
+            <Border Grid.Column="1" BorderBrush="Black" BorderThickness="0.75">
+                <Grid VerticalAlignment="Top" Margin="5,7">
+                    <TextBlock Name="Txt_ErrorMsg" TextWrapping="Wrap">Error Message</TextBlock>
                 </Grid>
             </Border>
         </Grid>
+        <Button Name="Ok" Grid.Row="1" Margin="300,0,0,0" Click="Ok_Click">确定</Button>
     </Grid>
 </Window>

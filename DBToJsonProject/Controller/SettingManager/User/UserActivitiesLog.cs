@@ -8,10 +8,10 @@ namespace DBToJsonProject.Controller.SettingManager
 {
     class UserActivitiesLog
     {
-        private Dictionary<DateTime, String> logs;
+        private List<KeyValuePair<DateTime,String>> logs;
         public UserActivitiesLog()
         {
-            logs = new Dictionary<DateTime, string>();
+            logs = new List<KeyValuePair<DateTime, string>>();
         }
         /// <summary>
         /// 记录Log信息，并返回格式化后的Log字符串
@@ -21,7 +21,7 @@ namespace DBToJsonProject.Controller.SettingManager
         public String Log(String msg)
         {
             DateTime t = DateTime.Parse(DateTime.Now.ToString());
-            logs.Add(t, msg);
+            logs.Add(new KeyValuePair<DateTime, string>(t, msg));
             return String.Format("{0} Info:{1}", t.ToShortTimeString(), msg);
         }
         /// <summary>
@@ -30,9 +30,9 @@ namespace DBToJsonProject.Controller.SettingManager
         /// <param name="stream"></param>
         public void Serialize(StreamWriter stream)
         {
-            foreach(DateTime d in logs.Keys)
+            foreach(KeyValuePair<DateTime,String> d in logs)
             {
-                String log = String.Format("{0} Info:{1}", d.ToString(), logs[d]);
+                String log = String.Format("{0} Info:{1}", d.Key, d.Value);
                 stream.WriteLine(log);
             }
             stream.Flush();

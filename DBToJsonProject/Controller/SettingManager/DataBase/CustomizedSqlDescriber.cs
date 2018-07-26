@@ -2,13 +2,19 @@
 {
     public class CustomizedSqlDescriber : ICustomizedSqlDescriber
     {
-        public bool HasCustomizeSQLString { get; private set; }
+        public bool HasCustomizeSQLString
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(CustomizeSQLString);
+            }
+        }
         private string customizedsql;
         public string CustomizeSQLString
         {
             get
             {
-                return HasCustomizeSQLString ? customizedsql : "";
+                return customizedsql;
             }
             set
             {
@@ -29,15 +35,15 @@
         }
         public CustomizedSqlDescriber()
         {
-            HasCustomizeSQLString = false;
+            CustomizeSQLString = string.Empty;
             param = new CustomizedSqlParameters();
         }
         public CustomizedSqlDescriber(bool hasSql, string sql, string args, IJsonTreeNode current)
         {
             if (hasSql)
                 customizedsql = sql;
-
-            HasCustomizeSQLString = hasSql;
+            else
+                CustomizeSQLString = string.Empty;
             param = new CustomizedSqlParameters(args, current);
         }
     }

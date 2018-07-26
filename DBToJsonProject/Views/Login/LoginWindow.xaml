@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DBToJsonProject.Views.Login"
         mc:Ignorable="d"
-        Title="LoginWindow" Height="381" Width="478"
+        Title="LoginWindow" Height="391" Width="478"
         BorderThickness="24"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -163,7 +163,7 @@
                 <local:NewWindowTitle x:Name="Btns_Ctrl" MinimumBtn_Clicked="Btns_Ctrl_MinimumBtn_Clicked" CloseBtn_Clicked="Btns_Ctrl_CloseBtn_Clicked" HorizontalAlignment="Right"></local:NewWindowTitle>
             </StackPanel>
         </Grid>
-        <StackPanel Height="150">
+        <StackPanel Height="160">
             <StackPanel Orientation="Horizontal" >
                 <Border Height="80" Width="80" Margin="35,10,10,10" CornerRadius="5" BorderBrush="Gray" BorderThickness="1">
                     <Border.Background>
@@ -223,6 +223,7 @@
             <Border Height="30" Width="180" Margin="20,5,0,0" CornerRadius="5" BorderBrush="#FF0E95F1" BorderThickness="1">
                 <Button Click="Btn_login_Click" Height="30" FontWeight="Bold" Width="180" Content="登  录" FontFamily="宋体" Foreground="White" Background="#FF0E95F1" BorderThickness="0" Style="{DynamicResource ButtonStyle1}"></Button>
             </Border>
+            <TextBlock Name="Txt_loginFailure" Visibility="Hidden" TextAlignment="Center" Margin="0,3" Foreground="Red" FontSize="12">用户名或密码错误</TextBlock>
         </StackPanel>
     </StackPanel>
 </Window>

@@ -6,7 +6,7 @@ namespace DBToJsonProject.Controller.SettingManager
 {
     public class TreeNode : IJsonTreeNode
     {
-        public TreeNode(string jsonNodeName, string dbName, string displayName,IJsonTreeNode parent, bool multiRelated, bool buildSingleFile, bool selectable, bool virtualNode)
+        public TreeNode(string jsonNodeName, string dbName, string displayName, IJsonTreeNode parent, bool multiRelated, bool buildSingleFile, bool selectable, bool virtualNode)
         {
             JsonNodeName = jsonNodeName;
             DbName = dbName;
@@ -15,7 +15,7 @@ namespace DBToJsonProject.Controller.SettingManager
             MultiRelated = multiRelated;
             BuildSingleFile = buildSingleFile;
             Selectable = selectable;
-            VirtualNode = virtualNode;
+            IsSelectionParameter = virtualNode;
             ChildNodes = new Dictionary<string, IJsonTreeNode>();
         }
 
@@ -26,7 +26,7 @@ namespace DBToJsonProject.Controller.SettingManager
         /// <summary>
         /// 虚结点，不写入Json
         /// </summary>
-        public Boolean VirtualNode { get; set; }
+        public Boolean IsSelectionParameter { get; set; }
         /// <summary>
         /// 数据库中该节点对应实体名
         /// </summary>
@@ -66,18 +66,18 @@ namespace DBToJsonProject.Controller.SettingManager
             {
                 bool r = true;
                 foreach (IJsonTreeNode n in this.ChildNodes.Values)
-                    if (!n.VirtualNode)
+                    if (!n.IsSelectionParameter)
                         r = false;
-                return r && !this.VirtualNode;
+                return r && !this.IsSelectionParameter;
             }
         }
-        public bool HasVirtualNode
+        public bool HasSelectionNode
         {
             get
             {
                 bool r = false;
                 foreach (IJsonTreeNode n in this.ChildNodes.Values)
-                    if (n.VirtualNode)
+                    if (n.IsSelectionParameter)
                         r = true;
                 return r;
             }
@@ -86,7 +86,7 @@ namespace DBToJsonProject.Controller.SettingManager
         {
             get
             {
-                return !IsDBColumn && !VirtualNode;
+                return !IsDBColumn && !IsSelectionParameter;
             }
         }
         public bool Equals(IJsonTreeNode obj)

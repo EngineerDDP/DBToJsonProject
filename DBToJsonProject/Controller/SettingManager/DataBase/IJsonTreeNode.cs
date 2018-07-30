@@ -6,7 +6,7 @@ namespace DBToJsonProject.Controller.SettingManager
     public interface IJsonTreeNode
     {
         String JsonNodeName { get; }
-        Boolean VirtualNode { get; }
+        Boolean IsSelectionParameter { get; }
         String DbName { get; }
         String DisplayName { get; }
         Boolean MultiRelated { get; }
@@ -17,7 +17,7 @@ namespace DBToJsonProject.Controller.SettingManager
         IJsonTreeNode Parent { get; }
         bool IsDBColumn { get; }
         bool Equals(IJsonTreeNode obj);
-        bool HasVirtualNode { get; }
+        bool HasSelectionNode { get; }
         bool IsDbTable { get; }
     }
 }

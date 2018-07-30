@@ -71,7 +71,7 @@ namespace DBToJsonProject.Views.WorkSpace
             item.HasCustomizedSql = root.Sql.HasCustomizeSQLString;
             item.CustomizedSql = root.Sql.CustomizeSQLString;
             item.CustomizedSqlParameters = root.Sql.Params?.ToString();
-            item.VirtualNode = root.VirtualNode;
+            item.VirtualNode = root.IsSelectionParameter;
             item.IsExpanded = root.Parent == null;
             
             foreach(IJsonTreeNode n in root.ChildNodes.Values)
@@ -224,6 +224,10 @@ namespace DBToJsonProject.Views.WorkSpace
             catch (ArgumentException e)
             {
                 WrongSetting?.Invoke(this, new WrongSettingEventArgs(e.Message, e.ParamName, e.StackTrace));
+            }
+            catch (UnSolvedParametersEXception e)
+            {
+                WrongSetting?.Invoke(this, new WrongSettingEventArgs(e.Message, e.Node + ":" + e.ParaName, e.StackTrace));
             }
             catch (Exception e)
             {

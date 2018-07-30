@@ -29,14 +29,16 @@ namespace DBToJsonProject.Controller.TaskManager
             {
                 sqlTemplate = describer.HasCustomizeSQLString ?
                     describer.CustomizeSQLString :
-                    String.Format("Select * From {0} Where ", dbname) + "{0} = {1};";
+                    String.Format("Select * From {0} Where ", dbname) + "{0} = {1}";
             }
             else
             {
                 sqlTemplate = describer.HasCustomizeSQLString ?
                     describer.CustomizeSQLString :
-                    String.Format("Select * From {0} Where ", dbname) + "{0} IN {1};";
+                    String.Format("Select * From {0} Where ", dbname) + "{0} IN {1}";
             }
+
+
         }
         public string GetInstance(JObject obj)
         {

@@ -4,6 +4,18 @@ using System.Linq;
 
 namespace DBToJsonProject.Controller.SettingManager
 {
+    public class UnSolvedParametersEXception : Exception
+    {
+        public override string Message
+        {
+            get
+            {
+                return "无法解析的自定义参数。";
+            }
+        }
+        public String ParaName { get; set; }
+        public String Node { get; set; }
+    }
     public struct Parameter
     {
         public IJsonTreeNode nvalue;
@@ -56,7 +68,12 @@ namespace DBToJsonProject.Controller.SettingManager
                         {
                             if (n == null)
                                 break;
-                            n = n.ChildNodes[i];
+                            if (!n.ChildNodes.TryGetValue(i, out n))
+                                throw new UnSolvedParametersEXception()
+                                {
+                                    ParaName = argv,
+                                    Node = current.JsonNodeName
+                                };
                         }
                         if (n != null)
                             Parameters.Add(new Parameter() { nvalue = n });

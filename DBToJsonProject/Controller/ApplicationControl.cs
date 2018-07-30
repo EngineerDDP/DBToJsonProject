@@ -249,12 +249,13 @@ namespace DBToJsonProject.Controller
                 AppSetting.Default.ActiveUser = args.Username;
 
                 login.Hide();
-                work.Show();
                 UseDispatcher(work, () =>
                 {
                     work.SetUsername(userSetting.Name);
                 });
-                NavigateToWelcomePage(this, new EventArgs());
+
+                RefreshWorkWindow();
+                work.Show();
             }
             else
             {

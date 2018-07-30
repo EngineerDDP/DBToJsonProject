@@ -46,14 +46,14 @@ namespace DBToJsonProject.TaskManager
         /// <param name="tableName">表名</param>
         /// <param name="dbRow">数据库行的一部分</param>
         /// <returns></returns>
-        public bool MatchRow(String tableName, Dictionary<String,string> dbRow)
+        public bool MatchRow(String tableName, Dictionary<String, string> dbRow)
         {
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = sqlCon;
             cmd.CommandType = CommandType.Text;
             cmd.CommandText = String.Format("Select * From {0} Where ", tableName);
 
-            foreach(string key in dbRow.Keys)
+            foreach (string key in dbRow.Keys)
             {
                 cmd.CommandText += String.Format("{0} = '{1}' AND ", key, dbRow[key]);
             }
@@ -76,52 +76,62 @@ namespace DBToJsonProject.TaskManager
         public async Task<JArray> FillDictionaryAsync(String sqlCommand, string[] sampleColumns, string[] targetColumns)
         {
             JArray arr = new JArray();
-            SqlDataReader reader;
             if (String.IsNullOrEmpty(sqlCommand))
                 return arr;
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = sqlCon;
-            cmd.CommandType = CommandType.Text;
-            cmd.CommandText = sqlCommand;
-            List<String> crruptedColumName = new List<string>();
 
-            try
+            List<String> crruptedColumName = null;
+            await Task.Run(async () =>
             {
-                reader = await cmd.ExecuteReaderAsync();
 
-                while (reader.Read())
+                try
                 {
-                    JObject obj = new JObject();
-                    for (int i = 0; i < sampleColumns.Count(); ++i)
+                    SqlDataReader reader;
+
+                    SqlCommand cmd = new SqlCommand();
+                    cmd.Connection = sqlCon;
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = sqlCommand;
+
+                    reader = await cmd.ExecuteReaderAsync();
+
+                    while (reader.Read())
                     {
-                        try
+                        JObject obj = new JObject();
+                        for (int i = 0; i < sampleColumns.Count(); ++i)
                         {
-                            obj.Add(targetColumns[i], reader[sampleColumns[i]].ToString());
+                            await Task.Run(() =>
+                            {
+                                try
+                                {
+
+                                    obj.Add(targetColumns[i], reader[sampleColumns[i]].ToString());
+
+                                }
+                                catch (IndexOutOfRangeException)
+                                {
+                                    if (crruptedColumName == null)
+                                        crruptedColumName = new List<string>();
+                                    crruptedColumName.Add(sampleColumns[i]);
+                                    sampleColumns[i] = String.Empty;
+                                }
+                            });
                         }
-                        catch (IndexOutOfRangeException)
-                        {
-                            crruptedColumName.Add(sampleColumns[i]);
-                            sampleColumns[i] = String.Empty;
-                        }
+                        arr.Add(obj);
                     }
-                    arr.Add(obj);
+                    reader.Close();
+                }
+                catch (SqlException)
+                {
+                    Console.WriteLine(sqlCommand);
                 }
 
-                reader.Close();
+            });
+            if (crruptedColumName != null && crruptedColumName.Count != 0)
+                DBColumnDosentExist?.Invoke(this, new DBColumnDosentExistEvent()
+                {
+                    ColumnNames = crruptedColumName.ToArray()
+                });
 
-                if (crruptedColumName.Count != 0)
-                    DBColumnDosentExist?.Invoke(this, new DBColumnDosentExistEvent()
-                    {
-                        ColumnNames = crruptedColumName.ToArray()
-                    });
-
-                
-
-            }
-            catch (SqlException)
-            {
-                Console.WriteLine(sqlCommand);
-            }
             return arr;
         }
         /// <summary>
@@ -133,14 +143,14 @@ namespace DBToJsonProject.TaskManager
         public void WriteToDB(String tableName, ref List<Dictionary<String, String>> targetDic)
         {
             DataTable dt = new DataTable();
-            foreach(String key in targetDic[0].Keys)
+            foreach (String key in targetDic[0].Keys)
             {
                 dt.Columns.Add(new DataColumn(key));
             }
-            foreach(Dictionary<String,String> dic in targetDic)
+            foreach (Dictionary<String, String> dic in targetDic)
             {
                 DataRow dr = dt.NewRow();
-                foreach(String key in dic.Keys)
+                foreach (String key in dic.Keys)
                 {
                     dr[key] = dic[key];
                 }

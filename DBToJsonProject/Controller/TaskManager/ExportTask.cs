@@ -278,7 +278,7 @@ namespace DBToJsonProject.Controller.TaskManager
                         obj = await FillJsonArrayAsync(node, s);
                         foreach (JObject o in obj as JArray)
                         {
-                            totalProgress = (100 / detial.roots.Count) * c / (obj as JArray).Count;
+                            totalProgress = i * (100 / detial.roots.Count) + (stageProgress / detial.roots.Count);
                             stageProgress = 100 * c++ / (obj as JArray).Count;
 
                             buildstate = await buildChildsAsync(node, o);
@@ -365,10 +365,11 @@ namespace DBToJsonProject.Controller.TaskManager
         private async Task<JToken> BuildJsonNodeAsync(IJsonTreeNode node, JObject parentObj, IJsonTreeNode parentNode)
         {
             JToken result = new JObject();
-            bool? check = Selections.FirstOrDefault(q => q.Node.Equals(node))?.IsChecked;
+            bool? check = Selections.FirstOrDefault(q => q.Node.Equals(node))?.IsChecked;       //查找本节点选择情况
             if (check == false || parentObj == null)
                 return result;
-            if (CancelProcess)
+
+            if (CancelProcess)          //检查进程退出标志
                 throw new Exception(UpdateStrings.Canceled);
 
             loginfo = UpdateStrings.ReadTable(node.DbName);
@@ -376,7 +377,7 @@ namespace DBToJsonProject.Controller.TaskManager
             if (node.MultiRelated)      //多元关系，生成数组,节点结构 "property":[A,B,C,D,E]
             {
                 JArray arr;
-                if (node.HasVirtualNode)        //存在多选项
+                if (node.HasSelectionNode)        //存在多选项
                 {
                     var j = Selections.Where(q => q.Node.Parent == node && q.IsChecked).Select(q => q.Node);      //列出选项
                     if (j.Count() == 0)         //未选任意类别

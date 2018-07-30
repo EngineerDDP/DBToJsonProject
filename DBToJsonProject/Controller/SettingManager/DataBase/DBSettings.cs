@@ -127,10 +127,10 @@ namespace DBToJsonProject.Controller.SettingManager
                 {
                     roots = new List<IJsonTreeNode>()
                 };
-                //遍历每个Export实体
+                //遍历每个Root实体
                 foreach (SettingNode n in ro.ChildNodes)
                     entityDetial.roots.Add(BuildTreeNode(n, null));
-                //读Export数据库信息
+                //读Root数据库信息
                 entityDetial.DbConnectStr = ro.Attributes[DbBaseTableConnectString];
             };
 
@@ -245,7 +245,7 @@ namespace DBToJsonProject.Controller.SettingManager
             xml.SetAttribute(NodeSelectable, root.Selectable.ToString());
             xml.SetAttribute(DbCustomizedSql, root.Sql.CustomizeSQLString);
             xml.SetAttribute(DbCustomizedSqlParameters, root.Sql.Params.ToString());
-            xml.SetAttribute(IsVirtual, root.VirtualNode.ToString());
+            xml.SetAttribute(IsVirtual, root.IsSelectionParameter.ToString());
 
             //先写实节点
             foreach (String key in root.ChildNodes.Keys)
@@ -261,6 +261,9 @@ namespace DBToJsonProject.Controller.SettingManager
             }
             return xml;
         }
+        /// <summary>
+        /// 初始化新的配置文件
+        /// </summary>
         protected override void Init()
         {
             userRoot = new UserInfo()
@@ -303,6 +306,10 @@ namespace DBToJsonProject.Controller.SettingManager
             }
             return selections;
         }
+        /// <summary>
+        /// 构建工作对象
+        /// </summary>
+        /// <param name="selections"></param>
         public void SetupBuildFiles(Models.SelectCollection selections)
         {
             foreach(Models.SelectableJsonList l in selections.Source)

@@ -1,1 +1,0 @@
-﻿SELECT * FROM BaseTable Where 1=0

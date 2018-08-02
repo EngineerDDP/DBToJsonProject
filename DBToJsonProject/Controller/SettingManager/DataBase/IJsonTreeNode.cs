@@ -19,5 +19,7 @@ namespace DBToJsonProject.Controller.SettingManager
         bool Equals(IJsonTreeNode obj);
         bool HasSelectionNode { get; }
         bool IsDbTable { get; }
+        bool IsSelectionNode { get; }
+        bool IsSelected { get; set; }
     }
 }

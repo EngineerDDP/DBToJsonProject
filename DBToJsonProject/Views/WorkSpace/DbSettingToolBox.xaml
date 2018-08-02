@@ -52,10 +52,6 @@
                         </Grid.ColumnDefinitions>
                         <Label Grid.Row="0" Grid.Column="0">数据库连接字符串：</Label>
                         <TextBox Grid.Row="0" Grid.Column="1" Name="Txt_DbConnectStr"></TextBox>
-                        <Label Grid.Row="2" Grid.Column="0">导出文件后执行命令：</Label>
-                        <TextBox Grid.Row="2" Grid.Column="1" Name="Txt_ExportCmd"></TextBox>
-                        <Label Grid.Row="4" Grid.Column="0">导入文件后执行命令：</Label>
-                        <TextBox Grid.Row="4" Grid.Column="1" Name="Txt_ImportCmd"></TextBox>
                     </Grid>
                     <Border  Grid.Row="3" Margin="3" VerticalAlignment="Center">
                         <TextBlock FontSize="14" Foreground="#FF007ACC">用户验证设置</TextBlock>

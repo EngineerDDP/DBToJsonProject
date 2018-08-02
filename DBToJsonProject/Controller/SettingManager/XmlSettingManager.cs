@@ -5,6 +5,9 @@ using System.Xml;
 
 namespace DBToJsonProject.Controller.SettingManager
 {
+    /// <summary>
+    /// 基于Xml的配置文件基类
+    /// </summary>
     abstract partial class XmlSettingManager
     {
 
@@ -130,8 +133,17 @@ namespace DBToJsonProject.Controller.SettingManager
             fs.Close();
         }
         #region 抽象方法
+        /// <summary>
+        /// 从磁盘加载配置项到内存
+        /// </summary>
         protected abstract void Load();
+        /// <summary>
+        /// 在内存中初始化新的配置项
+        /// </summary>
         protected abstract void Init();
+        /// <summary>
+        /// 更新配置项到磁盘中
+        /// </summary>
         public abstract void Update();
         #endregion
     }

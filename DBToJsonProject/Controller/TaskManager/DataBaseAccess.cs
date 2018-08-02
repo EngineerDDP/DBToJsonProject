@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 namespace DBToJsonProject.TaskManager
 {
@@ -51,13 +52,19 @@ namespace DBToJsonProject.TaskManager
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = sqlCon;
             cmd.CommandType = CommandType.Text;
-            cmd.CommandText = String.Format("Select * From {0} Where ", tableName);
+            string sqlstr = "Select * From @tableName Where ";
+            cmd.Parameters.Add(new SqlParameter("@tableName", tableName));
 
+            int i = 0;
             foreach (string key in dbRow.Keys)
             {
-                cmd.CommandText += String.Format("{0} = '{1}' AND ", key, dbRow[key]);
+                sqlstr += String.Format("@columnName{0} = @value{1} AND ", i, i);
+                cmd.Parameters.Add(new SqlParameter(String.Format("@columnName{0}", i), key));
+                cmd.Parameters.Add(new SqlParameter(String.Format("@value{0}", i), dbRow[key]));
+                i++;
             }
-            cmd.CommandText += "1 = 1";
+            sqlstr += "1 = 1";
+            cmd.CommandText = sqlstr;
 
             SqlDataReader reader = cmd.ExecuteReader();
             bool result = reader.HasRows;
@@ -120,15 +127,17 @@ namespace DBToJsonProject.TaskManager
                     }
                     reader.Close();
                 }
-                catch (SqlException)
+                catch (SqlException e)
                 {
                     Console.WriteLine(sqlCommand);
+                    Console.WriteLine(e.Message);
                 }
 
             });
             if (crruptedColumName != null && crruptedColumName.Count != 0)
                 DBColumnDosentExist?.Invoke(this, new DBColumnDosentExistEvent()
                 {
+                    TableName = Regex.Match(sqlCommand, @"(f|F)(r|R)(o|O)(m|M)\s+\b(.+?)\b").Value.Split(' ')[1],
                     ColumnNames = crruptedColumName.ToArray()
                 });
 
@@ -165,7 +174,7 @@ namespace DBToJsonProject.TaskManager
 
         public void Dispose()
         {
-            sqlCon?.Dispose();
+            sqlCon.Dispose();
         }
     }
 }

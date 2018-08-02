@@ -4,6 +4,9 @@ using System.Collections.ObjectModel;
 
 namespace DBToJsonProject.Models
 {
+    /// <summary>
+    /// 用于和前端交互的模型，表示同一系列的所有选项
+    /// </summary>
     public class SelectableJsonList : NotifyProperty
     {
         public SelectableJsonList(string name, IJsonTreeNode node)

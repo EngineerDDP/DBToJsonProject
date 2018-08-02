@@ -1,0 +1,1 @@
+﻿DELETE FROM BaseTable Where id > 509

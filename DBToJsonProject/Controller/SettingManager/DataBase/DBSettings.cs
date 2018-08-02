@@ -154,11 +154,12 @@ namespace DBToJsonProject.Controller.SettingManager
         /// <summary>
         /// 序列化新设置到设置文件
         /// </summary>
-        public void UpdateSetting(IUserTableInfo userTableInfo, JsonEntityDetial ex, JsonEntityDetial im)
+        public void UpdateSetting(IUserTableInfo userTableInfo, JsonEntityDetial ex, JsonEntityDetial im, String dbCon)
         {
             exportEntities = ex;
             importEntities = im;
             userRoot = userTableInfo;
+            DBConnectArgs = dbCon;
 
             Update();
         }
@@ -310,7 +311,7 @@ namespace DBToJsonProject.Controller.SettingManager
         /// 构建工作对象
         /// </summary>
         /// <param name="selections"></param>
-        public void SetupBuildFiles(Models.SelectCollection selections)
+        public void SetupBuildSelections(Models.SelectCollection selections)
         {
             foreach(Models.SelectableJsonList l in selections.Source)
             {
@@ -318,6 +319,7 @@ namespace DBToJsonProject.Controller.SettingManager
                 foreach(Models.SelectableJsonNode n in l.Nodes)
                 {
                     toBuild |= n.IsChecked;
+                    n.Node.IsSelected = n.IsChecked;
                 }
                 (l.Node as TreeNode).BuildSingleFile  = toBuild;
             }

@@ -5,36 +5,50 @@ using System.Windows.Controls;
 using DBToJsonProject.Models;
 using DBToJsonProject.Controller.SettingManager;
 using DBToJsonProject.Models.EventArguments;
-
+using System.Collections.ObjectModel;
 
 namespace DBToJsonProject.Views.WorkSpace
 {
     /// <summary>
     /// ExportPage.xaml 的交互逻辑
     /// </summary>
-    public partial class ExportPage : Page
+    public partial class ExportPage : Page, IWorkPage
     {
         private SelectCollection selections;
 
         public event EventHandler<SelectCollection> SelectionUpdated;           //更新选项集合
-        public event EventHandler<ExportCmdExecuteArgs> ExecuteExportCmd;       //执行导出任务
+        public event EventHandler<CmdExecuteArgs> ExecuteCmd;       //执行导出任务
         public event EventHandler CancelExcution;                               //取消任务
+
         public ExportPage()
         {
             InitializeComponent();
+
             selections = new SelectCollection();
+            files = new ObservableCollection<FileExpression>();
+            Lst_TargetFiles.ItemsSource = files;
         }
         public void UpdatePageInfos(ExportPageInfoEventArgs args)
         {
+
+        }
+        private ObservableCollection<FileExpression> files;
+        public void UpdateFileList(List<FileExpression> e)
+        {
+            files.Clear();
+            foreach (FileExpression f in e)
+                files.Add(f);
         }
         private void Opt_OpenFileEx_Click(object sender, RoutedEventArgs e)
         {
-
+            String path = (Lst_TargetFiles.SelectedItem as FileExpression).Path;
+            path = Environment.CurrentDirectory + "\\" + path;
+            System.Diagnostics.Process.Start(path);
         }
 
         private void Opt_CopyFileName_Click(object sender, RoutedEventArgs e)
         {
-
+            Clipboard.SetText((Lst_TargetFiles.SelectedItem as FileExpression).FileName);
         }
         /// <summary>
         /// 页面载入事件
@@ -48,16 +62,20 @@ namespace DBToJsonProject.Views.WorkSpace
         {
             selections = s;
             Panel_Selections.ItemsSource = selections.Source;
+            Panel_Selections.SelectedIndex = 0;
         }
         public void TaskPostBack(TaskPostBackEventArgs args)
         {
-            Txt_LogInfo.Text += args.LogInfo + "\n";
-            Txt_LogInfo.ScrollToEnd();
-            if(args.Progress == 100)
+            if (!Btn_ExecuteExport.IsEnabled)
             {
-                Img_Working.Visibility = Visibility.Hidden;
-                Btn_ExecuteExport.IsEnabled = true;
-                Btn_ResetExportSetting.IsEnabled = true;
+                Txt_LogInfo.Text += args.LogInfo + "\n";
+                Txt_LogInfo.ScrollToEnd();
+                if (args.Progress == 100)
+                {
+                    Img_Working.Visibility = Visibility.Hidden;
+                    Btn_ExecuteExport.IsEnabled = true;
+                    Btn_ResetExportSetting.IsEnabled = true;
+                }
             }
         }
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
@@ -86,11 +104,12 @@ namespace DBToJsonProject.Views.WorkSpace
                 date = "1990/01/01";
             else
                 date = Date_DBDateBegin.SelectedDate?.ToShortDateString();
-            ExecuteExportCmd?.Invoke(this, new ExportCmdExecuteArgs()
-            {
-                Selections = selections,
-                SpecifiedQuaryStringArgs = new string[] { String.Format("'{0}'",date) }
-            });
+
+            ExecuteCmd?.Invoke(this, new CmdExecuteArgs(selections, 
+                                        new string[] { String.Format("'{0}'", date) }, 
+                                        Chk_ExportImg.IsChecked.Value, 
+                                        Chk_ExportVdo.IsChecked.Value));
+
             Img_Working.Visibility = Visibility.Visible;
             Btn_ExecuteExport.IsEnabled = false;
             Btn_ResetExportSetting.IsEnabled = false;
@@ -119,11 +138,6 @@ namespace DBToJsonProject.Views.WorkSpace
         private void Btn_Cancel_Click(object sender, RoutedEventArgs e)
         {
             CancelExcution?.Invoke(this, e);
-        }
-
-        private void Txt_LogInfo_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-
         }
     }
 }

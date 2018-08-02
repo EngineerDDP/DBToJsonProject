@@ -225,7 +225,7 @@ namespace DBToJsonProject.Views.WorkSpace
             {
                 WrongSetting?.Invoke(this, new WrongSettingEventArgs(e.Message, e.ParamName, e.StackTrace));
             }
-            catch (UnSolvedParametersEXception e)
+            catch (UnSolvedParametersException e)
             {
                 WrongSetting?.Invoke(this, new WrongSettingEventArgs(e.Message, e.Node + ":" + e.ParaName, e.StackTrace));
             }
@@ -243,7 +243,7 @@ namespace DBToJsonProject.Views.WorkSpace
             PropertyNodeItem exportRoot = (Tree_Export.ItemsSource as ObservableCollection<PropertyNodeItem>)[0];
             String exdbStr = Txt_ExportDbConnectStr.Text;
             String imdbStr = Txt_ImportDbConnectStr.Text;
-            Default.UpdateSetting(Default.UserRoot, BuildSetting(exportRoot, exdbStr), BuildSetting(importRoot, imdbStr));
+            Default.UpdateSetting(Default.UserRoot, BuildSetting(exportRoot, exdbStr), BuildSetting(importRoot, imdbStr), Txt_DbConnectStr.Text);
         }
         /// <summary>
         /// 用户改变了选择项，重新判断该项是否可写

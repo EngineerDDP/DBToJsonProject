@@ -25,7 +25,7 @@ namespace DBToJsonProject.Controller.TaskManager
             "写文件",
             "任务完成"
         };
-        public static readonly string COmplete = "导出完成";
+        public static readonly string Complete = "导出完成";
         public static readonly string Initialize = "初始化资源...";
         public static string ReadTable(string name)
         {
@@ -45,16 +45,18 @@ namespace DBToJsonProject.Controller.TaskManager
         }
         public static readonly string Canceled = "任务被取消";
         public static readonly string Working = "工作进行中...";
+        public static readonly string ready = "准备就绪";
     }
+    [Serializable]
     public class DBSettingErrorException : Exception
     { }
     class ExportTask : ITask, IDisposable
     {
         public event EventHandler<StringEventArgs> PostErrorAndAbort;           //报告错误并退出运行
         public event EventHandler<TaskPostBackEventArgs> UpdateProgressInfo;    //更新执行信息
+        public event EventHandler<FileEventArgs> OnFileOperation;
 
         DataBaseAccess dataBaseAccess;              //数据库连接
-        SelectableJsonNode[] selections;            //选项集合
         JsonEntityDetial detial;                    //导出信息
         String[] SpecifiedQuaryStringsArgs;         //系统参数
         Task workingThread;                         //执行线程
@@ -81,7 +83,6 @@ namespace DBToJsonProject.Controller.TaskManager
         }
 
         internal DataBaseAccess DataBaseAccess { get => dataBaseAccess; set => dataBaseAccess = value; }
-        public SelectableJsonNode[] Selections { get => selections; set => selections = value; }
         public JsonEntityDetial Detial { get => detial; set => detial = value; }
 
         /// <summary>
@@ -90,10 +91,9 @@ namespace DBToJsonProject.Controller.TaskManager
         /// <param name="dbConStr"></param>
         /// <param name="jsonSelections"></param>
         /// <param name="topNodeSqlStr"></param>
-        public ExportTask(String dbConStr, SelectableJsonNode[] jsonSelections, JsonEntityDetial detial, String[] args)
+        public ExportTask(String dbConStr, JsonEntityDetial detial, String[] args)
         {
             DataBaseAccess = new DataBaseAccess(dbConStr);
-            Selections = jsonSelections;
             Detial = detial;
             SpecifiedQuaryStringsArgs = args;
         }
@@ -111,17 +111,29 @@ namespace DBToJsonProject.Controller.TaskManager
             ReportThread = new Task(KeepUpdate);
             ReportThread.Start();
             
+
             workingThread = new Task(Execution);
             workingThread.Start();
         }
+        /// <summary>
+        /// 取消操作，通知工作线程退出
+        /// </summary>
         public void Cancel()
         {
             CancelProcess = true;
         }
+        /// <summary>
+        /// 列不存在
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DataBaseAccess_DBColumnDosentExist(object sender, DBColumnDosentExistEvent e)
         {
             Update(String.Format(UpdateStrings.DBColumnsNotFound, e.TableName, String.Concat(e.ColumnNames.Select(q => q + ", "))));
         }
+        /// <summary>
+        /// 保持更新
+        /// </summary>
         private void KeepUpdate()
         {
             while(!CancelProcess && totalProgress != 100)
@@ -134,27 +146,77 @@ namespace DBToJsonProject.Controller.TaskManager
                 Thread.Sleep(1000);
             }
         }
+        /// <summary>
+        /// 向UI线程更新工作状态
+        /// </summary>
+        /// <param name="loginfo"></param>
         private void Update(String loginfo)
         {
             UpdateProgressInfo?.Invoke(this, new TaskPostBackEventArgs(
             totalProgress, loginfo, stageProgress, progressStage));
         }
+        /// <summary>
+        /// 工作
+        /// </summary>
         private void Execution()
         {
             try
             {
                 dataBaseAccess.OpenConnection();
                 BuildJsonFilesAsync().Wait();
+                PostExecution();
             }
             catch (AggregateException e)
             {
-                totalProgress = 100;
                 PostErrorAndAbort?.Invoke(this, new StringEventArgs()
                 {
-                    Str = "信息:" + e.InnerException.GetType().ToString() + e.InnerException.Message
+                    Str = "信息:" + e.InnerException.Message
                 });
             }
-            dataBaseAccess.CloseConnection();
+            catch (Exception e)
+            {
+                PostErrorAndAbort?.Invoke(this, new StringEventArgs()
+                {
+                    Str = "信息:" + e.Message
+                });
+            }
+            finally
+            {
+                progressStage = UpdateStrings.Complete;
+                Update(UpdateStrings.Complete);
+                stageProgress = 100;
+                totalProgress = 100;
+                progressStage = UpdateStrings.ready;
+                Update(UpdateStrings.ready);
+                dataBaseAccess.CloseConnection();
+            }
+        }
+        private void PostExecution()
+        {
+            System.Diagnostics.Process process = new System.Diagnostics.Process();
+            process.StartInfo = new System.Diagnostics.ProcessStartInfo()
+            {
+                FileName = "java",
+                Arguments = "-jar " + "./DataSynchronize_EX.jar " + SpecifiedQuaryStringsArgs[0].Replace('\'', ' ') + " " + Environment.CurrentDirectory + " /" + AppSetting.Default.ExportWorkFolder,
+                UseShellExecute = false,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            };
+            process.Start();
+            StreamReader sr = process.StandardOutput;
+
+            while (!process.HasExited)
+            {
+                string str = sr.ReadToEnd();
+                int i;
+                if (Int32.TryParse(str.Split(' ')[0], out i))
+                    stageProgress = i;
+                if (CancelProcess)
+                    process.Kill();
+            }
+            process.Dispose();
         }
         /// <summary>
         /// 填充JsonObject
@@ -247,13 +309,10 @@ namespace DBToJsonProject.Controller.TaskManager
             SqlCommandCache sql;
             if(!parameterCache.TryGetValue(currentNode,out sql))
             {
-                sql = new SqlCommandCache(currentNode.Sql, parentNode, currentNode.DbName);
+                sql = new SqlCommandCache(currentNode, parentNode, SpecifiedQuaryStringsArgs);
                 parameterCache.Add(currentNode, sql);
             }
-            if (currentNode.Sql.Params.Parameters.Count == 0)               //无参数
-                return sql.GetInstance(SpecifiedQuaryStringsArgs);          //填充系统参数
-            else
-                return sql.GetInstance(parentObject);                       //填充动态参数
+            return sql.GetInstance(parentObject);                       //填充参数
         }
         /// <summary>
         /// 根据设置构建Json文件
@@ -278,7 +337,7 @@ namespace DBToJsonProject.Controller.TaskManager
                         obj = await FillJsonArrayAsync(node, s);
                         foreach (JObject o in obj as JArray)
                         {
-                            totalProgress = i * (100 / detial.roots.Count) + (stageProgress / detial.roots.Count);
+                            totalProgress = Math.Min(i * (100 / detial.roots.Count) + (stageProgress / detial.roots.Count), 99);
                             stageProgress = 100 * c++ / (obj as JArray).Count;
 
                             buildstate = await buildChildsAsync(node, o);
@@ -297,10 +356,6 @@ namespace DBToJsonProject.Controller.TaskManager
                 i++;
             }
 
-            progressStage = UpdateStrings.COmplete;
-            totalProgress = 100;
-            stageProgress = 100;
-            Update(UpdateStrings.COmplete);
         }
         /// <summary>
         /// 写文件
@@ -316,8 +371,10 @@ namespace DBToJsonProject.Controller.TaskManager
                 StreamWriter sw = new StreamWriter(fs);
                 sw.Write(obj.ToString());
                 sw.Flush();
+
             }
             Update(UpdateStrings.WriteFile(filename));
+            OnFileOperation?.Invoke(this, new FileEventArgs(filename, AppSetting.Default.ExportWorkFolder));
         }
         /// <summary>
         /// 为数组构建子结构
@@ -364,41 +421,29 @@ namespace DBToJsonProject.Controller.TaskManager
         /// <returns></returns>
         private async Task<JToken> BuildJsonNodeAsync(IJsonTreeNode node, JObject parentObj, IJsonTreeNode parentNode)
         {
-            JToken result = new JObject();
-            bool? check = Selections.FirstOrDefault(q => q.Node.Equals(node))?.IsChecked;       //查找本节点选择情况
-            if (check == false || parentObj == null)
-                return result;
+            JToken result;
 
             if (CancelProcess)          //检查进程退出标志
                 throw new Exception(UpdateStrings.Canceled);
 
             loginfo = UpdateStrings.ReadTable(node.DbName);
             
-            if (node.MultiRelated)      //多元关系，生成数组,节点结构 "property":[A,B,C,D,E]
+            if (node.MultiRelated)      //多元关系，生成数组
             {
-                JArray arr;
-                if (node.HasSelectionNode)        //存在多选项
-                {
-                    var j = Selections.Where(q => q.Node.Parent == node && q.IsChecked).Select(q => q.Node);      //列出选项
-                    if (j.Count() == 0)         //未选任意类别
-                        return result;
-                    arr = new JArray();
-                    foreach (IJsonTreeNode i in j)
-                    {
-                        JToken t = await FillJsonArrayAsync(node, BuildSqlString(parentObj, i, parentNode));
-                        arr = new JArray(arr.Concat(t));
-                    }
-                }
-                else
-                {
-                    arr = await FillJsonArrayAsync(node, BuildSqlString(parentObj, node, parentNode));
-                }
+                result = new JArray();
+                if (node.IsSelected == false || parentObj == null)
+                    return result;
+                JArray arr = await FillJsonArrayAsync(node, BuildSqlString(parentObj, node, parentNode));
                 if (await buildChildsAsync(node, arr))
                     result = arr;
             }
             else        //单元关系，生成对象
             {
-                JObject obj = await FillJsonObjectAsync(node, BuildSqlString(parentObj, node, parentNode));
+                result = new JObject();
+                if (node.IsSelected == false || parentObj == null)
+                    return result;
+                JObject obj;
+                obj = await FillJsonObjectAsync(node, BuildSqlString(parentObj, node, parentNode));
                 if (await buildChildsAsync(node, obj))
                     result = obj;
             }

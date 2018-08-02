@@ -1,0 +1,344 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Setting DbBaseTableConnectString="">
+  <ExportTree DbBaseTableConnectString="Data Source=121.248.200.5;Initial Catalog=LCRiverRouting_MW;User ID=sa;Password=amon@1991;">
+    <dam DbColumnName="BaseTable" DbTableMultiRelated="True" DbDisplayName="水工巡检" BuildJsonFile="True" NodeSelectable="False" DbCustomizedSql="select id from BaseTable where routing_time &gt;= {0}" DbCustomizedSqlParameters="" IsVirtual="False">
+      <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      <BaseTable DbColumnName="BaseTable" DbTableMultiRelated="False" DbDisplayName="BaseTable" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="id,&gt;id/" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isDam DbColumnName="isDam" DbTableMultiRelated="False" DbDisplayName="isDam" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isDevice DbColumnName="isDevice" DbTableMultiRelated="False" DbDisplayName="isDevice" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isReservoir DbColumnName="isReservoir" DbTableMultiRelated="False" DbDisplayName="isReservoir" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <routing_time DbColumnName="routing_time" DbTableMultiRelated="False" DbDisplayName="routing_time" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <routing_staff DbColumnName="routing_staff" DbTableMultiRelated="False" DbDisplayName="routing_staff" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content01 DbColumnName="content01" DbTableMultiRelated="False" DbDisplayName="content01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </BaseTable>
+      <Result_DamList DbColumnName="Result_Dam" DbTableMultiRelated="True" DbDisplayName="Result_DamList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="base_table_id,id/" IsVirtual="False">
+        <base_table_id DbColumnName="base_table_id" DbTableMultiRelated="False" DbDisplayName="base_table_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <area_part_id DbColumnName="area_part_id" DbTableMultiRelated="False" DbDisplayName="area_part_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="Select id From Dam_Area_Part Where area_id IN {0}" DbCustomizedSqlParameters="" IsVirtual="False">
+          <a DbColumnName="6" DbTableMultiRelated="False" DbDisplayName="500KV开关站" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="" DbCustomizedSqlParameters="id//,6" IsVirtual="True" />
+          <b DbColumnName="15" DbTableMultiRelated="False" DbDisplayName="右冲闸门操作室及水垫塘配电室区域" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="select * from Result_Dam where base_table_id IN {0} AND area_part_id IN (Select id From Dam_Area_Part Where area_id = {1});" DbCustomizedSqlParameters="id//,15" IsVirtual="True" />
+          <c DbColumnName="11" DbTableMultiRelated="False" DbDisplayName="水垫塘排水泵房及廊道" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="select * from Result_Dam where base_table_id IN {0} AND area_part_id IN (Select id From Dam_Area_Part Where area_id = {1});" DbCustomizedSqlParameters="id//,11" IsVirtual="True" />
+          <d DbColumnName="9" DbTableMultiRelated="False" DbDisplayName="大坝坝顶及上下游坝面" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="select * from Result_Dam where base_table_id IN {0} AND area_part_id IN (Select id From Dam_Area_Part Where area_id = {1});" DbCustomizedSqlParameters="id//,9" IsVirtual="True" />
+          <e DbColumnName="14" DbTableMultiRelated="False" DbDisplayName="一期厂房" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="select * from Result_Dam where base_table_id IN {0} AND area_part_id IN (Select id From Dam_Area_Part Where area_id = {1});" DbCustomizedSqlParameters="id//,14" IsVirtual="True" />
+          <f DbColumnName="5" DbTableMultiRelated="False" DbDisplayName="220kV开关站及周边区域" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="select * from Result_Dam where base_table_id IN {0} AND area_part_id IN (Select id From Dam_Area_Part Where area_id = {1});" DbCustomizedSqlParameters="id//,5" IsVirtual="True" />
+          <g DbColumnName="7" DbTableMultiRelated="False" DbDisplayName="8#机厂房" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="select * from Result_Dam where base_table_id IN {0} AND area_part_id IN (Select id From Dam_Area_Part Where area_id = {1});" DbCustomizedSqlParameters="id//,7" IsVirtual="True" />
+          <h DbColumnName="1" DbTableMultiRelated="False" DbDisplayName="1号机厂房、GIS室及各洞室" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="select * from Result_Dam where base_table_id IN {0} AND area_part_id IN (Select id From Dam_Area_Part Where area_id = {1});" DbCustomizedSqlParameters="id//,1" IsVirtual="True" />
+          <i DbColumnName="13" DbTableMultiRelated="False" DbDisplayName="泄洪洞闸门操作室、8号机进水口区域" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="select * from Result_Dam where base_table_id IN {0} AND area_part_id IN (Select id From Dam_Area_Part Where area_id = {1});" DbCustomizedSqlParameters="id//,13" IsVirtual="True" />
+          <j DbColumnName="10" DbTableMultiRelated="False" DbDisplayName="大坝廊道" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="select * from Result_Dam where base_table_id IN {0} AND area_part_id IN (Select id From Dam_Area_Part Where area_id = {1});" DbCustomizedSqlParameters="id//,10" IsVirtual="True" />
+          <k DbColumnName="12" DbTableMultiRelated="False" DbDisplayName="尾水平台" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="select * from Result_Dam where base_table_id IN {0} AND area_part_id IN (Select id From Dam_Area_Part Where area_id = {1});" DbCustomizedSqlParameters="id//,12" IsVirtual="True" />
+          <l DbColumnName="2" DbTableMultiRelated="False" DbDisplayName="1号机进水口及尾水口区域，8号机进水口及尾水口区域" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="select * from Result_Dam where base_table_id IN {0} AND area_part_id IN (Select id From Dam_Area_Part Where area_id = {1});" DbCustomizedSqlParameters="id//,2" IsVirtual="True" />
+          <m DbColumnName="8" DbTableMultiRelated="False" DbDisplayName="945绝缘油库、975地位消防水池、1号、3号施工支洞区域" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="select * from Result_Dam where base_table_id IN {0} AND area_part_id IN (Select id From Dam_Area_Part Where area_id = {1});" DbCustomizedSqlParameters="id//,8" IsVirtual="True" />
+          <n DbColumnName="4" DbTableMultiRelated="False" DbDisplayName="1号机组施工支洞群、8号机组排水洞及施工支洞群" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="select * from Result_Dam where base_table_id IN {0} AND area_part_id IN (Select id From Dam_Area_Part Where area_id = {1});" DbCustomizedSqlParameters="id//,4" IsVirtual="True" />
+        </area_part_id>
+        <describe DbColumnName="describe" DbTableMultiRelated="False" DbDisplayName="describe" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <solve_rank DbColumnName="solve_rank" DbTableMultiRelated="False" DbDisplayName="solve_rank" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <problem_id DbColumnName="problem_id" DbTableMultiRelated="False" DbDisplayName="problem_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <location DbColumnName="location" DbTableMultiRelated="False" DbDisplayName="location" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isNew DbColumnName="isNew" DbTableMultiRelated="False" DbDisplayName="isNew" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isSolved DbColumnName="isSolved" DbTableMultiRelated="False" DbDisplayName="isSolved" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <solve_info DbColumnName="solve_info" DbTableMultiRelated="False" DbDisplayName="solve_info" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <result DbColumnName="result" DbTableMultiRelated="False" DbDisplayName="result" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Result_DamList>
+      <Photo_Mapping_DamList DbColumnName="Photo_Mapping_Dam" DbTableMultiRelated="True" DbDisplayName="Photo_Mapping_DamList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="select * from Photo_Mapping_Dam where result_id IN {0}" DbCustomizedSqlParameters="&gt;Result_DamList&gt;id/" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <photo_id DbColumnName="photo_id" DbTableMultiRelated="False" DbDisplayName="photo_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <result_id DbColumnName="result_id" DbTableMultiRelated="False" DbDisplayName="result_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content01 DbColumnName="content01" DbTableMultiRelated="False" DbDisplayName="content01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Photo_Mapping_DamList>
+      <Photo_RoutineList DbColumnName="Photo_Routine" DbTableMultiRelated="True" DbDisplayName="Photo_RoutineList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="select * from Photo_Routine where id IN {0}" DbCustomizedSqlParameters="&gt;Photo_Mapping_DamList&gt;photo_id/" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <path DbColumnName="path" DbTableMultiRelated="False" DbDisplayName="path" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <name DbColumnName="name" DbTableMultiRelated="False" DbDisplayName="name" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <size DbColumnName="size" DbTableMultiRelated="False" DbDisplayName="size" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isBasePhoto DbColumnName="isBasePhoto" DbTableMultiRelated="False" DbDisplayName="isBasePhoto" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <compress_path DbColumnName="compress_path" DbTableMultiRelated="False" DbDisplayName="compress_path" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Photo_RoutineList>
+      <Video_Mapping_DamList DbColumnName="Video_Mapping_Dam" DbTableMultiRelated="True" DbDisplayName="Video_Mapping_DamList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="result_id,&gt;Result_DamList&gt;id/" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <video_id DbColumnName="video_id" DbTableMultiRelated="False" DbDisplayName="video_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <result_id DbColumnName="result_id" DbTableMultiRelated="False" DbDisplayName="result_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content01 DbColumnName="content01" DbTableMultiRelated="False" DbDisplayName="content01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Video_Mapping_DamList>
+      <Video_Routine_DamList DbColumnName="Video_Routine_Dam" DbTableMultiRelated="True" DbDisplayName="Video_Routine_DamList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="id,&gt;Video_Mapping_DamList&gt;video_id/" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <path DbColumnName="path" DbTableMultiRelated="False" DbDisplayName="path" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <name DbColumnName="name" DbTableMultiRelated="False" DbDisplayName="name" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <size DbColumnName="size" DbTableMultiRelated="False" DbDisplayName="size" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content01 DbColumnName="content01" DbTableMultiRelated="False" DbDisplayName="content01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Video_Routine_DamList>
+    </dam>
+    <device DbColumnName="" DbTableMultiRelated="True" DbDisplayName="仪器设备巡检" BuildJsonFile="True" NodeSelectable="False" DbCustomizedSql="select id from BaseTable where routing_time &gt;= {0}" DbCustomizedSqlParameters="" IsVirtual="False">
+      <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      <BaseTable DbColumnName="BaseTable" DbTableMultiRelated="False" DbDisplayName="BaseTable" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="id,&gt;id/" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <routing_time DbColumnName="routing_time" DbTableMultiRelated="False" DbDisplayName="routing_time" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <routing_staff DbColumnName="routing_staff" DbTableMultiRelated="False" DbDisplayName="routing_staff" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isDam DbColumnName="isDam" DbTableMultiRelated="False" DbDisplayName="isDam" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isDevice DbColumnName="isDevice" DbTableMultiRelated="False" DbDisplayName="isDevice" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isReservoir DbColumnName="isReservoir" DbTableMultiRelated="False" DbDisplayName="isReservoir" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content01 DbColumnName="content01" DbTableMultiRelated="False" DbDisplayName="content01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </BaseTable>
+      <Result_DeviceList DbColumnName="Result_Device" DbTableMultiRelated="True" DbDisplayName="引张线" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="base_table_id,id/" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <base_table_id DbColumnName="base_table_id" DbTableMultiRelated="False" DbDisplayName="base_table_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <device_id DbColumnName="device_id" DbTableMultiRelated="False" DbDisplayName="device_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="Select id From Device Where device_type IN {0}" DbCustomizedSqlParameters="" IsVirtual="False">
+          <a DbColumnName="1" DbTableMultiRelated="False" DbDisplayName="正倒垂设备" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="True" />
+          <b DbColumnName="2" DbTableMultiRelated="False" DbDisplayName="引张线设备" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="select * from Result_Device where base_table_id IN {0} AND device_id IN (Select id From Device Where device_type = {1});" DbCustomizedSqlParameters="id//,BM" IsVirtual="True" />
+          <c DbColumnName="3" DbTableMultiRelated="False" DbDisplayName="渗透流量监测设备" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="select * from Result_Device where base_table_id IN {0} AND device_id IN (Select id From Device Where device_type = {1});" DbCustomizedSqlParameters="id//,ID" IsVirtual="True" />
+          <d DbColumnName="4" DbTableMultiRelated="False" DbDisplayName="扬压力及绕坝渗流设备" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="select * from Result_Device where base_table_id IN {0} AND device_id IN (Select id From Device Where device_type = {1});" DbCustomizedSqlParameters="id//,PL" IsVirtual="True" />
+          <e DbColumnName="5" DbTableMultiRelated="False" DbDisplayName="静力水准设备" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="select * from Result_Device where base_table_id IN {0} AND device_id IN (Select id From Device Where device_type = {1});" DbCustomizedSqlParameters="id//,WE" IsVirtual="True" />
+        </device_id>
+        <describe DbColumnName="describe" DbTableMultiRelated="False" DbDisplayName="describe" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <result DbColumnName="result" DbTableMultiRelated="False" DbDisplayName="result" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <problem_id DbColumnName="problem_id" DbTableMultiRelated="False" DbDisplayName="problem_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Result_DeviceList>
+      <DeviceList DbColumnName="Device" DbTableMultiRelated="True" DbDisplayName="DeviceList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="id,&gt;Result_DeviceList&gt;device_id/" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <thread_id DbColumnName="thread_id" DbTableMultiRelated="False" DbDisplayName="thread_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <area DbColumnName="area" DbTableMultiRelated="False" DbDisplayName="area" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <measure_id DbColumnName="measure_id" DbTableMultiRelated="False" DbDisplayName="measure_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <location01 DbColumnName="location01" DbTableMultiRelated="False" DbDisplayName="location01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <location02 DbColumnName="location02" DbTableMultiRelated="False" DbDisplayName="location02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <location03 DbColumnName="location03" DbTableMultiRelated="False" DbDisplayName="location03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content01 DbColumnName="content01" DbTableMultiRelated="False" DbDisplayName="content01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <device_type DbColumnName="device_type" DbTableMultiRelated="False" DbDisplayName="device_type" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <area_id DbColumnName="area_id" DbTableMultiRelated="False" DbDisplayName="area_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </DeviceList>
+    </device>
+    <reservoir DbColumnName="" DbTableMultiRelated="True" DbDisplayName="库区库岸巡检" BuildJsonFile="True" NodeSelectable="False" DbCustomizedSql="select id from BaseTable where routing_time &gt;= {0}" DbCustomizedSqlParameters="" IsVirtual="False">
+      <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      <BaseTable DbColumnName="BaseTable" DbTableMultiRelated="False" DbDisplayName="BaseTable" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="id,id/" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <routing_time DbColumnName="routing_time" DbTableMultiRelated="False" DbDisplayName="routing_time" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <routing_staff DbColumnName="routing_staff" DbTableMultiRelated="False" DbDisplayName="routing_staff" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isDam DbColumnName="isDam" DbTableMultiRelated="False" DbDisplayName="isDam" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isDevice DbColumnName="isDevice" DbTableMultiRelated="False" DbDisplayName="isDevice" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isReservoir DbColumnName="isReservoir" DbTableMultiRelated="False" DbDisplayName="isReservoir" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content01 DbColumnName="content01" DbTableMultiRelated="False" DbDisplayName="content01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </BaseTable>
+      <Result_DisasterList DbColumnName="Result_Disaster" DbTableMultiRelated="True" DbDisplayName="地质灾害" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="" DbCustomizedSqlParameters="base_table_id,id/" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <base_table_id DbColumnName="base_table_id" DbTableMultiRelated="False" DbDisplayName="base_table_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <disaster_id DbColumnName="disaster_id" DbTableMultiRelated="False" DbDisplayName="disaster_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <result DbColumnName="result" DbTableMultiRelated="False" DbDisplayName="result" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content01 DbColumnName="content01" DbTableMultiRelated="False" DbDisplayName="content01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content04 DbColumnName="content04" DbTableMultiRelated="False" DbDisplayName="content04" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Result_DisasterList>
+      <Reservoir_DisasterList DbColumnName="Reservoir_Disaster" DbTableMultiRelated="True" DbDisplayName="Reservoir_DisasterList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="id,&gt;Result_DisasterList&gt;disaster_id/" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <disaster_number DbColumnName="disaster_number" DbTableMultiRelated="False" DbDisplayName="disaster_number" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <scale_volume DbColumnName="scale_volume" DbTableMultiRelated="False" DbDisplayName="scale_volume" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <distance DbColumnName="distance" DbTableMultiRelated="False" DbDisplayName="distance" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <trend DbColumnName="trend" DbTableMultiRelated="False" DbDisplayName="trend" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <direct_threat DbColumnName="direct_threat" DbTableMultiRelated="False" DbDisplayName="direct_threat" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <indirect_threat DbColumnName="indirect_threat" DbTableMultiRelated="False" DbDisplayName="indirect_threat" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <disaster_level DbColumnName="disaster_level" DbTableMultiRelated="False" DbDisplayName="disaster_level" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <disaster_name DbColumnName="disaster_name" DbTableMultiRelated="False" DbDisplayName="disaster_name" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isSure DbColumnName="isSure" DbTableMultiRelated="False" DbDisplayName="isSure" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <describe DbColumnName="describe" DbTableMultiRelated="False" DbDisplayName="describe" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content01 DbColumnName="content01" DbTableMultiRelated="False" DbDisplayName="content01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Reservoir_DisasterList>
+      <Result_FisheryList DbColumnName="Result_Fishery" DbTableMultiRelated="True" DbDisplayName="养殖" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="" DbCustomizedSqlParameters="base_table_id,id/" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <base_table_id DbColumnName="base_table_id" DbTableMultiRelated="False" DbDisplayName="base_table_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <fishery_id DbColumnName="fishery_id" DbTableMultiRelated="False" DbDisplayName="fishery_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <breeding_scale DbColumnName="breeding_scale" DbTableMultiRelated="False" DbDisplayName="breeding_scale" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content04 DbColumnName="content04" DbTableMultiRelated="False" DbDisplayName="content04" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Result_FisheryList>
+      <Reservoir_FisheryList DbColumnName="Reservoir_Fishery" DbTableMultiRelated="True" DbDisplayName="Reservoir_FisheryList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="id,&gt;Result_FisheryList&gt;fishery_id/" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <name DbColumnName="name" DbTableMultiRelated="False" DbDisplayName="name" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <location DbColumnName="location" DbTableMultiRelated="False" DbDisplayName="location" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <contacts DbColumnName="contacts" DbTableMultiRelated="False" DbDisplayName="contacts" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <telephone DbColumnName="telephone" DbTableMultiRelated="False" DbDisplayName="telephone" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isExist DbColumnName="isExist" DbTableMultiRelated="False" DbDisplayName="isExist" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content01 DbColumnName="content01" DbTableMultiRelated="False" DbDisplayName="content01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Reservoir_FisheryList>
+      <Result_SandList DbColumnName="Result_Sand" DbTableMultiRelated="True" DbDisplayName="采砂" BuildJsonFile="False" NodeSelectable="True" DbCustomizedSql="" DbCustomizedSqlParameters="id,id/" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <base_table_id DbColumnName="base_table_id" DbTableMultiRelated="False" DbDisplayName="base_table_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <sand_id DbColumnName="sand_id" DbTableMultiRelated="False" DbDisplayName="sand_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <scale DbColumnName="scale" DbTableMultiRelated="False" DbDisplayName="scale" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content01 DbColumnName="content01" DbTableMultiRelated="False" DbDisplayName="content01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content04 DbColumnName="content04" DbTableMultiRelated="False" DbDisplayName="content04" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Result_SandList>
+      <Reservoir_SandList DbColumnName="Reservoir_Sand" DbTableMultiRelated="True" DbDisplayName="Reservoir_SandList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="id,&gt;Result_SandList&gt;sand_id/" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <name DbColumnName="name" DbTableMultiRelated="False" DbDisplayName="name" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <location DbColumnName="location" DbTableMultiRelated="False" DbDisplayName="location" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <contacts DbColumnName="contacts" DbTableMultiRelated="False" DbDisplayName="contacts" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <telephone DbColumnName="telephone" DbTableMultiRelated="False" DbDisplayName="telephone" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isExist DbColumnName="isExist" DbTableMultiRelated="False" DbDisplayName="isExist" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content01 DbColumnName="content01" DbTableMultiRelated="False" DbDisplayName="content01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Reservoir_SandList>
+      <Photo_Mapping_DisasterList DbColumnName="Photo_Mapping_Disaster" DbTableMultiRelated="True" DbDisplayName="Photo_Mapping_DisasterList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="result_disaster_id,&gt;Result_DisasterList&gt;id/" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <result_disaster_id DbColumnName="result_disaster_id" DbTableMultiRelated="False" DbDisplayName="result_disaster_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <path_id DbColumnName="path_id" DbTableMultiRelated="False" DbDisplayName="path_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content01 DbColumnName="content01" DbTableMultiRelated="False" DbDisplayName="content01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content04 DbColumnName="content04" DbTableMultiRelated="False" DbDisplayName="content04" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Photo_Mapping_DisasterList>
+      <Photo_Mapping_FisheryList DbColumnName="Photo_Mapping_Fishery" DbTableMultiRelated="True" DbDisplayName="Photo_Mapping_FisheryList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="result_fishery_id,&gt;Result_FisheryList&gt;id/" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <result_fishery_id DbColumnName="result_fishery_id" DbTableMultiRelated="True" DbDisplayName="result_fishery_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <photo_id DbColumnName="photo_id" DbTableMultiRelated="False" DbDisplayName="photo_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content01 DbColumnName="content01" DbTableMultiRelated="False" DbDisplayName="content01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Photo_Mapping_FisheryList>
+      <Photo_Mapping_SandList DbColumnName="Photo_Mapping_Sand" DbTableMultiRelated="True" DbDisplayName="Photo_Mapping_SandList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="result_sand_id,&gt;Result_SandList&gt;id/" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <result_sand_id DbColumnName="result_sand_id" DbTableMultiRelated="False" DbDisplayName="result_sand_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <path_id DbColumnName="path_id" DbTableMultiRelated="False" DbDisplayName="path_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content01 DbColumnName="content01" DbTableMultiRelated="False" DbDisplayName="content01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content04 DbColumnName="content04" DbTableMultiRelated="False" DbDisplayName="content04" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Photo_Mapping_SandList>
+      <Photo_RoutineList DbColumnName="Photo_Routine" DbTableMultiRelated="True" DbDisplayName="Photo_RoutineList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="select * from Photo_Routine where id IN {0} OR id IN {1} OR ID IN {2}" DbCustomizedSqlParameters="&gt;Photo_Mapping_DisasterList&gt;path_id/,&gt;Photo_Mapping_SandList&gt;path_id/,&gt;Photo_Mapping_FisheryList&gt;photo_id/" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <path DbColumnName="path" DbTableMultiRelated="False" DbDisplayName="path" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <name DbColumnName="name" DbTableMultiRelated="False" DbDisplayName="name" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <size DbColumnName="size" DbTableMultiRelated="False" DbDisplayName="size" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isBasePhoto DbColumnName="isBasePhoto" DbTableMultiRelated="False" DbDisplayName="isBasePhoto" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <compress_path DbColumnName="compress_path" DbTableMultiRelated="False" DbDisplayName="compress_path" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Photo_RoutineList>
+    </reservoir>
+    <def DbColumnName="" DbTableMultiRelated="False" DbDisplayName="def" BuildJsonFile="True" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="1,1" IsVirtual="False">
+      <AttentionList DbColumnName="Attention" DbTableMultiRelated="True" DbDisplayName="AttentionList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="1,1" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <items DbColumnName="items" DbTableMultiRelated="False" DbDisplayName="items" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <note DbColumnName="note" DbTableMultiRelated="False" DbDisplayName="note" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </AttentionList>
+      <Users_mwList DbColumnName="Users_mw" DbTableMultiRelated="True" DbDisplayName="Users_mwList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="1,1" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <username DbColumnName="username" DbTableMultiRelated="False" DbDisplayName="username" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <password DbColumnName="password" DbTableMultiRelated="False" DbDisplayName="password" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <note DbColumnName="note" DbTableMultiRelated="False" DbDisplayName="note" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isDam DbColumnName="isDam" DbTableMultiRelated="False" DbDisplayName="isDam" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isDevice DbColumnName="isDevice" DbTableMultiRelated="False" DbDisplayName="isDevice" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isReservoir DbColumnName="isReservoir" DbTableMultiRelated="False" DbDisplayName="isReservoir" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Users_mwList>
+      <EnvironList DbColumnName="Environ" DbTableMultiRelated="True" DbDisplayName="EnvironList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="1,1" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <dt DbColumnName="dt" DbTableMultiRelated="False" DbDisplayName="dt" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <uplevel DbColumnName="uplevel" DbTableMultiRelated="False" DbDisplayName="uplevel" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <downlevel DbColumnName="downlevel" DbTableMultiRelated="False" DbDisplayName="downlevel" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <rainfall DbColumnName="rainfall" DbTableMultiRelated="False" DbDisplayName="rainfall" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <outflow DbColumnName="outflow" DbTableMultiRelated="False" DbDisplayName="outflow" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <note DbColumnName="note" DbTableMultiRelated="False" DbDisplayName="note" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </EnvironList>
+      <Dam_Area_PartList DbColumnName="Dam_Area_Part" DbTableMultiRelated="True" DbDisplayName="Dam_Area_PartList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="1,1" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <area DbColumnName="area" DbTableMultiRelated="False" DbDisplayName="area" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <part DbColumnName="part" DbTableMultiRelated="False" DbDisplayName="part" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content DbColumnName="content" DbTableMultiRelated="False" DbDisplayName="content" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <area_id DbColumnName="area_id" DbTableMultiRelated="False" DbDisplayName="area_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <importance_level DbColumnName="importance_level" DbTableMultiRelated="False" DbDisplayName="importance_level" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <importance_rank DbColumnName="importance_rank" DbTableMultiRelated="False" DbDisplayName="importance_rank" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Dam_Area_PartList>
+      <DeviceList DbColumnName="Device" DbTableMultiRelated="True" DbDisplayName="DeviceList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="1,1" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <measure_id DbColumnName="measure_id" DbTableMultiRelated="False" DbDisplayName="measure_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <area DbColumnName="area" DbTableMultiRelated="False" DbDisplayName="area" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <location01 DbColumnName="location01" DbTableMultiRelated="False" DbDisplayName="location01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <location02 DbColumnName="location02" DbTableMultiRelated="False" DbDisplayName="location02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <location03 DbColumnName="location03" DbTableMultiRelated="False" DbDisplayName="location03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content01 DbColumnName="content01" DbTableMultiRelated="False" DbDisplayName="content01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <thread_id DbColumnName="thread_id" DbTableMultiRelated="False" DbDisplayName="thread_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <device_type DbColumnName="device_type" DbTableMultiRelated="False" DbDisplayName="device_type" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <area_id DbColumnName="area_id" DbTableMultiRelated="False" DbDisplayName="area_id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </DeviceList>
+      <Mapping_Table_NameList DbColumnName="Mapping_Table_Name" DbTableMultiRelated="True" DbDisplayName="Mapping_Table_NameList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="1,1" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <result_device_name DbColumnName="result_device_name" DbTableMultiRelated="False" DbDisplayName="result_device_name" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <device_name DbColumnName="device_name" DbTableMultiRelated="False" DbDisplayName="device_name" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <confirm DbColumnName="confirm" DbTableMultiRelated="False" DbDisplayName="confirm" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <daily DbColumnName="daily" DbTableMultiRelated="False" DbDisplayName="daily" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Mapping_Table_NameList>
+      <Reservoir_DisasterList DbColumnName="Reservoir_Disaster" DbTableMultiRelated="True" DbDisplayName="Reservoir_DisasterList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="1,1" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <disaster_number DbColumnName="disaster_number" DbTableMultiRelated="False" DbDisplayName="disaster_number" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <scale_volume DbColumnName="scale_volume" DbTableMultiRelated="False" DbDisplayName="scale_volume" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <distance DbColumnName="distance" DbTableMultiRelated="False" DbDisplayName="distance" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <trend DbColumnName="trend" DbTableMultiRelated="False" DbDisplayName="trend" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <direct_threat DbColumnName="direct_threat" DbTableMultiRelated="False" DbDisplayName="direct_threat" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <indirect_threat DbColumnName="indirect_threat" DbTableMultiRelated="False" DbDisplayName="indirect_threat" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <disaster_level DbColumnName="disaster_level" DbTableMultiRelated="False" DbDisplayName="disaster_level" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <disaster_name DbColumnName="disaster_name" DbTableMultiRelated="False" DbDisplayName="disaster_name" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isSure DbColumnName="isSure" DbTableMultiRelated="False" DbDisplayName="isSure" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <describe DbColumnName="describe" DbTableMultiRelated="False" DbDisplayName="describe" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content01 DbColumnName="content01" DbTableMultiRelated="False" DbDisplayName="content01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Reservoir_DisasterList>
+      <Reservoir_FisheryList DbColumnName="Reservoir_Fishery" DbTableMultiRelated="True" DbDisplayName="Reservoir_FisheryList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="1,1" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <name DbColumnName="name" DbTableMultiRelated="False" DbDisplayName="name" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <location DbColumnName="location" DbTableMultiRelated="False" DbDisplayName="location" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <contacts DbColumnName="contacts" DbTableMultiRelated="False" DbDisplayName="contacts" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <telephone DbColumnName="telephone" DbTableMultiRelated="False" DbDisplayName="telephone" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isExist DbColumnName="isExist" DbTableMultiRelated="False" DbDisplayName="isExist" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content01 DbColumnName="content01" DbTableMultiRelated="False" DbDisplayName="content01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Reservoir_FisheryList>
+      <Reservoir_SandList DbColumnName="Reservoir_Sand" DbTableMultiRelated="True" DbDisplayName="Reservoir_SandList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="1,1" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <name DbColumnName="name" DbTableMultiRelated="False" DbDisplayName="name" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <location DbColumnName="location" DbTableMultiRelated="False" DbDisplayName="location" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <contacts DbColumnName="contacts" DbTableMultiRelated="False" DbDisplayName="contacts" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <telephone DbColumnName="telephone" DbTableMultiRelated="False" DbDisplayName="telephone" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isExist DbColumnName="isExist" DbTableMultiRelated="False" DbDisplayName="isExist" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content01 DbColumnName="content01" DbTableMultiRelated="False" DbDisplayName="content01" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content02 DbColumnName="content02" DbTableMultiRelated="False" DbDisplayName="content02" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <content03 DbColumnName="content03" DbTableMultiRelated="False" DbDisplayName="content03" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </Reservoir_SandList>
+      <ProblemRankList DbColumnName="ProblemRank" DbTableMultiRelated="True" DbDisplayName="ProblemRankList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="1,1" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <Rankname DbColumnName="Rankname" DbTableMultiRelated="False" DbDisplayName="Rankname" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </ProblemRankList>
+      <IsSolvedList DbColumnName="IsSolved" DbTableMultiRelated="True" DbDisplayName="IsSolvedList" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="1,1" IsVirtual="False">
+        <id DbColumnName="id" DbTableMultiRelated="False" DbDisplayName="id" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+        <isORnot DbColumnName="isORnot" DbTableMultiRelated="False" DbDisplayName="isORnot" BuildJsonFile="False" NodeSelectable="False" DbCustomizedSql="" DbCustomizedSqlParameters="" IsVirtual="False" />
+      </IsSolvedList>
+    </def>
+  </ExportTree>
+  <ImportTree DbBaseTableConnectString="Data Source=121.248.200.5;Initial Catalog=LCRiverRouting_MW;User ID=sa;Password=amon@1991;" />
+  <UserTable DbBaseTableConnectString="" UserName="username" Password="password" UserTable="" />
+</Setting>

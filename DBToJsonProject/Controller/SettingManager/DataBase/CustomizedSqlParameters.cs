@@ -4,7 +4,8 @@ using System.Linq;
 
 namespace DBToJsonProject.Controller.SettingManager
 {
-    public class UnSolvedParametersEXception : Exception
+    [Serializable]
+    public class UnSolvedParametersException : Exception
     {
         public override string Message
         {
@@ -69,7 +70,7 @@ namespace DBToJsonProject.Controller.SettingManager
                             if (n == null)
                                 break;
                             if (!n.ChildNodes.TryGetValue(i, out n))
-                                throw new UnSolvedParametersEXception()
+                                throw new UnSolvedParametersException()
                                 {
                                     ParaName = argv,
                                     Node = current.JsonNodeName

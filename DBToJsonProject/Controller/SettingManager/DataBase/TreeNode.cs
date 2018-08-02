@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DBToJsonProject.Controller.SettingManager
 {
-    public class TreeNode : IJsonTreeNode
+    internal class TreeNode : IJsonTreeNode
     {
         public TreeNode(string jsonNodeName, string dbName, string displayName, IJsonTreeNode parent, bool multiRelated, bool buildSingleFile, bool selectable, bool virtualNode)
         {
@@ -59,36 +59,66 @@ namespace DBToJsonProject.Controller.SettingManager
         /// 自定义查询
         /// </summary>
         public ICustomizedSqlDescriber Sql { get; set; }
-
-        public bool IsDBColumn
-        {
+        public bool IsDBColumn {
             get
             {
-                bool r = true;
-                foreach (IJsonTreeNode n in this.ChildNodes.Values)
-                    if (!n.IsSelectionParameter)
-                        r = false;
-                return r && !this.IsSelectionParameter;
-            }
-        }
-        public bool HasSelectionNode
-        {
-            get
-            {
-                bool r = false;
-                foreach (IJsonTreeNode n in this.ChildNodes.Values)
-                    if (n.IsSelectionParameter)
-                        r = true;
-                return r;
+                if (!isDbColumn.HasValue)
+                    initExtendedAttribute();
+                return isDbColumn.Value;
             }
         }
         public bool IsDbTable
         {
             get
             {
-                return !IsDBColumn && !IsSelectionParameter;
+                if (!isDbTable.HasValue)
+                    initExtendedAttribute();
+                return isDbTable.Value;
             }
         }
+        public bool HasSelectionNode
+        {
+            get
+            {
+                if (!hasSelectionNode.HasValue)
+                    initExtendedAttribute();
+                return hasSelectionNode.Value;
+            }
+        }
+        public bool IsSelectionNode
+        {
+            get
+            {
+                if (!isSelectionNode.HasValue)
+                    initExtendedAttribute();
+                return isSelectionNode.Value;
+            }
+        }
+
+        private void initExtendedAttribute()
+        {
+            bool r = true;
+            hasSelectionNode = false;
+
+            foreach (TreeNode n in this.ChildNodes.Values)
+            {
+                if (n.IsSelectionNode)
+                    hasSelectionNode |= true;
+                if (!n.IsSelectionParameter)
+                    r = false;
+            }
+            isDbColumn = r && !this.IsSelectionParameter;
+            isSelectionNode = r && (this.ChildNodes.Count != 0);
+            isDbTable = !isDbColumn.Value && !IsSelectionParameter;
+            IsSelected = true;
+        }
+        
+        private bool? isSelectionNode;
+        private bool? isDbColumn;
+        private bool? isDbTable;
+        private bool? hasSelectionNode;
+        public bool IsSelected { get; set; }
+
         public bool Equals(IJsonTreeNode obj)
         {
             if (this.JsonNodeName == obj.JsonNodeName)

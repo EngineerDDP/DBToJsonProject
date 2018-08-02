@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:DBToJsonProject.Views.WorkSpace"
       xmlns:models="clr-namespace:DBToJsonProject.Models"
+      xmlns:style="clr-namespace:DBToJsonProject.Views.Style"
       xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
       mc:Ignorable="d" 
       Loaded="Page_Loaded"
@@ -15,7 +16,7 @@
         <DataTemplate x:Key="xNodeItemTemplate" DataType="{x:Type models:SelectableJsonNode}">
             <DataTemplate.Resources>
                 <Style TargetType="CheckBox">
-                    <Setter Property="MinWidth" Value="340"/>
+                    <Setter Property="MinWidth" Value="330"/>
                     <Setter Property="IsEnabled" Value="{Binding ElementName=Btn_ExecuteExport,Path=IsEnabled,Mode=OneWay}"/>
                     <Style.Triggers>
                         <Trigger Property="IsChecked" Value="False">
@@ -62,8 +63,82 @@
         <DataTemplate x:Key="xListItemHeadTemplate" DataType="{x:Type models:SelectableJsonList}">
             <TextBlock FontSize="13" Foreground="#003366" Text="{Binding Path=Name}"/>
         </DataTemplate>
+
+        <Style TargetType="{x:Type style:BulletCheckBox}">
+            <Setter Property="Background" Value="#FF5B9BD5"></Setter>
+            <Setter Property="Foreground">
+                <Setter.Value>
+                    <SolidColorBrush Color="White" Opacity="0.8"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="CheckedForeground" Value="White"></Setter>
+            <Setter Property="CheckedBackground" Value="#FF5B9BD5"></Setter>
+            <Setter Property="FontSize" Value="13"></Setter>
+            <Setter Property="Cursor" Value="Hand"></Setter>
+            <Setter Property="Width" Value="58"></Setter>
+            <Setter Property="Height" Value="28"></Setter>
+            <Setter Property="Margin" Value="1"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <!--控件模板-->
+                    <ControlTemplate TargetType="{x:Type style:BulletCheckBox}">
+                        <Viewbox Stretch="Uniform"  VerticalAlignment="Center" HorizontalAlignment="Left">
+                            <Border x:Name="border" Width="58" Height="28" SnapsToDevicePixels="True"
+                                Margin="{TemplateBinding Margin}" CornerRadius="14" Background="{TemplateBinding Background}">
+                                <StackPanel Orientation="Horizontal">
+                                    <!--状态球-->
+                                    <Border x:Name="state" Width="24" Height="24" Margin="3,0,1,0" CornerRadius="12" SnapsToDevicePixels="True"
+                                    Background="{TemplateBinding Foreground}">
+                                        <Border.RenderTransform>
+                                            <TranslateTransform x:Name="transState" X="0"></TranslateTransform>
+                                        </Border.RenderTransform>
+                                    </Border>
+                                    <!--文本框-->
+                                    <TextBlock Width="24" Foreground="{TemplateBinding Foreground}" x:Name="txt" Text="{TemplateBinding Text}" VerticalAlignment="Center" TextAlignment="Center">
+                                        <TextBlock.RenderTransform>
+                                            <TranslateTransform x:Name="transTxt" X="0"></TranslateTransform>
+                                        </TextBlock.RenderTransform>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Border>
+                        </Viewbox>
+
+                        <!--触发器：设置选中状态符号-->
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Text" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=CheckedText}" TargetName="txt"/>
+                                <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=CheckedForeground}" TargetName="state"/>
+                                <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=CheckedForeground}" TargetName="txt"/>
+                                <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=CheckedBackground}" TargetName="border"/>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="transState" Storyboard.TargetProperty="X" To="27" Duration="0:0:0.2" />
+                                            <DoubleAnimation Storyboard.TargetName="transTxt" Storyboard.TargetProperty="X" To="-24" Duration="0:0:0.2" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="transState" Storyboard.TargetProperty="X" To="0" Duration="0:0:0.2" />
+                                            <DoubleAnimation Storyboard.TargetName="transTxt" Storyboard.TargetProperty="X" To="0" Duration="0:0:0.2" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Opacity" Value="100" TargetName="border"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Page.Resources>
-    
+
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="7*"/>
@@ -101,12 +176,22 @@
                             <StackPanel Orientation="Vertical">
                                 <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,2">
                                     <Label>选择导出的起始时间：</Label>
-                                    <DatePicker Name="Date_DBDateBegin" IsEnabled="{Binding ElementName=Btn_ExecuteExport,Path=IsEnabled,Mode=OneWay}"></DatePicker>
+                                    <DatePicker x:Name="Date_DBDateBegin" IsEnabled="{Binding IsEnabled, ElementName=Btn_ExecuteExport, Mode=OneWay}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label>导出图片</Label>
+                                        <style:BulletCheckBox Height="23" x:Name="Chk_ExportImg" CheckedText="是" Text="否"></style:BulletCheckBox>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label>导出视频</Label>
+                                        <style:BulletCheckBox Height="23" x:Name="Chk_ExportVdo" CheckedText="是" Text="否"></style:BulletCheckBox>
+                                    </StackPanel>
                                 </StackPanel>
                                 <Label>选择要导出的类别</Label>
                             </StackPanel>
-                            <Image Grid.Column="1" Visibility="{Binding ElementName=Btn_ExecuteExport,Path=IsEnabled,Mode=OneWay}" Source="/Images/icons/PC2phone_static.png" Height="50"></Image>
-                            <Image Grid.Column="1" Name="Img_Working" Visibility="Hidden" gif:AnimationBehavior.SourceUri="/Images/icons/PC2phone2.gif" Height="50"></Image>
+                            <Image Grid.Column="1" Visibility="Visible" Panel.ZIndex="0" Source="/Images/icons/PC2phone_static.png" Height="50"></Image>
+                            <Image Grid.Column="1" Name="Img_Working" Panel.ZIndex="1" Visibility="Hidden" gif:AnimationBehavior.SourceUri="/Images/icons/PC2phone.gif" Height="50"></Image>
                         </Grid>
 
                         <Border Grid.Row="1">
@@ -138,6 +223,11 @@
                             <MenuItem Name="Opt_CopyFileName" Click="Opt_CopyFileName_Click" Header="复制文件名"></MenuItem>
                         </ContextMenu>
                     </ListBox.ContextMenu>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type models:FileExpression}">
+                            <TextBlock Text="{Binding Path=FileName}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
                 </ListBox>
             </Grid>
         </Grid>

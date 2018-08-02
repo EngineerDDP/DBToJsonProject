@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace DBToJsonProject.Controller
 {
-    class ApplicationControl : IApplicationControl
+    class ApplicationControl : IApplicationControl, IDisposable
     {
         /// <summary>
         /// 登录窗口
@@ -50,6 +50,10 @@ namespace DBToJsonProject.Controller
         /// </summary>
         private ITask task;
         /// <summary>
+        /// 目标文件列表
+        /// </summary>
+        private List<FileExpression> files;
+        /// <summary>
         /// 初始化资源
         /// </summary>
         public ApplicationControl()
@@ -60,6 +64,8 @@ namespace DBToJsonProject.Controller
             welcomePage = new WelcomePage();
             importPage = new ImportPage();
             exportPage = new ExportPage();
+
+            files = new List<FileExpression>();
         }
         
         public LoginWindow Login { get => login; set => login = value; }
@@ -70,6 +76,7 @@ namespace DBToJsonProject.Controller
         public void Startup()
         {
             RegisterWindows();
+            SetWindowSize();
             Login.Show();
 
             //初始化用户记录
@@ -90,6 +97,20 @@ namespace DBToJsonProject.Controller
             }
         }
         /// <summary>
+        /// 设置窗口大小
+        /// </summary>
+        private void SetWindowSize()
+        {
+            UseDispatcher(work, () =>
+             {
+                 work.Width = AppSetting.Default.WindowWidth;
+                 work.Height = AppSetting.Default.WindowHeight;
+                 work.Left = AppSetting.Default.WindowLeft;
+                 Work.Top = AppSetting.Default.WindowTop;
+             });
+        }
+
+        /// <summary>
         /// 重载页面
         /// </summary>
         private void ReLoadPages()
@@ -107,9 +128,41 @@ namespace DBToJsonProject.Controller
             welcomePage.OnNavigateToExport += NavigateToExport;
             welcomePage.OnNavigateToImPort += NavigateToImPort;
 
-            exportPage.ExecuteExportCmd += ExecuteExportCmd;
+            exportPage.ExecuteCmd += ExecuteExportCmd;
             exportPage.SelectionUpdated += Export_SelectionUpdated;
             exportPage.CancelExcution += ExportPage_CancelExcution;
+
+            importPage.ExecuteCmd += ExecuteImportCmd;
+            importPage.SelectionUpdated += ImportPage_SelectionUpdated;
+            importPage.CancelExcution += ImportPage_CancelExcution;
+        }
+
+        private void ImportPage_CancelExcution(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ImportPage_SelectionUpdated(object sender, SelectCollection e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ExecuteImportCmd(object sender, CmdExecuteArgs e)
+        {
+            if (task == null || task.Complete)
+            {
+                task = new ImportTask();
+
+                task.UpdateProgressInfo += T_UpdateProgressInfo;
+                task.PostErrorAndAbort += T_PostErrorAndAbort;
+                task.OnFileOperation += Task_OnFileOperation;
+                task.Run();
+                files.Clear();
+            }
+            else
+            {
+                PostAnCriticalError("有任务进行中，无法启动新任务。");
+            }
         }
 
         private void ExportPage_CancelExcution(object sender, EventArgs e)
@@ -148,7 +201,7 @@ namespace DBToJsonProject.Controller
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ExecuteExportCmd(object sender, ExportCmdExecuteArgs e)
+        private void ExecuteExportCmd(object sender, CmdExecuteArgs e)
         {
             if (task == null || task.Complete)
             {
@@ -156,23 +209,38 @@ namespace DBToJsonProject.Controller
                                 DBSettings.Default.DBConnectStr :
                                 DBSettings.Default.ExportRoot.DbConnectStr;
 
-                List<SelectableJsonNode> sel = new List<SelectableJsonNode>();
-                foreach (SelectableJsonList l in e.Selections.Source)
-                {
-                    sel.AddRange(l.Nodes);
-                }
-                DBSettings.Default.SetupBuildFiles(e.Selections);
+                DBSettings.Default.SetupBuildSelections(e.Selections);
 
-                task = new ExportTask(con, sel.ToArray(), DBSettings.Default.ExportRoot, e.SpecifiedQuaryStringArgs);
+                task = new ExportTask(con, DBSettings.Default.ExportRoot, e.SpecifiedQuaryStringArgs);
+
                 task.UpdateProgressInfo += T_UpdateProgressInfo;
                 task.PostErrorAndAbort += T_PostErrorAndAbort;
+                task.OnFileOperation += Task_OnFileOperation;
                 task.Run();
+                files.Clear();
             }
             else
             {
                 PostAnCriticalError("有任务进行中，无法启动新任务。");
             }
         }
+        /// <summary>
+        /// 文件操作
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Task_OnFileOperation(object sender, FileEventArgs e)
+        {
+            files.Add(e);
+            UseDispatcher(exportPage, () => {
+                exportPage.UpdateFileList(files);
+            });
+            UseDispatcher(importPage, () =>
+            {
+                importPage.UpdateFileList(files);
+            });
+        }
+
         /// <summary>
         /// 任务中止
         /// </summary>
@@ -200,7 +268,10 @@ namespace DBToJsonProject.Controller
             {
                 exportPage.TaskPostBack(e);
             });
-
+            UseDispatcher(importPage, () =>
+            {
+                importPage.TaskPostBack(e);
+            });
         }
 
         /// <summary>
@@ -304,9 +375,11 @@ namespace DBToJsonProject.Controller
             SelectCollection selections = DBSettings.Default.BuildSelections();
             //使用用户设置预选集合
             userSetting.LoadSelections(ref selections);
-            //更新选择集合
+            //导航至ExportPage
+            UseDispatcher(work, () => { work.SetNavigate(exportPage); });
             UseDispatcher(exportPage, () =>
             {
+                //更新选择集合
                 exportPage.SetupSelections(selections);
                 exportPage.UpdatePageInfos(new ExportPageInfoEventArgs()
                 {
@@ -321,8 +394,6 @@ namespace DBToJsonProject.Controller
                     }
                 });
             });
-            //导航至ExportPage
-            UseDispatcher(work, () => { work.SetNavigate(exportPage); });
         }
         /// <summary>
         /// 设置数据库
@@ -375,10 +446,17 @@ namespace DBToJsonProject.Controller
         private void AppExited(object sender, EventArgs args)
         {
             task?.Cancel();
+            SaveWindowSize();
             CloseMainWindow();
             SaveData();
         }
-
+        private void SaveWindowSize()
+        {
+            AppSetting.Default.WindowLeft = work.Left;
+            AppSetting.Default.WindowTop = work.Top;
+            AppSetting.Default.WindowHeight = work.Height;
+            AppSetting.Default.WindowWidth = work.Width;
+        }
         /// <summary>
         /// 关闭主要窗格
         /// </summary>
@@ -440,6 +518,11 @@ namespace DBToJsonProject.Controller
         {
             SetupErrorBox("严重错误", msg);
             CloseMainWindow();
+        }
+
+        public void Dispose()
+        {
+            task.Dispose();
         }
     }
 }

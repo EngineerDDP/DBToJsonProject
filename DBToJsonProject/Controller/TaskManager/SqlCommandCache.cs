@@ -104,8 +104,7 @@ namespace DBToJsonProject.Controller.TaskManager
 
             foreach (ParameterCache para in paras)
             {
-                args[i] = para.GetParam(obj);
-                if(String.IsNullOrEmpty(args[i]))
+                if(!para.GetParam(obj, out args[i]))
                 {
                     return String.Empty;
                 }

@@ -23,6 +23,18 @@ namespace DBToJsonProject.Models
         }
         public IJsonTreeNode Node { get; set; }
         public string Name { get; set; }
-        public ObservableCollection<SelectableJsonNode> Nodes { get; set; }
+        private ObservableCollection<SelectableJsonNode> nodes;
+        public ObservableCollection<SelectableJsonNode> Nodes
+        {
+            get
+            {
+                return nodes;
+            }
+            set
+            {
+                nodes = value;
+                base.UpdatePropertyChange("Nodes");
+            }
+        }
     }
 }

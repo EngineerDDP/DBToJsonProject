@@ -17,6 +17,8 @@
             <Setter Property="MaxWidth" Value="180"/>
             <Setter Property="MaxLines" Value="4"/>
         </Style>
+        <local:SelectionCanNew x:Key="NewEnable"/>
+        <local:SelectionCanDel x:Key="DelEnable"/>
     </Window.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
@@ -247,8 +249,12 @@
                                 <TextBox Name="Txt_ExParameters" Text="{Binding ElementName=Tree_Export,Path=SelectedItem.CustomizedSqlParameters,Mode=TwoWay}"></TextBox>
                             </StackPanel>
                             <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Button Name="Btn_NewExEntity" Click="Btn_NewExEntity_Click"  Width="30" Margin="2,0" IsEnabled="{Binding ElementName=Tree_Export,Path=SelectedItem,TargetNullValue=False}" HorizontalAlignment="Right">新建</Button>
-                                <Button Name="Btn_DelExEntity" Click="Btn_DelExEntity_Click"  Width="30" Margin="2,0" IsEnabled="{Binding ElementName=Tree_Export,Path=SelectedItem.Parent,TargetNullValue=False}" HorizontalAlignment="Right">删除</Button>
+                                <Button Name="Btn_NewExEntity" Click="Btn_NewExEntity_Click"  Width="30" Margin="2,0" 
+                                        IsEnabled="{Binding ElementName=Tree_Export,Path=SelectedItem,Converter={StaticResource NewEnable},Mode=OneWay}" 
+                                        HorizontalAlignment="Right">新建</Button>
+                                <Button Name="Btn_DelExEntity" Click="Btn_DelExEntity_Click"  Width="30" Margin="2,0" 
+                                        IsEnabled="{Binding ElementName=Tree_Export,Path=SelectedItem,Converter={StaticResource DelEnable},Mode=OneWay}" 
+                                        HorizontalAlignment="Right">删除</Button>
                             </StackPanel>
                         </Grid>
                     </Grid>

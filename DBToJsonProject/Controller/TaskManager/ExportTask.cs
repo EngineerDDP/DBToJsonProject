@@ -43,6 +43,11 @@ namespace DBToJsonProject.Controller.TaskManager
         {
             return String.Format("构造文件 \"{0}\" ", name);
         }
+        public static string Progress(int i)
+        {
+            return String.Format("进度 ({0}/100)", i);
+        }
+        public static readonly string PostExecute = "导出文件到Pad";
         public static readonly string Canceled = "任务被取消";
         public static readonly string Working = "工作进行中...";
         public static readonly string ready = "准备就绪";
@@ -197,7 +202,8 @@ namespace DBToJsonProject.Controller.TaskManager
             process.StartInfo = new System.Diagnostics.ProcessStartInfo()
             {
                 FileName = "java",
-                Arguments = "-jar " + "./DataSynchronize_EX.jar " + SpecifiedQuaryStringsArgs[0].Replace('\'', ' ') + " " + Environment.CurrentDirectory + " /" + AppSetting.Default.ExportWorkFolder,
+                Arguments = "-jar " + "./DataSynchronize_EX.jar " + SpecifiedQuaryStringsArgs[0].Replace('\'', ' ') + " " 
+                                    + Environment.CurrentDirectory + "/" + AppSetting.Default.ExportWorkFolder,
                 UseShellExecute = false,
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
@@ -207,16 +213,22 @@ namespace DBToJsonProject.Controller.TaskManager
             process.Start();
             StreamReader sr = process.StandardOutput;
 
-            while (!process.HasExited)
+            Update(UpdateStrings.PostExecute);
+
+            while (process?.HasExited == false)
             {
-                string str = sr.ReadToEnd();
+                string str = sr.ReadLine();
                 int i;
-                if (Int32.TryParse(str.Split(' ')[0], out i))
-                    stageProgress = i;
+                if (str?.Split(' ').Length > 0)
+                    if (Int32.TryParse(str.Split(' ')[0], out i))
+                    {
+                        stageProgress = i;
+                        loginfo = UpdateStrings.Progress(i);
+                    }
                 if (CancelProcess)
-                    process.Kill();
+                    process?.Kill();
             }
-            process.Dispose();
+            process?.Dispose();
         }
         /// <summary>
         /// 填充JsonObject
@@ -347,11 +359,14 @@ namespace DBToJsonProject.Controller.TaskManager
                     }
                     else
                     {
+                        stageProgress = 0;
                         obj = await FillJsonObjectAsync(node, s);
                         buildstate = await buildChildsAsync(node, obj as JObject);
+                        stageProgress = 100;
                     }
+                    totalProgress = Math.Min(i * (100 / detial.roots.Count) + (stageProgress / detial.roots.Count), 99);
                 }
-                if(buildstate)
+                if (buildstate)
                     WriteFile(obj, node.JsonNodeName);
                 i++;
             }

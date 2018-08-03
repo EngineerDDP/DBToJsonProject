@@ -87,53 +87,49 @@ namespace DBToJsonProject.TaskManager
                 return arr;
 
             List<String> crruptedColumName = null;
-            await Task.Run(async () =>
+            try
             {
+                SqlDataReader reader;
 
-                try
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = sqlCon;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = sqlCommand;
+
+                reader = await cmd.ExecuteReaderAsync();
+
+                while (reader.Read())
                 {
-                    SqlDataReader reader;
-
-                    SqlCommand cmd = new SqlCommand();
-                    cmd.Connection = sqlCon;
-                    cmd.CommandType = CommandType.Text;
-                    cmd.CommandText = sqlCommand;
-
-                    reader = await cmd.ExecuteReaderAsync();
-
-                    while (reader.Read())
+                    JObject obj = new JObject();
+                    for (int i = 0; i < sampleColumns.Count(); ++i)
                     {
-                        JObject obj = new JObject();
-                        for (int i = 0; i < sampleColumns.Count(); ++i)
-                        {
-                            await Task.Run(() =>
+                        if (String.IsNullOrEmpty(sampleColumns[i]))
+                            continue;
+                        await Task.Run(() => { 
+                            try
                             {
-                                try
-                                {
 
-                                    obj.Add(targetColumns[i], reader[sampleColumns[i]].ToString());
+                                obj.Add(targetColumns[i], reader[sampleColumns[i]].ToString());
 
-                                }
-                                catch (IndexOutOfRangeException)
-                                {
-                                    if (crruptedColumName == null)
-                                        crruptedColumName = new List<string>();
-                                    crruptedColumName.Add(sampleColumns[i]);
-                                    sampleColumns[i] = String.Empty;
-                                }
-                            });
-                        }
-                        arr.Add(obj);
+                            }
+                            catch (IndexOutOfRangeException)
+                            {
+                                if (crruptedColumName == null)
+                                    crruptedColumName = new List<string>();
+                                crruptedColumName.Add(sampleColumns[i]);
+                                sampleColumns[i] = String.Empty;
+                            }
+                        });
                     }
-                    reader.Close();
+                    arr.Add(obj);
                 }
-                catch (SqlException e)
-                {
-                    Console.WriteLine(sqlCommand);
-                    Console.WriteLine(e.Message);
-                }
-
-            });
+                reader.Close();
+            }
+            catch (SqlException e)
+            {
+                Console.WriteLine(sqlCommand);
+                Console.WriteLine(e.Message);
+            }
             if (crruptedColumName != null && crruptedColumName.Count != 0)
                 DBColumnDosentExist?.Invoke(this, new DBColumnDosentExistEvent()
                 {

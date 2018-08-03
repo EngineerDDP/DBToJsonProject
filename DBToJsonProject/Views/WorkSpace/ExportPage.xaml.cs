@@ -6,9 +6,31 @@ using DBToJsonProject.Models;
 using DBToJsonProject.Controller.SettingManager;
 using DBToJsonProject.Models.EventArguments;
 using System.Collections.ObjectModel;
+using System.Windows.Data;
+using System.Globalization;
 
 namespace DBToJsonProject.Views.WorkSpace
 {
+    public class SelectAll : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            IEnumerable<SelectableJsonNode> val = value as IEnumerable<SelectableJsonNode>;
+            if(val != null)
+            {
+                foreach (SelectableJsonNode n in val)
+                    if (!n.IsChecked)
+                        return false;
+                return true;
+            }
+            return false;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
     /// <summary>
     /// ExportPage.xaml 的交互逻辑
     /// </summary>

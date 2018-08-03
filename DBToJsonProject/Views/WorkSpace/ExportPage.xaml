@@ -12,6 +12,7 @@
       d:DesignHeight="400" d:DesignWidth="700"
       Title="ExportPage">
     <Page.Resources>
+        <local:SelectAll x:Key="SelectAllCov"/>
         <!--绑定选择子项-->
         <DataTemplate x:Key="xNodeItemTemplate" DataType="{x:Type models:SelectableJsonNode}">
             <DataTemplate.Resources>
@@ -55,7 +56,8 @@
                     </Border>
                 </ScrollViewer>
                 <Grid Grid.Row="1" HorizontalAlignment="Right">
-                    <CheckBox IsEnabled="{Binding ElementName=Btn_ExecuteExport,Path=IsEnabled,Mode=OneWay}" Checked="CheckBox_CheckAll_Checked" Unchecked="CheckBox_CheckAll_Unchecked">全选</CheckBox>
+                    <CheckBox IsEnabled="{Binding ElementName=Btn_ExecuteExport,Path=IsEnabled,Mode=OneWay}" IsChecked="{Binding Path=Nodes,Converter={StaticResource SelectAllCov},Mode=OneWay}" 
+                              Checked="CheckBox_CheckAll_Checked" Unchecked="CheckBox_CheckAll_Unchecked">全选</CheckBox>
                 </Grid>
             </Grid>
         </DataTemplate>

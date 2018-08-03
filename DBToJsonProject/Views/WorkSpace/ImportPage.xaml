@@ -40,7 +40,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
-                            <Image Grid.Column="1" Visibility="{Binding ElementName=Btn_ExecuteImport,Path=IsEnabled,Mode=OneWay}" Source="/Images/icons/phone2PC_static.png" Height="50"></Image>
+                            <Image Grid.Column="1" Visibility="Visible" Source="/Images/icons/phone2PC_static.png" Height="50"></Image>
                             <Image Grid.Column="1" Name="Img_Working" Visibility="Hidden" gif:AnimationBehavior.SourceUri="/Images/icons/phone2PC.gif" Height="50"></Image>
                         </Grid>
                         <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">

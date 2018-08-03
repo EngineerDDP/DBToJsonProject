@@ -10,9 +10,38 @@ using DBToJsonProject.Models;
 using static DBToJsonProject.Controller.SettingManager.DBSettings;
 using System.Windows.Input;
 using System.Windows.Data;
+using System.Globalization;
 
 namespace DBToJsonProject.Views.WorkSpace
 {
+    public class SelectionCanNew : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value != null)
+                return true;
+            return false;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class SelectionCanDel : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if ((value as PropertyNodeItem)?.Parent != null)
+                return true;
+            return false;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
     /// <summary>
     /// DbSettingToolBox.xaml 的交互逻辑
     /// </summary>

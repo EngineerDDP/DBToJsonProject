@@ -7,51 +7,6 @@ using Newtonsoft.Json.Linq;
 namespace DBToJsonProject.Controller.TaskManager
 {
     /// <summary>
-    /// 缓存Sql查询语句
-    /// </summary>
-    internal class SqlCommandCache
-    {
-        private static readonly string Nonsence = String.Empty;
-        private ParameterCache[] paras;
-        private string sqlTemplate;
-
-        public SqlCommandCache(ICustomizedSqlDescriber describer, IJsonTreeNode parent, String dbname)
-        {
-            sqlTemplate = describer.HasCustomizeSQLString ?
-                describer.CustomizeSQLString :
-                String.Format("Select * From {0} Where ", dbname) + "{0} = {1};";
-            
-            int i = 0;
-            paras = new ParameterCache[describer.Params.Parameters.Count];
-            foreach(Parameter p in describer.Params.Parameters)
-            {
-                paras[i] = new ParameterCache(p, parent);
-                i++;
-            }
-        }
-        public string GetInstance(JObject obj)
-        {
-            int i = 0;
-            string[] args = new string[paras.Length];
-
-            foreach (ParameterCache para in paras)
-            {
-                args[i] = para.GetParam(obj);
-                if(String.IsNullOrEmpty(args[i]))
-                {
-                    return String.Empty;
-                }
-                i++;
-            }
-
-            return String.Format(sqlTemplate, args);
-        }
-        public string GetInstance(String[] args)
-        {
-            return String.Format(sqlTemplate, args);
-        }
-    }
-    /// <summary>
     /// 缓存参数回溯路径
     /// </summary>
     internal class ParameterCache
@@ -84,22 +39,26 @@ namespace DBToJsonProject.Controller.TaskManager
                 ChildRoute = trace.ToArray();
             }
         }
-        private string ConcatStringParas(JArray array, String paraName)
+        private bool ConcatStringParas(JArray array, String paraName, out string str)
         {
-            String result = String.Empty;
+            str = "";
+            String result = " ";
             foreach (JObject i in array)
             {
-                result += i[paraName] + ",";
+                if (String.IsNullOrWhiteSpace((string)i[paraName]))
+                    return false;
+                result += (string)i[paraName] + ",";
             }
-            result = "(" + result.Substring(0, result.Length - 1) + ")";
+            str = "(" + result.Substring(0, result.Length - 1) + ")";
 
-            return result;
+            return true;
         }
-        public string GetParam(JObject o)
+        public bool GetParam(JObject o, out String str)
         {
+            str = String.Empty;
             if (IsString)
             {
-                return ChildRoute[0];
+                str = ChildRoute[0];
             }
             else
             {
@@ -109,15 +68,20 @@ namespace DBToJsonProject.Controller.TaskManager
                 for (i = 0; i < ChildRoute.Length - 1; ++i)
                 {
                     v = v[ChildRoute[i]];
+                    if (v.Count() == 0)
+                        return false;
                 }
 
-                if (v.Count() == 0)
-                    return String.Empty;
                 if (v.Type == JTokenType.Array)             //目标是数组，取所有值
-                    return ConcatStringParas(v as JArray, ChildRoute[i]);
+                {
+                    return ConcatStringParas(v as JArray, ChildRoute[i], out str);
+                }
                 else
-                    return (string)v[ChildRoute[i]];
+                {
+                    str = String.Format("({0})", (string)v[ChildRoute[i]]);
+                }
             }
+            return true;
         }
     }
 }

@@ -6,10 +6,11 @@ using System.Text;
 
 namespace DBToJsonProject.Controller.TaskManager
 {
-    interface ITask
+    interface ITask : IDisposable
     {
         event EventHandler<StringEventArgs> PostErrorAndAbort;
         event EventHandler<TaskPostBackEventArgs> UpdateProgressInfo;
+        event EventHandler<FileEventArgs> OnFileOperation;
         int Progress { get; }
         bool Complete { get; }
         void Run();

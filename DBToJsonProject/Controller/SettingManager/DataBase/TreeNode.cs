@@ -4,9 +4,9 @@ using System.Text;
 
 namespace DBToJsonProject.Controller.SettingManager
 {
-    public class TreeNode : IJsonTreeNode
+    internal class TreeNode : IJsonTreeNode
     {
-        public TreeNode(string jsonNodeName, string dbName, string displayName,IJsonTreeNode parent, bool multiRelated, bool buildSingleFile, bool selectable, bool virtualNode)
+        public TreeNode(string jsonNodeName, string dbName, string displayName, IJsonTreeNode parent, bool multiRelated, bool buildSingleFile, bool selectable, bool virtualNode)
         {
             JsonNodeName = jsonNodeName;
             DbName = dbName;
@@ -15,7 +15,7 @@ namespace DBToJsonProject.Controller.SettingManager
             MultiRelated = multiRelated;
             BuildSingleFile = buildSingleFile;
             Selectable = selectable;
-            VirtualNode = virtualNode;
+            IsSelectionParameter = virtualNode;
             ChildNodes = new Dictionary<string, IJsonTreeNode>();
         }
 
@@ -26,7 +26,7 @@ namespace DBToJsonProject.Controller.SettingManager
         /// <summary>
         /// 虚结点，不写入Json
         /// </summary>
-        public Boolean VirtualNode { get; set; }
+        public Boolean IsSelectionParameter { get; set; }
         /// <summary>
         /// 数据库中该节点对应实体名
         /// </summary>
@@ -59,46 +59,72 @@ namespace DBToJsonProject.Controller.SettingManager
         /// 自定义查询
         /// </summary>
         public ICustomizedSqlDescriber Sql { get; set; }
-
-        public bool IsDBColumn
-        {
+        public bool IsDBColumn {
             get
             {
-                bool r = true;
-                foreach (IJsonTreeNode n in this.ChildNodes.Values)
-                    if (!n.VirtualNode)
-                        r = false;
-                return r && !this.VirtualNode;
-            }
-        }
-        public bool HasVirtualNode
-        {
-            get
-            {
-                bool r = false;
-                foreach (IJsonTreeNode n in this.ChildNodes.Values)
-                    if (n.VirtualNode)
-                        r = true;
-                return r;
+                if (!isDbColumn.HasValue)
+                    initExtendedAttribute();
+                return isDbColumn.Value;
             }
         }
         public bool IsDbTable
         {
             get
             {
-                return !IsDBColumn && !VirtualNode;
+                if (!isDbTable.HasValue)
+                    initExtendedAttribute();
+                return isDbTable.Value;
             }
         }
+        public bool HasSelectionNode
+        {
+            get
+            {
+                if (!hasSelectionNode.HasValue)
+                    initExtendedAttribute();
+                return hasSelectionNode.Value;
+            }
+        }
+        public bool IsSelectionNode
+        {
+            get
+            {
+                if (!isSelectionNode.HasValue)
+                    initExtendedAttribute();
+                return isSelectionNode.Value;
+            }
+        }
+
+        private void initExtendedAttribute()
+        {
+            bool r = true;
+            hasSelectionNode = false;
+
+            foreach (TreeNode n in this.ChildNodes.Values)
+            {
+                if (n.IsSelectionNode)
+                    hasSelectionNode |= true;
+                if (!n.IsSelectionParameter)
+                    r = false;
+            }
+            isDbColumn = r && !this.IsSelectionParameter;
+            isSelectionNode = r && (this.ChildNodes.Count != 0);
+            isDbTable = !isDbColumn.Value && !IsSelectionParameter;
+            IsSelected = true;
+        }
+        
+        private bool? isSelectionNode;
+        private bool? isDbColumn;
+        private bool? isDbTable;
+        private bool? hasSelectionNode;
+        public bool IsSelected { get; set; }
+
         public bool Equals(IJsonTreeNode obj)
         {
             if (this.JsonNodeName == obj.JsonNodeName)
                 return Parent == null ? true : Parent.Equals(obj);
             else
                 return false;
-        }
-        public override int GetHashCode()
-        {
-            return JsonNodeName.GetHashCode();
         }
     }
 }

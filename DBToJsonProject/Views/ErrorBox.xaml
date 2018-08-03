@@ -8,7 +8,7 @@
         WindowStyle="SingleBorderWindow"
         ResizeMode="NoResize"
         Background="#FFF0F0F0"
-        Title="错误" Height="200" Width="400">
+        Title="错误" Height="220" Width="400">
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

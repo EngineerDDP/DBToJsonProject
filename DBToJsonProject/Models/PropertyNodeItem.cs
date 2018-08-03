@@ -6,21 +6,21 @@ using System.Collections.ObjectModel;
 namespace DBToJsonProject.Models
 {
     /// <summary>
-    /// 动态更新
+    /// 用于和前端交互的类。表示了Json结构与数据库结构的映射关系
     /// </summary>
     internal class PropertyNodeItem : NotifyProperty
     {
+        /// <summary>
+        /// 节点名称
+        /// </summary>
         private String name;
-        public String DisplayName {
-            get {
-                return name;
-            }
-            set
-            {
-                name = value;
-                UpdatePropertyChange("DisplayName");
-            }
-        }
+        /// <summary>
+        /// 节点显示名称
+        /// </summary>
+        public String DisplayName { get; set; }
+        /// <summary>
+        /// 节点是否被展开
+        /// </summary>
         private Boolean isExpanded;
         public Boolean IsExpanded
         {
@@ -34,7 +34,17 @@ namespace DBToJsonProject.Models
                 UpdatePropertyChange("IsExpanded");
             }
         }
-        public String JsonName { get; set; }
+        public String JsonName {
+            get
+            {
+                return name;
+            }
+            set
+            {
+                name = value;
+                UpdatePropertyChange("JsonName");
+            }
+        }
         public Boolean VirtualNode { get; set; }
         public String EntityName { get; set; }
         public Boolean MultiReleationShip { get; set; }
@@ -61,7 +71,7 @@ namespace DBToJsonProject.Models
         /// <summary>
         /// 按照默认模板新建
         /// </summary>
-        private static int C = 0;
+        private static uint C = 0;
         public static PropertyNodeItem Default
         {
             get
@@ -72,7 +82,7 @@ namespace DBToJsonProject.Models
                     DisplayName = String.Format("DisplayName{0}", C),
                     JsonName = String.Format("JsonName{0}", C),
                     EntityName = String.Format("EntityName{0}", C),
-                    IsExpanded = true,
+                    IsExpanded = false,
                     MultiReleationShip = false,
                     BuildJson = false,
                     HasChildren = false,

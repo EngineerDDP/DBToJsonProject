@@ -108,7 +108,10 @@ namespace DBToJsonProject.Controller.SettingManager
         /// <summary>
         /// 初始化数据库配置文件
         /// </summary>
-        private DBSettings() : base() { }
+        private DBSettings()
+        {
+            base.Start();
+        }
         private delegate void X(out JsonEntityDetial entityDetial, ref SettingNode n);
         protected override void Load()
         {
@@ -124,10 +127,10 @@ namespace DBToJsonProject.Controller.SettingManager
                 {
                     roots = new List<IJsonTreeNode>()
                 };
-                //遍历每个Export实体
+                //遍历每个Root实体
                 foreach (SettingNode n in ro.ChildNodes)
                     entityDetial.roots.Add(BuildTreeNode(n, null));
-                //读Export数据库信息
+                //读Root数据库信息
                 entityDetial.DbConnectStr = ro.Attributes[DbBaseTableConnectString];
             };
 
@@ -151,11 +154,12 @@ namespace DBToJsonProject.Controller.SettingManager
         /// <summary>
         /// 序列化新设置到设置文件
         /// </summary>
-        public void UpdateSetting(IUserTableInfo userTableInfo, JsonEntityDetial ex, JsonEntityDetial im)
+        public void UpdateSetting(IUserTableInfo userTableInfo, JsonEntityDetial ex, JsonEntityDetial im, String dbCon)
         {
             exportEntities = ex;
             importEntities = im;
             userRoot = userTableInfo;
+            DBConnectArgs = dbCon;
 
             Update();
         }
@@ -242,7 +246,7 @@ namespace DBToJsonProject.Controller.SettingManager
             xml.SetAttribute(NodeSelectable, root.Selectable.ToString());
             xml.SetAttribute(DbCustomizedSql, root.Sql.CustomizeSQLString);
             xml.SetAttribute(DbCustomizedSqlParameters, root.Sql.Params.ToString());
-            xml.SetAttribute(IsVirtual, root.VirtualNode.ToString());
+            xml.SetAttribute(IsVirtual, root.IsSelectionParameter.ToString());
 
             //先写实节点
             foreach (String key in root.ChildNodes.Keys)
@@ -258,6 +262,9 @@ namespace DBToJsonProject.Controller.SettingManager
             }
             return xml;
         }
+        /// <summary>
+        /// 初始化新的配置文件
+        /// </summary>
         protected override void Init()
         {
             userRoot = new UserInfo()
@@ -280,8 +287,7 @@ namespace DBToJsonProject.Controller.SettingManager
             Models.SelectCollection selections = new Models.SelectCollection();
             foreach (IJsonTreeNode root in ExportRoot.roots)
             {
-                Models.SelectableJsonList list = new Models.SelectableJsonList(root.DisplayName);
-                selections.Source.Add(list);
+                Models.SelectableJsonList list = new Models.SelectableJsonList(root.DisplayName, root);
 
                 //使用宽度优先搜索遴选出可选节点并标记
                 Queue<IJsonTreeNode> que = new Queue<IJsonTreeNode>();
@@ -296,8 +302,27 @@ namespace DBToJsonProject.Controller.SettingManager
                     if (n.Selectable)
                         list.Nodes.Add(new Models.SelectableJsonNode(n.DisplayName, n));
                 }
+                if(list.Nodes.Count != 0)
+                    selections.Source.Add(list);
             }
             return selections;
+        }
+        /// <summary>
+        /// 构建工作对象
+        /// </summary>
+        /// <param name="selections"></param>
+        public void SetupBuildSelections(Models.SelectCollection selections)
+        {
+            foreach(Models.SelectableJsonList l in selections.Source)
+            {
+                bool toBuild = false;
+                foreach(Models.SelectableJsonNode n in l.Nodes)
+                {
+                    toBuild |= n.IsChecked;
+                    n.Node.IsSelected = n.IsChecked;
+                }
+                (l.Node as TreeNode).BuildSingleFile  = toBuild;
+            }
         }
         /// <summary>
         /// 获取默认设置对象

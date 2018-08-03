@@ -26,7 +26,15 @@ namespace DBToJsonProject.Controller
     {
         public String Str { get; set; }
     }
-    class Events
+    public class FileEventArgs
     {
+        public FileEventArgs(string fileName, string filePath)
+        {
+            FileName = fileName;
+            FilePath = filePath;
+        }
+
+        public String FileName { get; set; }
+        public String FilePath { get; set; }
     }
 }

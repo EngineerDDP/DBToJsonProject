@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 namespace DBToJsonProject.TaskManager
 {
@@ -16,7 +17,7 @@ namespace DBToJsonProject.TaskManager
         public String[] ColumnNames { get; set; }
     }
 
-    class DataBaseAccess
+    class DataBaseAccess : IDisposable
     {
         private SqlConnection sqlCon;
         public event EventHandler<DBColumnDosentExistEvent> DBColumnDosentExist;
@@ -46,18 +47,24 @@ namespace DBToJsonProject.TaskManager
         /// <param name="tableName">表名</param>
         /// <param name="dbRow">数据库行的一部分</param>
         /// <returns></returns>
-        public bool MatchRow(String tableName, Dictionary<String,string> dbRow)
+        public bool MatchRow(String tableName, Dictionary<String, string> dbRow)
         {
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = sqlCon;
             cmd.CommandType = CommandType.Text;
-            cmd.CommandText = String.Format("Select * From {0} Where ", tableName);
+            string sqlstr = "Select * From @tableName Where ";
+            cmd.Parameters.Add(new SqlParameter("@tableName", tableName));
 
-            foreach(string key in dbRow.Keys)
+            int i = 0;
+            foreach (string key in dbRow.Keys)
             {
-                cmd.CommandText += String.Format("{0} = '{1}' AND ", key, dbRow[key]);
+                sqlstr += String.Format("@columnName{0} = @value{1} AND ", i, i);
+                cmd.Parameters.Add(new SqlParameter(String.Format("@columnName{0}", i), key));
+                cmd.Parameters.Add(new SqlParameter(String.Format("@value{0}", i), dbRow[key]));
+                i++;
             }
-            cmd.CommandText += "1 = 1";
+            sqlstr += "1 = 1";
+            cmd.CommandText = sqlstr;
 
             SqlDataReader reader = cmd.ExecuteReader();
             bool result = reader.HasRows;
@@ -65,6 +72,7 @@ namespace DBToJsonProject.TaskManager
 
             return result;
         }
+
         /// <summary>
         /// 查询并填充字典
         /// </summary>
@@ -72,43 +80,64 @@ namespace DBToJsonProject.TaskManager
         /// <param name="dbColumnNames">数据库表的列名</param>
         /// <exception cref="DBColumnDosentExistException">异常，如果存在列名找不到</exception>
         /// <returns></returns>
-        public void FillDictionary(String sqlCommand, string[] sampleColumns, string[] targetColumns, out JArray arr)
+        public async Task<JArray> FillDictionaryAsync(String sqlCommand, string[] sampleColumns, string[] targetColumns)
         {
-            arr = new JArray();
+            JArray arr = new JArray();
+            if (String.IsNullOrEmpty(sqlCommand))
+                return arr;
 
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = sqlCon;
-            cmd.CommandType = CommandType.Text;
-            cmd.CommandText = sqlCommand;
-            List<String> crruptedColumName = new List<string>();
-
-            SqlDataReader reader = cmd.ExecuteReader();
-
-            while (reader.Read())
+            List<String> crruptedColumName = null;
+            try
             {
-                JObject obj = new JObject();
-                for (int i = 0; i < sampleColumns.Count() && !String.IsNullOrEmpty(sampleColumns[i]); ++i)
+                SqlDataReader reader;
+
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = sqlCon;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = sqlCommand;
+
+                reader = await cmd.ExecuteReaderAsync();
+
+                while (reader.Read())
                 {
-                    try
+                    JObject obj = new JObject();
+                    for (int i = 0; i < sampleColumns.Count(); ++i)
                     {
-                        obj.Add(targetColumns[i], reader[sampleColumns[i]].ToString());
+                        if (String.IsNullOrEmpty(sampleColumns[i]))
+                            continue;
+                        await Task.Run(() => { 
+                            try
+                            {
+
+                                obj.Add(targetColumns[i], reader[sampleColumns[i]].ToString());
+
+                            }
+                            catch (IndexOutOfRangeException)
+                            {
+                                if (crruptedColumName == null)
+                                    crruptedColumName = new List<string>();
+                                crruptedColumName.Add(sampleColumns[i]);
+                                sampleColumns[i] = String.Empty;
+                            }
+                        });
                     }
-                    catch (IndexOutOfRangeException)
-                    {
-                        crruptedColumName.Add(sampleColumns[i]);
-                        sampleColumns[i] = String.Empty;
-                    }
+                    arr.Add(obj);
                 }
-                arr.Add(obj);
+                reader.Close();
             }
-
-            reader.Close();
-
-            if (crruptedColumName.Count != 0)
+            catch (SqlException e)
+            {
+                Console.WriteLine(sqlCommand);
+                Console.WriteLine(e.Message);
+            }
+            if (crruptedColumName != null && crruptedColumName.Count != 0)
                 DBColumnDosentExist?.Invoke(this, new DBColumnDosentExistEvent()
                 {
+                    TableName = Regex.Match(sqlCommand, @"(f|F)(r|R)(o|O)(m|M)\s+\b(.+?)\b").Value.Split(' ')[1],
                     ColumnNames = crruptedColumName.ToArray()
                 });
+
+            return arr;
         }
         /// <summary>
         /// 将字典列表写入数据库
@@ -119,14 +148,14 @@ namespace DBToJsonProject.TaskManager
         public void WriteToDB(String tableName, ref List<Dictionary<String, String>> targetDic)
         {
             DataTable dt = new DataTable();
-            foreach(String key in targetDic[0].Keys)
+            foreach (String key in targetDic[0].Keys)
             {
                 dt.Columns.Add(new DataColumn(key));
             }
-            foreach(Dictionary<String,String> dic in targetDic)
+            foreach (Dictionary<String, String> dic in targetDic)
             {
                 DataRow dr = dt.NewRow();
-                foreach(String key in dic.Keys)
+                foreach (String key in dic.Keys)
                 {
                     dr[key] = dic[key];
                 }
@@ -137,6 +166,11 @@ namespace DBToJsonProject.TaskManager
             sqlBulkCopy.DestinationTableName = tableName;
             sqlBulkCopy.BatchSize = dt.Rows.Count;
             sqlBulkCopy.WriteToServer(dt);
+        }
+
+        public void Dispose()
+        {
+            sqlCon.Dispose();
         }
     }
 }

@@ -7,6 +7,7 @@
       xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="700"
+      Loaded="Page_Loaded"
       Title="ImportPage">
 
     <Grid Margin="5">
@@ -15,13 +16,7 @@
             <RowDefinition Height="3"/>
             <RowDefinition Height="3*"/>
         </Grid.RowDefinitions>
-
         <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="3"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
             <TabControl Grid.Column="0" Name="Tab_ExportSetting">
                 <TabItem Header="常规">
                     <Grid Margin="12,12">
@@ -30,41 +25,35 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="22"/>
                         </Grid.RowDefinitions>
+                        <StackPanel Margin="12">
+                            <TextBlock FontSize="16" FontFamily="微软雅黑">
+                                <Bold>
+                                    当前时间：
+                                </Bold>
+                                <Run Name="Txt_Time" Foreground="#0054a7">
+                                    
+                                </Run>
+                            </TextBlock>
+                        </StackPanel>
                         <Grid Grid.Row="0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
-                            <Image Name="Img_Working" Grid.Column="1" gif:AnimationBehavior.SourceUri="/Images/icons/phone2PC.gif" Height="50"></Image>
+                            <Image Grid.Column="1" Visibility="Visible" Source="/Images/icons/phone2PC_static.png" Height="50"></Image>
+                            <Image Grid.Column="1" Name="Img_Working" Visibility="Hidden" gif:AnimationBehavior.SourceUri="/Images/icons/phone2PC.gif" Height="50"></Image>
                         </Grid>
                         <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-                            <Button Name="Btn_ResetExportSetting" Width="60">重置</Button>
                             <Label></Label>
-                            <Button Name="Btn_ExecuteExport" Width="60">导入</Button>
+                            <Button Name="Btn_ExecuteImport" Click="Btn_ExecuteImport_Click" Width="60">导入</Button>
                         </StackPanel>
                     </Grid>
                 </TabItem>
             </TabControl>
-            <GridSplitter Grid.Column="1"/>
-            <Grid Grid.Column="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="21"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Height="21">目标文件列表</TextBlock>
-                <ListBox x:Name="Lst_TargetFiles" Grid.Row="1">
-                    <ListBox.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Name="Opt_OpenFileEx" Header="打开文件位置"></MenuItem>
-                            <MenuItem Name="Opt_CopyFileName" Header="复制文件名"></MenuItem>
-                        </ContextMenu>
-                    </ListBox.ContextMenu>
-                </ListBox>
-            </Grid>
         </Grid>
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"></GridSplitter>
         <Grid Grid.Row="2">
-            <TextBox Margin="1" FontSize="10" Foreground="Gray" x:Name="Txt_LogInfo" IsReadOnly="True" Text="准备就绪..."/>
+            <TextBox Margin="1" FontSize="12" Foreground="Gray" x:Name="Txt_LogInfo" IsReadOnly="True"/>
         </Grid>
     </Grid>
 </Page>

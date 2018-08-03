@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DBToJsonProject.Views.WorkSpace"
         mc:Ignorable="d"
         WindowStartupLocation="Manual"
-        Title="WorkWindow" Height="677" Width="1062" MinHeight="611" MinWidth="760" Background="#FFF0F0F0"
+        Title="WorkWindow" Height="685" Width="1062" MinHeight="689" MinWidth="981" Background="#FFF0F0F0"
         Closed="Window_Closed">
     <Grid>
         <Grid.RowDefinitions>
@@ -32,7 +32,6 @@
                         </Style>
                     </Menu.Resources>
                     <MenuItem Header="文件(F)">
-                        <MenuItem x:Name="Opt_SeeLogInfo" Click="Opt_SeeLogInfo_Click" Header="查看任务记录(L)"></MenuItem>
                         <MenuItem x:Name="Opt_ToWelcomePage" Click="Opt_ToWelcomePage_Click" Header="起始页"></MenuItem>
                         <Separator/>
                         <MenuItem x:Name="Opt_Logout" Click="Opt_Logout_Click" Header="登出..."/>
@@ -81,13 +80,13 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="auto" />
                             </Grid.ColumnDefinitions>
                         </Grid>
                     </ItemsPanelTemplate>
                 </StatusBar.ItemsPanel>
                 <StatusBarItem>
-                    <TextBlock Name="Txt_StatusA"/>
+                    <TextBlock Name="Txt_StatusA">准备就绪</TextBlock>
                 </StatusBarItem>
                 <StatusBarItem Grid.Column="2">
                     <StackPanel Orientation="Horizontal">
@@ -116,7 +115,20 @@
                             </Style.Triggers>
                         </Style>
                     </StatusBarItem.Resources>
-                    <ProgressBar Name="Progress_Status" Value="100" Width="90" Height="13" />
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.Resources>
+                            <Style TargetType="ProgressBar">
+                                <Style.Triggers>
+                                    <Trigger Property="Value" Value="100">
+                                        <Setter Property="Visibility" Value="Hidden"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Resources>
+                        <TextBlock Visibility="{Binding ElementName=Progress_Status,Path=Visibility,Mode=OneWay}">总体进度 :</TextBlock>
+                        <Label></Label>
+                        <ProgressBar Name="Progress_Status" Value="100" Width="90" Height="13" />
+                    </StackPanel>
                 </StatusBarItem>
             </StatusBar>
         </Border>

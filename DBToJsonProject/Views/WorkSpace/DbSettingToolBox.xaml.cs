@@ -10,9 +10,38 @@ using DBToJsonProject.Models;
 using static DBToJsonProject.Controller.SettingManager.DBSettings;
 using System.Windows.Input;
 using System.Windows.Data;
+using System.Globalization;
 
 namespace DBToJsonProject.Views.WorkSpace
 {
+    public class SelectionCanNew : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value != null)
+                return true;
+            return false;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class SelectionCanDel : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if ((value as PropertyNodeItem)?.Parent != null)
+                return true;
+            return false;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
     /// <summary>
     /// DbSettingToolBox.xaml 的交互逻辑
     /// </summary>
@@ -71,7 +100,8 @@ namespace DBToJsonProject.Views.WorkSpace
             item.HasCustomizedSql = root.Sql.HasCustomizeSQLString;
             item.CustomizedSql = root.Sql.CustomizeSQLString;
             item.CustomizedSqlParameters = root.Sql.Params?.ToString();
-            item.VirtualNode = root.VirtualNode;
+            item.VirtualNode = root.IsSelectionParameter;
+            item.IsExpanded = root.Parent == null;
             
             foreach(IJsonTreeNode n in root.ChildNodes.Values)
             {
@@ -224,6 +254,10 @@ namespace DBToJsonProject.Views.WorkSpace
             {
                 WrongSetting?.Invoke(this, new WrongSettingEventArgs(e.Message, e.ParamName, e.StackTrace));
             }
+            catch (UnSolvedParametersException e)
+            {
+                WrongSetting?.Invoke(this, new WrongSettingEventArgs(e.Message, e.Node + ":" + e.ParaName, e.StackTrace));
+            }
             catch (Exception e)
             {
                 UnKnowError?.Invoke(this, new StringEventArgs() { Str = e.Message });
@@ -238,7 +272,7 @@ namespace DBToJsonProject.Views.WorkSpace
             PropertyNodeItem exportRoot = (Tree_Export.ItemsSource as ObservableCollection<PropertyNodeItem>)[0];
             String exdbStr = Txt_ExportDbConnectStr.Text;
             String imdbStr = Txt_ImportDbConnectStr.Text;
-            Default.UpdateSetting(Default.UserRoot, BuildSetting(exportRoot, exdbStr), BuildSetting(importRoot, imdbStr));
+            Default.UpdateSetting(Default.UserRoot, BuildSetting(exportRoot, exdbStr), BuildSetting(importRoot, imdbStr), Txt_DbConnectStr.Text);
         }
         /// <summary>
         /// 用户改变了选择项，重新判断该项是否可写

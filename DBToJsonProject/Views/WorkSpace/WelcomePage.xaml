@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:DBToJsonProject.Views.WorkSpace"
       xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
       mc:Ignorable="d" 
-      d:DesignHeight="400" d:DesignWidth="600"
+      d:DesignHeight="589" d:DesignWidth="981"
       MinWidth="600"
       MinHeight="400"
       Title="WelcomePage"

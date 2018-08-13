@@ -11,6 +11,17 @@ using System.Text.RegularExpressions;
 
 namespace DBToJsonProject.TaskManager
 {
+    public class DbSqlException : Exception
+    {
+        public String SqlCommand
+        {
+            get;set;
+        }
+        public DbSqlException(String sql,String msg) : base(msg)
+        {
+            this.SqlCommand = sql;
+        }
+    }
     public class DBColumnDosentExistEvent : EventArgs
     {
         public String TableName { get; set; }
@@ -127,8 +138,7 @@ namespace DBToJsonProject.TaskManager
             }
             catch (SqlException e)
             {
-                Console.WriteLine(sqlCommand);
-                Console.WriteLine(e.Message);
+                throw new DbSqlException(sqlCommand, e.Message);
             }
             if (crruptedColumName != null && crruptedColumName.Count != 0)
                 DBColumnDosentExist?.Invoke(this, new DBColumnDosentExistEvent()

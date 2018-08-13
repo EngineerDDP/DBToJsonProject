@@ -15,7 +15,7 @@ namespace DBToJsonProject.Views.WorkSpace
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            IEnumerable<SelectableJsonNode> val = value as IEnumerable<SelectableJsonNode>;
+            IEnumerable<SelectableJsonNode> val = (value as SelectableJsonList).Nodes;
             if(val != null)
             {
                 foreach (SelectableJsonNode n in val)
@@ -139,6 +139,7 @@ namespace DBToJsonProject.Views.WorkSpace
 
         private void CheckBox_CheckAll_Checked(object sender, RoutedEventArgs e)
         {
+            Console.WriteLine(e.OriginalSource);
             var list = ((sender as CheckBox).DataContext as SelectableJsonList);
             for(int i = 0;i < list.Nodes.Count;++i)
             {
@@ -149,6 +150,7 @@ namespace DBToJsonProject.Views.WorkSpace
 
         private void CheckBox_CheckAll_Unchecked(object sender, RoutedEventArgs e)
         {
+            Console.WriteLine(e.OriginalSource);
             var list = ((sender as CheckBox).DataContext as SelectableJsonList);
             for (int i = 0; i < list.Nodes.Count; ++i)
             {

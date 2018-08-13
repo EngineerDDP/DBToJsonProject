@@ -13,13 +13,7 @@ namespace DBToJsonProject.Models
         {
             Name = name;
             Node = node;
-            Nodes = new ObservableCollection<SelectableJsonNode>();
-            Nodes.CollectionChanged += Nodes_CollectionChanged;
-        }
-
-        private void Nodes_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            base.UpdatePropertyChange("Nodes");
+            nodes = new ObservableCollection<SelectableJsonNode>();
         }
         public IJsonTreeNode Node { get; set; }
         public string Name { get; set; }
@@ -30,10 +24,34 @@ namespace DBToJsonProject.Models
             {
                 return nodes;
             }
+        }
+        public void AddNode(SelectableJsonNode item)
+        {
+            item.PropertyChanged += N_PropertyChanged;
+            nodes.Add(item);
+        }
+        private void N_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            base.UpdatePropertyChange(e.PropertyName);
+        }
+
+        public bool IsChecked
+        {
+            get
+            {
+                foreach(SelectableJsonNode n in Nodes)
+                {
+                    if (!n.IsChecked)
+                        return false;
+                }
+                return true;
+            }
             set
             {
-                nodes = value;
-                base.UpdatePropertyChange("Nodes");
+                foreach(SelectableJsonNode n in Nodes)
+                {
+                    n.IsChecked = value;
+                }
             }
         }
     }

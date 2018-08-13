@@ -88,7 +88,7 @@ namespace DBToJsonProject.Views.WorkSpace
 
         private void Opt_About_Click(object sender, RoutedEventArgs e)
         {
-
+            new About().ShowDialog();
         }
 
         private void Opt_ToWelcomePage_Click(object sender, RoutedEventArgs e)

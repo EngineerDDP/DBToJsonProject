@@ -65,13 +65,16 @@ namespace DBToJsonProject.Controller.TaskManager
                 while (!process.HasExited)
                 {
                     string output = sr.ReadLine();
-                    string[] info = output.Split('\n');
-                    foreach(string i in info)
+                    if (output != null)
                     {
-                        string[] j = i.Split(' ');
-                        Int32 p;
-                        if(Int32.TryParse(j[0], out p))
-                            UpdateProgressInfo?.Invoke(this, new TaskPostBackEventArgs(p, j[1], p, j[1]));
+                        string[] info = output.Split('\n');
+                        foreach (string i in info)
+                        {
+                            string[] j = i.Split(' ');
+                            Int32 p;
+                            if (Int32.TryParse(j[0], out p))
+                                UpdateProgressInfo?.Invoke(this, new TaskPostBackEventArgs(p, j[1], p, j[1]));
+                        }
                     }
                 }
             }

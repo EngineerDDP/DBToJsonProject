@@ -136,66 +136,6 @@ namespace DBToJsonProject.Controller
             importPage.SelectionUpdated += ImportPage_SelectionUpdated;
             importPage.CancelExcution += ImportPage_CancelExcution;
         }
-
-        private void ImportPage_CancelExcution(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void ImportPage_SelectionUpdated(object sender, SelectCollection e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void ExecuteImportCmd(object sender, CmdExecuteArgs e)
-        {
-            if (task == null || task.Complete)
-            {
-                task = new ImportTask();
-
-                task.UpdateProgressInfo += T_UpdateProgressInfo;
-                task.PostErrorAndAbort += T_PostErrorAndAbort;
-                task.OnFileOperation += Task_OnFileOperation;
-                task.Run();
-                files.Clear();
-            }
-            else
-            {
-                PostAnCriticalError("有任务进行中，无法启动新任务。");
-            }
-        }
-
-        private void ExportPage_CancelExcution(object sender, EventArgs e)
-        {
-            task?.Cancel();
-        }
-
-        /// <summary>
-        /// 注册事件监听器
-        /// </summary>
-        private void RegisterWindows()
-        {
-            Login.OnLogin += Login_OnLogin;
-            Login.OnExit += AppExited;
-
-            Work.OnWorkSpaceExited += AppExited;
-            Work.OnDbSettingRequired += Work_OnDbSettingRequired;
-            Work.OnNavigateToExport += NavigateToExport;
-            Work.OnNavigateToImPort += NavigateToImPort;
-            work.OnNavigateToWelcomePage += NavigateToWelcomePage;
-            Work.OnLogout += Logout;
-
-            RegisterPages();
-        }
-        /// <summary>
-        /// 记录选项
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Export_SelectionUpdated(object sender, SelectCollection e)
-        {
-            userSetting.SaveSelections(e);
-        }
         /// <summary>
         /// 执行导出
         /// </summary>
@@ -240,6 +180,63 @@ namespace DBToJsonProject.Controller
                 importPage.UpdateFileList(files);
             });
         }
+        private void ExecuteImportCmd(object sender, CmdExecuteArgs e)
+        {
+            if (task == null || task.Complete)
+            {
+                task = new ImportTask();
+
+                task.UpdateProgressInfo += T_UpdateProgressInfo;
+                task.PostErrorAndAbort += T_PostErrorAndAbort;
+                task.OnFileOperation += Task_OnFileOperation;
+                task.Run();
+                files.Clear();
+            }
+            else
+            {
+                PostAnCriticalError("有任务进行中，无法启动新任务。");
+            }
+        }
+        private void ImportPage_CancelExcution(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ImportPage_SelectionUpdated(object sender, SelectCollection e)
+        {
+            throw new NotImplementedException();
+        }
+        private void ExportPage_CancelExcution(object sender, EventArgs e)
+        {
+            (task as ExportTask)?.Cancel();
+        }
+
+        /// <summary>
+        /// 注册事件监听器
+        /// </summary>
+        private void RegisterWindows()
+        {
+            Login.OnLogin += Login_OnLogin;
+            Login.OnExit += AppExited;
+
+            Work.OnWorkSpaceExited += AppExited;
+            Work.OnDbSettingRequired += Work_OnDbSettingRequired;
+            Work.OnNavigateToExport += NavigateToExport;
+            Work.OnNavigateToImPort += NavigateToImPort;
+            work.OnNavigateToWelcomePage += NavigateToWelcomePage;
+            Work.OnLogout += Logout;
+
+            RegisterPages();
+        }
+        /// <summary>
+        /// 记录选项
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Export_SelectionUpdated(object sender, SelectCollection e)
+        {
+            userSetting.SaveSelections(e);
+        }
 
         /// <summary>
         /// 任务中止
@@ -250,8 +247,7 @@ namespace DBToJsonProject.Controller
         {
             PostAnCriticalError(e.Str);
             task = null;
-            userSetting.PostLog("操作失败 " + e.Str);
-            T_UpdateProgressInfo(this, new TaskPostBackEventArgs(100, "操作失败", 100, "准备就绪"));
+            T_UpdateProgressInfo(this, new TaskPostBackEventArgs(100, userSetting.PostLog("操作失败 " + e.Str), 100, "准备就绪"));
         }
         /// <summary>
         /// 更新任务进度
@@ -260,6 +256,8 @@ namespace DBToJsonProject.Controller
         /// <param name="e"></param>
         private void T_UpdateProgressInfo(object sender, TaskPostBackEventArgs e)
         {
+            e.LogInfo = userSetting.PostLog(e.LogInfo);
+
             UseDispatcher(work, () =>
             {
                 work.TaskPostBack(e);
@@ -342,6 +340,7 @@ namespace DBToJsonProject.Controller
         {
             Login.Show();
             work.Hide();
+            userSetting.Update();
             userSetting = null;
             
             NavigateToWelcomePage(this, e);

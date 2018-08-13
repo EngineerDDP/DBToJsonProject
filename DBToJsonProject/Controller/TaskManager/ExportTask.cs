@@ -51,6 +51,7 @@ namespace DBToJsonProject.Controller.TaskManager
         public static readonly string Canceled = "任务被取消";
         public static readonly string Working = "工作进行中...";
         public static readonly string ready = "准备就绪";
+        public static readonly float DbTotalProcessRate = 0.50f;
     }
     [Serializable]
     public class DBSettingErrorException : Exception
@@ -163,13 +164,20 @@ namespace DBToJsonProject.Controller.TaskManager
         /// <summary>
         /// 工作
         /// </summary>
-        private void Execution()
+        private async void Execution()
         {
             try
             {
                 dataBaseAccess.OpenConnection();
-                BuildJsonFilesAsync().Wait();
+                await BuildJsonFilesAsync();
                 PostExecution();
+            }
+            catch(DbSqlException e)
+            {
+                PostErrorAndAbort?.Invoke(this, new StringEventArgs()
+                {
+                    Str = "信息:" + e.Message + " SQL: " + e.SqlCommand
+                });
             }
             catch (AggregateException e)
             {
@@ -213,6 +221,7 @@ namespace DBToJsonProject.Controller.TaskManager
             process.Start();
             StreamReader sr = process.StandardOutput;
 
+            progressStage = UpdateStrings.PostExecute;
             Update(UpdateStrings.PostExecute);
 
             while (process?.HasExited == false)
@@ -223,10 +232,14 @@ namespace DBToJsonProject.Controller.TaskManager
                     if (Int32.TryParse(str.Split(' ')[0], out i))
                     {
                         stageProgress = i;
+                        totalProgress = (int)((stageProgress + 100) * UpdateStrings.DbTotalProcessRate);
                         loginfo = UpdateStrings.Progress(i);
                     }
                 if (CancelProcess)
+                {
                     process?.Kill();
+                    throw new Exception(UpdateStrings.Canceled);
+                }
             }
             process?.Dispose();
         }
@@ -349,7 +362,7 @@ namespace DBToJsonProject.Controller.TaskManager
                         obj = await FillJsonArrayAsync(node, s);
                         foreach (JObject o in obj as JArray)
                         {
-                            totalProgress = Math.Min(i * (100 / detial.roots.Count) + (stageProgress / detial.roots.Count), 99);
+                            totalProgress = (int)((i * 100 + stageProgress) * UpdateStrings.DbTotalProcessRate / detial.roots.Count);
                             stageProgress = 100 * c++ / (obj as JArray).Count;
 
                             buildstate = await buildChildsAsync(node, o);
@@ -364,7 +377,7 @@ namespace DBToJsonProject.Controller.TaskManager
                         buildstate = await buildChildsAsync(node, obj as JObject);
                         stageProgress = 100;
                     }
-                    totalProgress = Math.Min(i * (100 / detial.roots.Count) + (stageProgress / detial.roots.Count), 99);
+                    totalProgress = (int)((i * 100 + stageProgress) * UpdateStrings.DbTotalProcessRate / detial.roots.Count);
                 }
                 if (buildstate)
                     WriteFile(obj, node.JsonNodeName);

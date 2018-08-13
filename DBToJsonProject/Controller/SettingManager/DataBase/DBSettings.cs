@@ -150,7 +150,18 @@ namespace DBToJsonProject.Controller.SettingManager
                 Password = node.Attributes[PasswordAttrition]
             };
         }
-        
+        public void UpdateSetting(String userCol,String passCol,String usrTbl,String usrCon, JsonEntityDetial ex, JsonEntityDetial im, String dbCon)
+        {
+            exportEntities = ex;
+            importEntities = im;
+            userRoot = new UserInfo()
+            {
+                DbConnectStr = usrCon, UserName = userCol, Password = passCol, TableName = usrTbl
+            };
+            DBConnectArgs = dbCon;
+
+            Update();
+        }
         /// <summary>
         /// 序列化新设置到设置文件
         /// </summary>
@@ -300,7 +311,7 @@ namespace DBToJsonProject.Controller.SettingManager
                         que.Enqueue(i);
                     //筛选节点
                     if (n.Selectable)
-                        list.Nodes.Add(new Models.SelectableJsonNode(n.DisplayName, n));
+                        list.AddNode(new Models.SelectableJsonNode(n.DisplayName, n));
                 }
                 if(list.Nodes.Count != 0)
                     selections.Source.Add(list);

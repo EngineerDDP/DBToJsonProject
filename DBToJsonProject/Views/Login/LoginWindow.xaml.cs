@@ -14,10 +14,23 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Globalization;
 
 namespace DBToJsonProject.Views.Login
 {
     public delegate void UserloginEvent(object sender, UserLoginEventArgs args);
+    public class HintTextShowForPassword : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return String.IsNullOrEmpty(value as string) ? Visibility.Visible : Visibility.Hidden;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
     /// <summary>
     /// LoginWindow.xaml 的交互逻辑
     /// </summary>

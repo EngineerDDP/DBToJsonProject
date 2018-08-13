@@ -192,19 +192,7 @@
                                 </TextBox.Style>
                             </TextBox>
                             <Line X1="0" X2="180" Y1="0" Y2="0" Stroke="Gray" StrokeThickness="1"></Line>
-                            <PasswordBox Name="Txt_Password" Height="25" Width="180" Margin="2,5,0,0" FontSize="14" BorderThickness="0">
-                                <PasswordBox.Resources>
-                                    <VisualBrush x:Key="HintText" TileMode="None" Opacity="0.5" Stretch="None" AlignmentX="Left">
-                                        <VisualBrush.Visual>
-                                            <TextBlock Text="密码"/>
-                                        </VisualBrush.Visual>
-                                    </VisualBrush>
-                                </PasswordBox.Resources>
-                                <PasswordBox.Style>
-                                    <Style TargetType="PasswordBox">
-                                    </Style>
-                                </PasswordBox.Style>
-                            </PasswordBox>
+                            <local:PasswordBoxWithHintText x:Name="Txt_Password" Height="25" Width="180" Margin="2,5,0,0" Hint="请输入密码"/>
                         </StackPanel>
                     </Border>
                     <StackPanel Orientation="Horizontal" Height="15" Width="180" Margin="0,10,0,0">

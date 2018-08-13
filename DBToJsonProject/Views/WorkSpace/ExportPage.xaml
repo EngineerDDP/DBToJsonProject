@@ -45,7 +45,7 @@
                 </Grid.RowDefinitions>
                 <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
                     <Border Margin="5">
-                        <ItemsControl ItemsSource="{Binding Path=Nodes,Mode=TwoWay}" 
+                        <ItemsControl ItemsSource="{Binding Path=Nodes,Mode=OneWay}" 
                                           ItemTemplate="{StaticResource xNodeItemTemplate}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -56,8 +56,8 @@
                     </Border>
                 </ScrollViewer>
                 <Grid Grid.Row="1" HorizontalAlignment="Right">
-                    <CheckBox IsEnabled="{Binding ElementName=Btn_ExecuteExport,Path=IsEnabled,Mode=OneWay}" IsChecked="{Binding Path=Nodes,Converter={StaticResource SelectAllCov},Mode=OneWay}" 
-                              Checked="CheckBox_CheckAll_Checked" Unchecked="CheckBox_CheckAll_Unchecked">全选</CheckBox>
+                    <!--IsChecked="{Binding Converter={StaticResource SelectAllCov},Mode=OneWay}" Checked="CheckBox_CheckAll_Checked" Unchecked="CheckBox_CheckAll_Unchecked"-->
+                    <CheckBox IsEnabled="{Binding ElementName=Btn_ExecuteExport,Path=IsEnabled,Mode=OneWay}" IsChecked="{Binding Path=IsChecked,Mode=TwoWay}">全选</CheckBox>
                 </Grid>
             </Grid>
         </DataTemplate>

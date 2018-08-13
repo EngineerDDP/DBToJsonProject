@@ -1,0 +1,21 @@
+﻿<Window x:Class="DBToJsonProject.Views.WorkSpace.About"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DBToJsonProject.Views.WorkSpace"
+        mc:Ignorable="d"
+        WindowStyle="ToolWindow"
+        Title="关于" Height="220" Width="350">
+    <Grid Background="LightGray">
+        <Button Name="Ok" Margin="236,126,16,16" Click="Ok_Click" Height="28" Width="60">确定</Button>
+        <Image Margin="22,21,226,65" Height="64" Width="64" Source="/DBToJsonProject;component/desktopicon.png" Stretch="Fill"/>
+        <TextBlock Width="150" Height="100" Margin="110,29,52,41">
+            <Run>项目组：漫湾—景洪项目组</Run><LineBreak/>
+            <Run>软件版本：0.1.0.0</Run><LineBreak/>
+            <Run>发行日期：2018-08-16</Run><LineBreak/>
+            <LineBreak></LineBreak>
+            <Run>Copyright@2018 版权所有</Run><LineBreak/>
+        </TextBlock>
+    </Grid>
+</Window>

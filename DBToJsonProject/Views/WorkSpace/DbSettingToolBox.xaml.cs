@@ -272,7 +272,13 @@ namespace DBToJsonProject.Views.WorkSpace
             PropertyNodeItem exportRoot = (Tree_Export.ItemsSource as ObservableCollection<PropertyNodeItem>)[0];
             String exdbStr = Txt_ExportDbConnectStr.Text;
             String imdbStr = Txt_ImportDbConnectStr.Text;
-            Default.UpdateSetting(Default.UserRoot, BuildSetting(exportRoot, exdbStr), BuildSetting(importRoot, imdbStr), Txt_DbConnectStr.Text);
+            Default.UpdateSetting(  Txt_UsernameColumnName.Text,
+                                    Txt_PasswordColumnName.Text,
+                                    Txt_UserDbTableName.Text,
+                                    Txt_UserDbConnectStr.Text,
+                                    BuildSetting(exportRoot, exdbStr), 
+                                    BuildSetting(importRoot, imdbStr), 
+                                    Txt_DbConnectStr.Text);
         }
         /// <summary>
         /// 用户改变了选择项，重新判断该项是否可写
@@ -287,7 +293,7 @@ namespace DBToJsonProject.Views.WorkSpace
         }
         void TextBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            (sender as TextBox).PreviewMouseDown += new MouseButtonEventHandler(TextBox_PreviewMouseDown);
+            (sender as TextBox).PreviewMouseDown += TextBox_PreviewMouseDown;
         }
 
         void TextBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -299,7 +305,7 @@ namespace DBToJsonProject.Views.WorkSpace
         void TextBox_GotFocus(object sender, RoutedEventArgs e)
         {
             (sender as TextBox).SelectAll();
-            (sender as TextBox).PreviewMouseDown -= new MouseButtonEventHandler(TextBox_PreviewMouseDown);
+            (sender as TextBox).PreviewMouseDown -= TextBox_PreviewMouseDown;
         }
     }
 }

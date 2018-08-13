@@ -10,7 +10,7 @@ namespace DBToJsonProject.Models.EventArguments
     /// </summary>
     public class ExportPageInfoEventArgs
     {
-        public string UserName { get; set; }
-        public List<DeviceTag> DeviceList { get; set; }
+        public Boolean VdoSelected { get; set; }
+        public Boolean ImgSelected { get; set; }
     }
 }

@@ -150,8 +150,10 @@ namespace DBToJsonProject.Controller
                                 DBSettings.Default.ExportRoot.DbConnectStr;
 
                 DBSettings.Default.SetupBuildSelections(e.Selections);
+                userSetting.ExportImg = e.SelectImgs;
+                userSetting.ExportVdo = e.SelectVdos;
 
-                task = new ExportTask(con, DBSettings.Default.ExportRoot, e.SpecifiedQuaryStringArgs);
+                task = new ExportTask(con, DBSettings.Default.ExportRoot, e.SpecifiedQuaryStringArgs, e.SelectVdos, e.SelectImgs);
 
                 task.UpdateProgressInfo += T_UpdateProgressInfo;
                 task.PostErrorAndAbort += T_PostErrorAndAbort;
@@ -382,15 +384,8 @@ namespace DBToJsonProject.Controller
                 exportPage.SetupSelections(selections);
                 exportPage.UpdatePageInfos(new ExportPageInfoEventArgs()
                 {
-                    UserName = userSetting.Name,
-                    DeviceList = new System.Collections.Generic.List<DeviceTag>()
-                    {
-                        new DeviceTag()
-                        {
-                            Name = "Default device",
-                            ID = "0x0000"
-                        }
-                    }
+                    VdoSelected = userSetting.ExportVdo,
+                    ImgSelected = userSetting.ExportImg
                 });
             });
         }

@@ -17,7 +17,9 @@ namespace DBToJsonProject.Controller.SettingManager
         private readonly string Xml_PasswordAttr = "C";
         private readonly string Xml_AutoLogAttr = "D";
         private readonly string Xml_ExportSettingNode = "G";
-        
+        private readonly string Xml_ExportSettingVdo = "F";
+        private readonly string Xml_ExportSettingImg = "J";
+
 
         private string name;
         private String savedpass;
@@ -27,6 +29,8 @@ namespace DBToJsonProject.Controller.SettingManager
         public string Name { get => name; set => name = value; }
         public string Savedpass { get => savedpass; set => savedpass = value; }
         public bool AutoLogin { get => autoLogin; set => autoLogin = value; }
+        public bool ExportImg { get; set; }
+        public bool ExportVdo { get; set; }
 
         public UserSetting(string username)
         {
@@ -46,6 +50,8 @@ namespace DBToJsonProject.Controller.SettingManager
             SettingNode root = LoadSettingXML(UserFolder, SettingFile);
             AutoLogin = Boolean.Parse(root.Attributes[Xml_AutoLogAttr]);
             Savedpass = root.Attributes[Xml_PasswordAttr];
+            ExportImg = Boolean.Parse(root.Attributes[Xml_ExportSettingImg]);
+            ExportVdo = Boolean.Parse(root.Attributes[Xml_ExportSettingVdo]);
 
             //读上次保存的选项集合
             root = root.SelectSingleNode(Sel.Name);
@@ -67,6 +73,8 @@ namespace DBToJsonProject.Controller.SettingManager
             SettingNode root = new SettingNode(Xml_BaseSettingRoot);
             root.SetAttribute(Xml_AutoLogAttr, AutoLogin.ToString());
             root.SetAttribute(Xml_PasswordAttr, Savedpass);
+            root.SetAttribute(Xml_ExportSettingImg, ExportImg.ToString());
+            root.SetAttribute(Xml_ExportSettingVdo, ExportVdo.ToString());
 
             SettingNode sel = new SettingNode(Sel.Name);
             //写选项集合

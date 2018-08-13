@@ -39,8 +39,8 @@
                         <MenuItem x:Name="Opt_Exit" Click="Opt_Exit_Click" Header="退出" InputGestureText="Alt+F4"></MenuItem>
                     </MenuItem>
                     <MenuItem Header="任务(T)">
-                        <MenuItem x:Name="Opt_InportJob" Click="Opt_ImportJob_Click" Header="设备数据导入计算机(I)"></MenuItem>
-                        <MenuItem x:Name="Opt_ExportJob" Click="Opt_ExportJob_Click" Header="计算机数据导入移动设备(E)"></MenuItem>
+                        <MenuItem x:Name="Opt_InportJob" Click="Opt_ImportJob_Click" Header="设备数据导入到计算机(I)"></MenuItem>
+                        <MenuItem x:Name="Opt_ExportJob" Click="Opt_ExportJob_Click" Header="计算机数据导出到设备(E)"></MenuItem>
                     </MenuItem>
                     <MenuItem Header="设置(O)">
                         <MenuItem x:Name="Opt_SimpleMode" Click="Opt_SimpleMode_Click" Header="简单模式(S)"></MenuItem>

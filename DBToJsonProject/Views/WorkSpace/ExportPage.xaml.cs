@@ -52,7 +52,8 @@ namespace DBToJsonProject.Views.WorkSpace
         }
         public void UpdatePageInfos(ExportPageInfoEventArgs args)
         {
-
+            Chk_ExportVdo.IsChecked = args.VdoSelected;
+            Chk_ExportImg.IsChecked = args.ImgSelected;
         }
         private ObservableCollection<FileExpression> files;
         public void UpdateFileList(List<FileExpression> e)

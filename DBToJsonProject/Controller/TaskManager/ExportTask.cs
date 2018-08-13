@@ -67,6 +67,8 @@ namespace DBToJsonProject.Controller.TaskManager
         String[] SpecifiedQuaryStringsArgs;         //系统参数
         Task workingThread;                         //执行线程
         Task ReportThread;
+        Boolean ProcessVdo;
+        Boolean ProcessImg;
 
         bool CancelProcess = false;         //取消线程
         int totalProgress = 0;              //进度
@@ -97,11 +99,14 @@ namespace DBToJsonProject.Controller.TaskManager
         /// <param name="dbConStr"></param>
         /// <param name="jsonSelections"></param>
         /// <param name="topNodeSqlStr"></param>
-        public ExportTask(String dbConStr, JsonEntityDetial detial, String[] args)
+        public ExportTask(String dbConStr, JsonEntityDetial detial, String[] args, bool vdo, bool img)
         {
             DataBaseAccess = new DataBaseAccess(dbConStr);
             Detial = detial;
             SpecifiedQuaryStringsArgs = args;
+
+            ProcessImg = false;
+            ProcessVdo = false;
         }
         /// <summary>
         /// 初始化环境并启动工作线程
@@ -171,6 +176,8 @@ namespace DBToJsonProject.Controller.TaskManager
                 dataBaseAccess.OpenConnection();
                 await BuildJsonFilesAsync();
                 PostExecution();
+                progressStage = UpdateStrings.Complete;
+                Update(UpdateStrings.Complete);
             }
             catch(DbSqlException e)
             {
@@ -195,8 +202,6 @@ namespace DBToJsonProject.Controller.TaskManager
             }
             finally
             {
-                progressStage = UpdateStrings.Complete;
-                Update(UpdateStrings.Complete);
                 stageProgress = 100;
                 totalProgress = 100;
                 progressStage = UpdateStrings.ready;
@@ -211,7 +216,8 @@ namespace DBToJsonProject.Controller.TaskManager
             {
                 FileName = "java",
                 Arguments = "-jar " + "./DataSynchronize_EX.jar " + SpecifiedQuaryStringsArgs[0].Replace('\'', ' ') + " " 
-                                    + Environment.CurrentDirectory + "/" + AppSetting.Default.ExportWorkFolder,
+                                    + Environment.CurrentDirectory + "/" + AppSetting.Default.ExportWorkFolder + " "
+                                    + ProcessImg.ToString() + " " + ProcessVdo.ToString(),
                 UseShellExecute = false,
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
@@ -228,12 +234,15 @@ namespace DBToJsonProject.Controller.TaskManager
             {
                 string str = sr.ReadLine();
                 int i;
-                if (str?.Split(' ').Length > 0)
-                    if (Int32.TryParse(str.Split(' ')[0], out i))
+                string[] infos = str?.Split(' ');
+                if (infos?.Length > 1)
+                    if (Int32.TryParse(infos[0], out i))
                     {
+                        if (i == -1)
+                            throw new Exception(infos[1]);
                         stageProgress = i;
                         totalProgress = (int)((stageProgress + 100) * UpdateStrings.DbTotalProcessRate);
-                        loginfo = UpdateStrings.Progress(i);
+                        loginfo = infos[1];
                     }
                 if (CancelProcess)
                 {

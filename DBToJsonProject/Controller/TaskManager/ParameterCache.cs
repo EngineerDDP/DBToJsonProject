@@ -33,8 +33,6 @@ namespace DBToJsonProject.Controller.TaskManager
                 {
                     trace.Push(tracker.JsonNodeName);
                     tracker = tracker.Parent;
-                    if (tracker == null)
-                        throw new DBSettingErrorException();
                 }
                 ChildRoute = trace.ToArray();
             }

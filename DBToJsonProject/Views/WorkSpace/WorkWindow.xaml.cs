@@ -26,11 +26,16 @@ namespace DBToJsonProject.Views.WorkSpace
         public event EventHandler OnNavigateToImPort;
         public event EventHandler OnNavigateToWelcomePage;
         public event EventHandler OnLogout;
+        public event EventHandler<Boolean> OnSelectSimpleMode;
         
 
         public WorkWindow()
         {
             InitializeComponent();
+        }
+        public void ActivateSimpleMode()
+        {
+            Mnu_Setting.Visibility = Visibility.Hidden;
         }
         public void SetPosition(double left, double top, double width, double height)
         {
@@ -79,7 +84,7 @@ namespace DBToJsonProject.Views.WorkSpace
 
         private void Opt_SimpleMode_Click(object sender, RoutedEventArgs e)
         {
-
+            OnSelectSimpleMode?.Invoke(this, true);
         }
 
         private void Opt_JobOption_Click(object sender, RoutedEventArgs e)
@@ -94,7 +99,7 @@ namespace DBToJsonProject.Views.WorkSpace
 
         private void Opt_Manual_Click(object sender, RoutedEventArgs e)
         {
-
+            System.Diagnostics.Process.Start("help.rtf");
         }
 
         private void Opt_About_Click(object sender, RoutedEventArgs e)
@@ -115,6 +120,11 @@ namespace DBToJsonProject.Views.WorkSpace
         private void Opt_Logout_Click(object sender, RoutedEventArgs e)
         {
             OnLogout?.Invoke(this, e);
+        }
+
+        private void Opt_SimpleMode_Unchecked(object sender, RoutedEventArgs e)
+        {
+            OnSelectSimpleMode?.Invoke(this, false);
         }
     }
 }

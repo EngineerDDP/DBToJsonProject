@@ -6,9 +6,6 @@ using System.Text;
 namespace DBToJsonProject.Controller
 {
 
-    public delegate void WindowExited(object sender, EventArgs args);
-    public delegate void RequireChangeDbSetting(object sender, EventArgs args);
-
     public class WrongSettingEventArgs : EventArgs
     {
         public WrongSettingEventArgs(string wrongTip, string wrongValue, string wrongMsg)

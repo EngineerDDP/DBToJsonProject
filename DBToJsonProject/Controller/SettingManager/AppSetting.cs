@@ -18,6 +18,7 @@ namespace DBToJsonProject.Controller.SettingManager
         private static readonly string Xml_WindowLocY = "LocY";
         private static readonly string Xml_WindowWidth = "Width";
         private static readonly string Xml_WindowHeight = "Height";
+        private static readonly string Xml_SimpleMode = "SimpleMode";
         public Int32 UpdateDelay
         {
             get => 500;
@@ -34,6 +35,7 @@ namespace DBToJsonProject.Controller.SettingManager
         public Double WindowTop { get; set; }
         public Double WindowWidth { get; set; }
         public Double WindowHeight { get; set; }
+        public Boolean SimpleMode { get; set; }
         private static AppSetting obj;
         public static AppSetting Default
         {
@@ -53,6 +55,7 @@ namespace DBToJsonProject.Controller.SettingManager
             SettingNode root = LoadSettingXML(SettingFile);
             ActiveUser = root.Attributes[Xml_ActiveUserNodeName];
             ExportWorkFolder = root.Attributes[Xml_ExportFolder];
+            SimpleMode = Boolean.Parse(root.Attributes[Xml_SimpleMode]);
 
             SettingNode window = root.SelectSingleNode(Xml_WindowSettingRoot);
             WindowLeft = Double.Parse(window.Attributes[Xml_WindowLocX]);
@@ -68,18 +71,21 @@ namespace DBToJsonProject.Controller.SettingManager
             WindowTop = 200;
             WindowWidth = 1062;
             WindowHeight = 677;
+            SimpleMode = true;
         }
         public override void Update()
         {
             SettingNode root = new SettingNode(Xml_SettingRootName);
             root.SetAttribute(Xml_ActiveUserNodeName, ActiveUser);
             root.SetAttribute(Xml_ExportFolder, ExportWorkFolder);
+            root.SetAttribute(Xml_SimpleMode, SimpleMode.ToString());
 
             SettingNode window = new SettingNode(Xml_WindowSettingRoot);
             window.SetAttribute(Xml_WindowLocX, WindowLeft.ToString());
             window.SetAttribute(Xml_WindowLocY, WindowTop.ToString());
             window.SetAttribute(Xml_WindowWidth, WindowWidth.ToString());
             window.SetAttribute(Xml_WindowHeight, WindowHeight.ToString());
+
             root.AppendChild(window);
 
             SaveSettingXML(SettingFile, root);

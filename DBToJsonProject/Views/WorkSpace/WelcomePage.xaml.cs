@@ -38,7 +38,7 @@ namespace DBToJsonProject.Views.WorkSpace
 
         private void Link_Help_Click(object sender, RoutedEventArgs e)
         {
-
+            System.Diagnostics.Process.Start("help.rtf");
         }
 
         private void Opt_AddDevice_Click(object sender, RoutedEventArgs e)

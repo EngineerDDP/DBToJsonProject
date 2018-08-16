@@ -50,7 +50,7 @@ namespace DBToJsonProject.Controller
         /// </summary>
         private ITask task;
         /// <summary>
-        /// 目标文件列表
+        /// 工作目标文件列表
         /// </summary>
         private List<FileExpression> files;
         /// <summary>
@@ -58,13 +58,6 @@ namespace DBToJsonProject.Controller
         /// </summary>
         public ApplicationControl()
         {
-            Login = new LoginWindow();
-            Work = new WorkWindow();
-            errorBox = new ErrorBox();
-            welcomePage = new WelcomePage();
-            importPage = new ImportPage();
-            exportPage = new ExportPage();
-
             files = new List<FileExpression>();
         }
         
@@ -75,8 +68,11 @@ namespace DBToJsonProject.Controller
         /// </summary>
         public void Startup()
         {
+            LoadWindows();
             RegisterWindows();
-            SetWindowSize();
+            LoadPages();
+            RegisterPages();
+
             Login.Show();
 
             //初始化用户记录
@@ -95,6 +91,8 @@ namespace DBToJsonProject.Controller
                     });
                 });
             }
+            if(AppSetting.Default.SimpleMode)
+                UseDispatcher(work, work.ActivateSimpleMode);
         }
         /// <summary>
         /// 设置窗口大小
@@ -107,16 +105,42 @@ namespace DBToJsonProject.Controller
                  work.SetPosition(setting.WindowLeft,setting.WindowTop,setting.WindowWidth,setting.WindowHeight);
              });
         }
-
         /// <summary>
-        /// 重载页面
+        /// 加载窗口
         /// </summary>
-        private void ReLoadPages()
+        private void LoadWindows()
+        {
+            Login = new LoginWindow();
+
+            Work = new WorkWindow();
+            SetWindowSize();
+
+            errorBox = new ErrorBox();
+        }
+        /// <summary>
+        /// 注册窗口事件监听器
+        /// </summary>
+        private void RegisterWindows()
+        {
+            Login.OnLogin += Login_OnLogin;
+            Login.OnExit += AppExited;
+
+            Work.OnWorkSpaceExited += AppExited;
+            Work.OnDbSettingRequired += Work_OnDbSettingRequired;
+            Work.OnNavigateToExport += NavigateToExport;
+            Work.OnNavigateToImPort += NavigateToImPort;
+            work.OnNavigateToWelcomePage += NavigateToWelcomePage;
+            Work.OnLogout += Logout;
+            work.OnSelectSimpleMode += Work_OnSelectSimpleMode;
+        }
+        /// <summary>
+        /// 加载页面
+        /// </summary>
+        private void LoadPages()
         {
             welcomePage = new WelcomePage();
             importPage = new ImportPage();
             exportPage = new ExportPage();
-            RegisterPages();
         }
         /// <summary>
         /// 注册页面事件监听器
@@ -135,10 +159,8 @@ namespace DBToJsonProject.Controller
             importPage.CancelExcution += ImportPage_CancelExcution;
         }
         /// <summary>
-        /// 执行导出
+        /// 为导出任务创建工作线程
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void ExecuteExportCmd(object sender, CmdExecuteArgs e)
         {
             if (task == null || task.Complete)
@@ -165,21 +187,8 @@ namespace DBToJsonProject.Controller
             }
         }
         /// <summary>
-        /// 文件操作
+        /// 为导入任务创建工作线程
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Task_OnFileOperation(object sender, FileEventArgs e)
-        {
-            files.Add(e);
-            UseDispatcher(exportPage, () => {
-                exportPage.UpdateFileList(files);
-            });
-            UseDispatcher(importPage, () =>
-            {
-                importPage.UpdateFileList(files);
-            });
-        }
         private void ExecuteImportCmd(object sender, CmdExecuteArgs e)
         {
             if (task == null || task.Complete)
@@ -197,52 +206,23 @@ namespace DBToJsonProject.Controller
                 PostAnCriticalError("有任务进行中，无法启动新任务。");
             }
         }
-        private void ImportPage_CancelExcution(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void ImportPage_SelectionUpdated(object sender, SelectCollection e)
-        {
-            throw new NotImplementedException();
-        }
-        private void ExportPage_CancelExcution(object sender, EventArgs e)
-        {
-            (task as ExportTask)?.Cancel();
-        }
-
         /// <summary>
-        /// 注册事件监听器
+        /// 工作线程进行了文件操作
         /// </summary>
-        private void RegisterWindows()
+        private void Task_OnFileOperation(object sender, FileEventArgs e)
         {
-            Login.OnLogin += Login_OnLogin;
-            Login.OnExit += AppExited;
-
-            Work.OnWorkSpaceExited += AppExited;
-            Work.OnDbSettingRequired += Work_OnDbSettingRequired;
-            Work.OnNavigateToExport += NavigateToExport;
-            Work.OnNavigateToImPort += NavigateToImPort;
-            work.OnNavigateToWelcomePage += NavigateToWelcomePage;
-            Work.OnLogout += Logout;
-
-            RegisterPages();
+            files.Add(e);
+            UseDispatcher(exportPage, () => {
+                exportPage.UpdateFileList(files);
+            });
+            UseDispatcher(importPage, () =>
+            {
+                importPage.UpdateFileList(files);
+            });
         }
         /// <summary>
-        /// 记录选项
+        /// 工作线程报告任务中止
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Export_SelectionUpdated(object sender, SelectCollection e)
-        {
-            userSetting.SaveSelections(e);
-        }
-
-        /// <summary>
-        /// 任务中止
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void T_PostErrorAndAbort(object sender, StringEventArgs e)
         {
             PostAnCriticalError(e.Str);
@@ -250,10 +230,8 @@ namespace DBToJsonProject.Controller
             T_UpdateProgressInfo(this, new TaskPostBackEventArgs(100, "操作失败 " + e.Str, 100, "准备就绪"));
         }
         /// <summary>
-        /// 更新任务进度
+        /// 工作线程更新任务进度
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void T_UpdateProgressInfo(object sender, TaskPostBackEventArgs e)
         {
             e.LogInfo = userSetting.PostLog(e.LogInfo);
@@ -271,30 +249,64 @@ namespace DBToJsonProject.Controller
                 importPage.TaskPostBack(e);
             });
         }
+        /// <summary>
+        /// 导入页面，取消操作
+        /// </summary>
+        private void ImportPage_CancelExcution(object sender, EventArgs e)
+        {
+            (task as ImportTask)?.Cancel();
+        }
+        /// <summary>
+        /// 导入页面，更新用户选项
+        /// </summary>
+        private void ImportPage_SelectionUpdated(object sender, SelectCollection e)
+        {
+            throw new NotImplementedException();
+        }
+        /// <summary>
+        /// 导出页面，取消操作
+        /// </summary>
+        private void ExportPage_CancelExcution(object sender, EventArgs e)
+        {
+            (task as ExportTask)?.Cancel();
+        }
+        /// <summary>
+        /// 使用简单模式
+        /// </summary>
+        private void Work_OnSelectSimpleMode(object sender, Boolean e)
+        {
+            AppSetting.Default.SimpleMode = e;
+        }
+
+        /// <summary>
+        /// 记录导出页面选项
+        /// </summary>
+        private void Export_SelectionUpdated(object sender, SelectCollection e)
+        {
+            userSetting.SaveSelections(e);
+        }
 
         /// <summary>
         /// 将任务添加到UIElement的线程队列
         /// </summary>
-        /// <param name="e"></param>
-        /// <param name="action"></param>
+        /// <param name="e">Dispatcher</param>
+        /// <param name="action">要执行的动作</param>
         private void UseDispatcher(UIElement e, Action action)
         {
             e.Dispatcher.Invoke(action);
         }
         /// <summary>
-        /// 将任务添加到UIElement的线程队列
+        /// 将任务添加到Dispatcher的线程队列
         /// </summary>
-        /// <param name="e"></param>
-        /// <param name="action"></param>
+        /// <param name="e">Dispatcher</param>
+        /// <param name="action">要执行的动作</param>
         private void UseDispatcher(System.Windows.Threading.Dispatcher e, Action action)
         {
             e.Invoke(action);
         }
         /// <summary>
-        /// 登录
+        /// 登录窗口登录事件
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
         private void Login_OnLogin(object sender, UserLoginEventArgs args)
         {
             UserValidation user = new UserValidation(args.Username, args.Password);
@@ -332,10 +344,8 @@ namespace DBToJsonProject.Controller
             }
         }
         /// <summary>
-        /// 登出
+        /// 工作页面登出事件
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void Logout(object sender, EventArgs e)
         {
             Login.Show();
@@ -346,28 +356,22 @@ namespace DBToJsonProject.Controller
             NavigateToWelcomePage(this, e);
         }
         /// <summary>
-        /// 导航至WelcomePage
+        /// 导航事件，至起始页
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void NavigateToWelcomePage(object sender, EventArgs e)
         {
             UseDispatcher(work, () => { work.SetNavigate(welcomePage); });
         }
         /// <summary>
-        /// 导航至ImportPage
+        /// 导航事件，至导入页面
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void NavigateToImPort(object sender, EventArgs e)
         {
             UseDispatcher(work, () => { work.SetNavigate(importPage); });
         }
         /// <summary>
-        /// 导航至ExportPage
+        /// 导航事件，至导出页面
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void NavigateToExport(object sender, EventArgs e)
         {
             //初始化选项集合
@@ -388,10 +392,8 @@ namespace DBToJsonProject.Controller
             });
         }
         /// <summary>
-        /// 设置数据库
+        /// 请求弹出数据库设置属性窗口
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
         private void Work_OnDbSettingRequired(object sender, EventArgs args)
         {
             dbSettingbox = new DbSettingToolBox();
@@ -411,30 +413,33 @@ namespace DBToJsonProject.Controller
 
             RefreshWorkWindow();
         }
-
+        /// <summary>
+        /// 属性设置窗口出现未知错误
+        /// </summary>
         private void DbSettingbox_UnKnowError(object sender, StringEventArgs e)
         {
             PostAnCriticalError(e.Str);
         }
-
+        /// <summary>
+        /// 属性设置窗口通知属性设置错误
+        /// </summary>
         private void DbSettingbox_WrongSetting(object sender, WrongSettingEventArgs e)
         {
             PostAnCriticalError(String.Format("值:{0}，建议:{1}", e.wrongValue, e.WrongTip));
         }
-
         /// <summary>
         /// 刷新工作空间
         /// </summary>
         private void RefreshWorkWindow()
         {
-            ReLoadPages();
+            LoadPages();
+            RegisterPages();
+
             NavigateToWelcomePage(this, new EventArgs());
         }
         /// <summary>
         /// 程序退出
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
         private void AppExited(object sender, EventArgs args)
         {
             task?.Cancel();
@@ -450,7 +455,7 @@ namespace DBToJsonProject.Controller
             AppSetting.Default.WindowWidth = work.Width;
         }
         /// <summary>
-        /// 关闭主要窗格
+        /// 关闭主要窗口
         /// </summary>
         private void CloseMainWindow()
         {
@@ -470,10 +475,8 @@ namespace DBToJsonProject.Controller
         }
 
         /// <summary>
-        /// 设置错误窗格
+        /// 设置错误窗口
         /// </summary>
-        /// <param name="title"></param>
-        /// <param name="msg"></param>
         private void SetupErrorBox(String title, String msg)
         {
             try
@@ -495,8 +498,7 @@ namespace DBToJsonProject.Controller
         /// <summary>
         /// 报严重错误
         /// </summary>
-        /// <param name="title"></param>
-        /// <param name="msg"></param>
+        /// <param name="msg">错误信息</param>
         private void PostAnCriticalError(String msg)
         {
             SetupErrorBox("错误", msg);
@@ -504,14 +506,15 @@ namespace DBToJsonProject.Controller
         /// <summary>
         /// 死球了，再见
         /// </summary>
-        /// <param name="title"></param>
-        /// <param name="msg"></param>
+        /// <param name="msg">错误信息</param>
         private void PostAnErrorAndExit(String msg)
         {
             SetupErrorBox("严重错误", msg);
             CloseMainWindow();
         }
-
+        /// <summary>
+        /// 析构方法
+        /// </summary>
         public void Dispose()
         {
             task.Dispose();

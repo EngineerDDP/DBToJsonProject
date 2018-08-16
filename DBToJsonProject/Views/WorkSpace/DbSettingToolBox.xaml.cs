@@ -52,15 +52,15 @@ namespace DBToJsonProject.Views.WorkSpace
         public DbSettingToolBox()
         {
             InitializeComponent();
-            EventManager.RegisterClassHandler(typeof(TextBox), 
-                TextBox.PreviewMouseDownEvent, 
-                new MouseButtonEventHandler(TextBox_PreviewMouseDown));
-            EventManager.RegisterClassHandler(typeof(TextBox),
-                TextBox.GotFocusEvent,
-                new RoutedEventHandler(TextBox_GotFocus));
-            EventManager.RegisterClassHandler(typeof(TextBox),
-                TextBox.LostFocusEvent,
-                new RoutedEventHandler(TextBox_LostFocus));
+            //EventManager.RegisterClassHandler(typeof(TextBox), 
+            //    TextBox.PreviewMouseDownEvent, 
+            //    new MouseButtonEventHandler(TextBox_PreviewMouseDown));
+            //EventManager.RegisterClassHandler(typeof(TextBox),
+            //    TextBox.GotFocusEvent,
+            //    new RoutedEventHandler(TextBox_GotFocus));
+            //EventManager.RegisterClassHandler(typeof(TextBox),
+            //    TextBox.LostFocusEvent,
+            //    new RoutedEventHandler(TextBox_LostFocus));
         }
         /// <summary>
         /// 将填充树载入View

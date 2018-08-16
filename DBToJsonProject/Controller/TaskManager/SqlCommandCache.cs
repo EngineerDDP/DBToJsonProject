@@ -97,6 +97,11 @@ namespace DBToJsonProject.Controller.TaskManager
                 result = string.Format("({0})", r.Substring(0, r.Length - 1));    //去最后一个逗号，创建数组
             return !String.IsNullOrEmpty(r);
         }
+        /// <summary>
+        /// 使用JsonObject具象化抽象参数，并获取SQL语句实例
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public string GetInstance(JObject obj)
         {
             int i = 0;

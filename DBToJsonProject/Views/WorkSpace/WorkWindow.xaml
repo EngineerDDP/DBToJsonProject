@@ -42,16 +42,16 @@
                         <MenuItem x:Name="Opt_InportJob" Click="Opt_ImportJob_Click" Header="设备数据导入到计算机(I)"></MenuItem>
                         <MenuItem x:Name="Opt_ExportJob" Click="Opt_ExportJob_Click" Header="计算机数据导出到设备(E)"></MenuItem>
                     </MenuItem>
-                    <MenuItem Header="设置(O)">
-                        <MenuItem x:Name="Opt_SimpleMode" Click="Opt_SimpleMode_Click" Header="简单模式(S)"></MenuItem>
-                        <Separator/>
-                        <MenuItem x:Name="Opt_JobOption" Click="Opt_JobOption_Click" Header="任务选项..."></MenuItem>
-                        <MenuItem x:Name="Opt_DBOption" Click="Opt_DBOption_Click" Header="数据库表选项..."></MenuItem>
-                    </MenuItem>
                     <MenuItem Header="帮助(H)">
                         <MenuItem x:Name="Opt_Manual" Click="Opt_Manual_Click" Header="帮助手册..."></MenuItem>
                         <Separator/>
                         <MenuItem x:Name="Opt_About" Click="Opt_About_Click" Header="关于(A)"></MenuItem>
+                    </MenuItem>
+                    <MenuItem x:Name="Mnu_Setting" Header="开发人员选项(O)">
+                        <MenuItem x:Name="Opt_SimpleMode" Checked="Opt_SimpleMode_Click" Unchecked="Opt_SimpleMode_Unchecked" IsCheckable="True" Header="简单模式(S)"></MenuItem>
+                        <Separator/>
+                        <MenuItem x:Name="Opt_JobOption" Click="Opt_JobOption_Click" Header="任务选项..."></MenuItem>
+                        <MenuItem x:Name="Opt_DBOption" Click="Opt_DBOption_Click" Header="数据库表选项..."></MenuItem>
                     </MenuItem>
                 </Menu>
                 <StackPanel Grid.Column="1" Margin="10,0" HorizontalAlignment="Right" Orientation="Horizontal">

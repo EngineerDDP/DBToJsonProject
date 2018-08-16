@@ -105,6 +105,7 @@
     <Compile Include="Models\EventArguments\ExportPageInfoEventArgs.cs" />
     <Compile Include="Models\EventArguments\TaskPostBackEventArgs.cs" />
     <Compile Include="Models\FileExpression.cs" />
+    <Compile Include="Models\LoginInfo.cs" />
     <Compile Include="Models\PlainSelectableJsonNode.cs" />
     <Compile Include="Models\SelectCollection.cs" />
     <Compile Include="Views\ErrorBox.xaml.cs">

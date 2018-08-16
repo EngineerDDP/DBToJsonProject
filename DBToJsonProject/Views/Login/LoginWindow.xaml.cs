@@ -31,6 +31,21 @@ namespace DBToJsonProject.Views.Login
             throw new NotImplementedException();
         }
     }
+    public class BooleanToVisibility : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            Boolean? val = value as Boolean?;
+            if (val != true)
+                return Visibility.Hidden;
+            return Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
     /// <summary>
     /// LoginWindow.xaml 的交互逻辑
     /// </summary>
@@ -39,10 +54,15 @@ namespace DBToJsonProject.Views.Login
         public event EventHandler<UserLoginEventArgs> OnLogin;
         public event EventHandler OnExit;
 
+        private LoginInfo loginInfo;
+
         public LoginWindow()
         {
             InitializeComponent();
-            
+
+            loginInfo = new LoginInfo();
+            Txt_loginFailure.DataContext = loginInfo;
+          
         }
         public void FillInfo(UserLoginEventArgs args)
         {
@@ -60,7 +80,7 @@ namespace DBToJsonProject.Views.Login
         }
         public void LoginFailure()
         {
-            Txt_loginFailure.Visibility = Visibility.Visible;
+            loginInfo.Message = "登录失败，请检查用户名和密码是否正确!";
         }
         private void PostLoginEvent()
         {
@@ -75,6 +95,17 @@ namespace DBToJsonProject.Views.Login
                     RememberPassword = Chk_RememberPassword.IsChecked == true
                 };
                 OnLogin?.Invoke(this, args);
+                loginInfo.Message = "正在登录...";
+            }
+            else if(String.IsNullOrWhiteSpace(Txt_Username.Text))
+            {
+                loginInfo.Message = "请输入用户名!";
+                loginInfo.IsShown = true;
+            }
+            else if(String.IsNullOrEmpty(Txt_Password.Password))
+            {
+                loginInfo.Message = "请输入密码!";
+                loginInfo.IsShown = true;
             }
         }
         private void Btn_login_Click(object sender, RoutedEventArgs e)

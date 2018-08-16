@@ -101,12 +101,10 @@ namespace DBToJsonProject.Controller
         /// </summary>
         private void SetWindowSize()
         {
+            AppSetting setting = AppSetting.Default;
             UseDispatcher(work, () =>
              {
-                 work.Width = AppSetting.Default.WindowWidth;
-                 work.Height = AppSetting.Default.WindowHeight;
-                 work.Left = AppSetting.Default.WindowLeft;
-                 Work.Top = AppSetting.Default.WindowTop;
+                 work.SetPosition(setting.WindowLeft,setting.WindowTop,setting.WindowWidth,setting.WindowHeight);
              });
         }
 
@@ -249,7 +247,7 @@ namespace DBToJsonProject.Controller
         {
             PostAnCriticalError(e.Str);
             task = null;
-            T_UpdateProgressInfo(this, new TaskPostBackEventArgs(100, userSetting.PostLog("操作失败 " + e.Str), 100, "准备就绪"));
+            T_UpdateProgressInfo(this, new TaskPostBackEventArgs(100, "操作失败 " + e.Str, 100, "准备就绪"));
         }
         /// <summary>
         /// 更新任务进度

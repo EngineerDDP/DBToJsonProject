@@ -50,6 +50,7 @@ namespace DBToJsonProject.Controller.TaskManager
         public static readonly string PostExecute = "导出文件到Pad";
         public static readonly string Canceled = "任务被取消";
         public static readonly string Working = "工作进行中...";
+        public static readonly string Failed = "操作失败，请稍后再试一次.";
         public static readonly string ready = "准备就绪";
         public static readonly float DbTotalProcessRate = 0.50f;
     }
@@ -105,8 +106,8 @@ namespace DBToJsonProject.Controller.TaskManager
             Detial = detial;
             SpecifiedQuaryStringsArgs = args;
 
-            ProcessImg = false;
-            ProcessVdo = false;
+            ProcessImg = img;
+            ProcessVdo = vdo;
         }
         /// <summary>
         /// 初始化环境并启动工作线程
@@ -154,7 +155,7 @@ namespace DBToJsonProject.Controller.TaskManager
                     Update(loginfo);
                     loginfo = String.Empty;
                 }
-                Thread.Sleep(1000);
+                Thread.Sleep(AppSetting.Default.UpdateDelay);
             }
         }
         /// <summary>
@@ -173,6 +174,10 @@ namespace DBToJsonProject.Controller.TaskManager
         {
             try
             {
+                //清空文件夹
+                foreach (string f in Directory.GetFiles(AppSetting.Default.ExportWorkFolder))
+                    File.Delete(f);
+
                 dataBaseAccess.OpenConnection();
                 await BuildJsonFilesAsync();
                 PostExecution();
@@ -230,12 +235,13 @@ namespace DBToJsonProject.Controller.TaskManager
             progressStage = UpdateStrings.PostExecute;
             Update(UpdateStrings.PostExecute);
 
+            int i = 0;
+
             while (process?.HasExited == false)
             {
                 string str = sr.ReadLine();
-                int i;
                 string[] infos = str?.Split(' ');
-                if (infos?.Length > 1)
+                if (infos != null)
                     if (Int32.TryParse(infos[0], out i))
                     {
                         if (i == -1)
@@ -250,6 +256,8 @@ namespace DBToJsonProject.Controller.TaskManager
                     throw new Exception(UpdateStrings.Canceled);
                 }
             }
+            if (i != 100)
+                Update(UpdateStrings.Failed);
             process?.Dispose();
         }
         /// <summary>

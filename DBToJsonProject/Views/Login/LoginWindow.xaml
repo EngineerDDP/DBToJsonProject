@@ -10,11 +10,13 @@
         WindowStyle="None"
         AllowsTransparency="True"
         WindowStartupLocation="CenterScreen"
-        MouseDown="Window_MouseDown">
+        MouseDown="Window_MouseDown"
+        >
     <Window.Effect>
         <DropShadowEffect BlurRadius="24" Color="#FF858484" Direction="270" ShadowDepth="2"/>
     </Window.Effect>
     <Window.Resources>
+        <local:BooleanToVisibility x:Key="Boolean2Visibility"/>
         <Style x:Key="FocusVisual">
             <Setter Property="Control.Template">
                 <Setter.Value>
@@ -152,6 +154,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
     </Window.Resources>
     
     <StackPanel>
@@ -211,7 +214,7 @@
             <Border Height="30" Width="180" Margin="20,5,0,0" CornerRadius="5" BorderBrush="#FF0E95F1" BorderThickness="1">
                 <Button Click="Btn_login_Click" Height="30" FontWeight="Bold" Width="180" Content="登  录" FontFamily="宋体" Foreground="White" Background="#FF0E95F1" BorderThickness="0" Style="{DynamicResource ButtonStyle1}"></Button>
             </Border>
-            <TextBlock Name="Txt_loginFailure" Visibility="Hidden" TextAlignment="Center" Margin="0,3" Foreground="Red" FontSize="12">用户名或密码错误</TextBlock>
+            <TextBlock Name="Txt_loginFailure" Text="{Binding Path=Message,Mode=OneWay}" Visibility="{Binding Path=IsShown,Mode=TwoWay,UpdateSourceTrigger=Explicit,Converter={StaticResource Boolean2Visibility}}" TextAlignment="Center" Margin="0,3" Foreground="Red" FontSize="12"/>
         </StackPanel>
     </StackPanel>
 </Window>

@@ -18,7 +18,10 @@ namespace DBToJsonProject.Controller.SettingManager
         private static readonly string Xml_WindowLocY = "LocY";
         private static readonly string Xml_WindowWidth = "Width";
         private static readonly string Xml_WindowHeight = "Height";
-
+        public Int32 UpdateDelay
+        {
+            get => 500;
+        }
         public String ActiveUser
         {
             get; set;

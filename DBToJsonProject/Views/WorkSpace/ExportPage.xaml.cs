@@ -64,6 +64,8 @@ namespace DBToJsonProject.Views.WorkSpace
         }
         private void Opt_OpenFileEx_Click(object sender, RoutedEventArgs e)
         {
+            if (Lst_TargetFiles.SelectedIndex == -1)
+                Lst_TargetFiles.SelectedIndex = 1;
             String path = (Lst_TargetFiles.SelectedItem as FileExpression).Path;
             path = Environment.CurrentDirectory + "\\" + path;
             System.Diagnostics.Process.Start(path);
@@ -71,7 +73,8 @@ namespace DBToJsonProject.Views.WorkSpace
 
         private void Opt_CopyFileName_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText((Lst_TargetFiles.SelectedItem as FileExpression).FileName);
+            if(Lst_TargetFiles.SelectedIndex != -1)
+                Clipboard.SetText((Lst_TargetFiles.SelectedItem as FileExpression).FileName);
         }
         /// <summary>
         /// 页面载入事件

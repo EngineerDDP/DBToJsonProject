@@ -32,6 +32,17 @@ namespace DBToJsonProject.Views.WorkSpace
         {
             InitializeComponent();
         }
+        public void SetPosition(double left, double top, double width, double height)
+        {
+            if (left + width > SystemParameters.WorkArea.Width)
+                return;
+            if (top + height > SystemParameters.WorkArea.Height)
+                return;
+            this.Left = left;
+            this.Top = top;
+            this.Width = width;
+            this.Height = height;
+        }
         public void SetNavigate(Page page)
         {
             Frame_MainWorkSpace.Navigate(page);

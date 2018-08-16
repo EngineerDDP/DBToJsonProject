@@ -279,6 +279,7 @@ namespace DBToJsonProject.Views.WorkSpace
                                     BuildSetting(exportRoot, exdbStr), 
                                     BuildSetting(importRoot, imdbStr), 
                                     Txt_DbConnectStr.Text);
+            MessageBox.Show("保存成功", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         /// <summary>
         /// 用户改变了选择项，重新判断该项是否可写

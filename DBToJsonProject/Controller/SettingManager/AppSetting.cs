@@ -27,9 +27,17 @@ namespace DBToJsonProject.Controller.SettingManager
         {
             get; set;
         }
+        private String exportworkFolder;
         public String ExportWorkFolder
         {
-            get;set;
+            get
+            {
+                return ProfileRootPath + exportworkFolder;
+            }
+            set
+            {
+                exportworkFolder = value;
+            }
         }
         public Double WindowLeft { get; set; }
         public Double WindowTop { get; set; }
@@ -54,7 +62,7 @@ namespace DBToJsonProject.Controller.SettingManager
         {
             SettingNode root = LoadSettingXML(SettingFile);
             ActiveUser = root.Attributes[Xml_ActiveUserNodeName];
-            ExportWorkFolder = root.Attributes[Xml_ExportFolder];
+            exportworkFolder = root.Attributes[Xml_ExportFolder];
             SimpleMode = Boolean.Parse(root.Attributes[Xml_SimpleMode]);
 
             SettingNode window = root.SelectSingleNode(Xml_WindowSettingRoot);
@@ -77,7 +85,7 @@ namespace DBToJsonProject.Controller.SettingManager
         {
             SettingNode root = new SettingNode(Xml_SettingRootName);
             root.SetAttribute(Xml_ActiveUserNodeName, ActiveUser);
-            root.SetAttribute(Xml_ExportFolder, ExportWorkFolder);
+            root.SetAttribute(Xml_ExportFolder, exportworkFolder);
             root.SetAttribute(Xml_SimpleMode, SimpleMode.ToString());
 
             SettingNode window = new SettingNode(Xml_WindowSettingRoot);

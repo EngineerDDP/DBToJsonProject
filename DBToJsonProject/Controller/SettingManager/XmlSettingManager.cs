@@ -10,15 +10,10 @@ namespace DBToJsonProject.Controller.SettingManager
     /// </summary>
     abstract partial class XmlSettingManager
     {
-
-        /// <summary>
-        /// 设置文件根目录
-        /// </summary>
-        private static readonly string SettingRootFolder = "settings/";
         /// <summary>
         /// 子设置文件目录
         /// </summary>
-        protected virtual string SettingFolder { get => ""; }
+        protected virtual string SettingFolder { get; }
         /// <summary>
         /// 子设置文件识别名
         /// </summary>
@@ -26,7 +21,9 @@ namespace DBToJsonProject.Controller.SettingManager
         /// <summary>
         /// 获取设置文件根目录
         /// </summary>
-        protected static string SettingRootPath { get => SettingRootFolder; }
+        protected static string SettingRootPath { get => ProfileRootPath + "\\Profiles\\"; }
+        protected static string ProfileRootPath { get => Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\DataSynchronization_MW\\"; }
+        protected static string BinDirectory { get => "./"; }
         protected void Start()
         {
             if(ExistSettingXML(SettingFolder,SettingFile))
@@ -55,7 +52,7 @@ namespace DBToJsonProject.Controller.SettingManager
         /// <returns></returns>
         protected Boolean ExistSettingXML(String dir,String file)
         {
-            return File.Exists(SettingRootFolder + dir + file);
+            return File.Exists(SettingRootPath + dir + file);
         }
         /// <summary>
         /// 加载设置文件
@@ -85,7 +82,7 @@ namespace DBToJsonProject.Controller.SettingManager
         {
             FileStream fs;
             XmlDocument xml = new XmlDocument();
-            dir = SettingRootFolder + dir;
+            dir = SettingRootPath + dir;
             if (File.Exists(dir + file))
             {
                 fs = File.Open(dir + file, FileMode.Open);
@@ -114,7 +111,7 @@ namespace DBToJsonProject.Controller.SettingManager
         protected void SaveSettingXML(String dir, String file, SettingNode setting)
         {
             FileStream fs;
-            dir = SettingRootFolder + dir;
+            dir = SettingRootPath + dir;
             if (File.Exists(dir + file))
             {
                 fs = File.Open(dir + file, FileMode.Open);

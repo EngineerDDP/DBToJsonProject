@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBToJsonProject", "DBToJsonProject\DBToJsonProject.csproj", "{F048281C-0241-483B-81AE-5344E280E3A2}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupProj", "SetupProj\SetupProj.vdproj", "{A6F4F5F0-D92A-41D2-BC65-F5D0F9BAA81B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,8 @@ Global
 		{F048281C-0241-483B-81AE-5344E280E3A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F048281C-0241-483B-81AE-5344E280E3A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F048281C-0241-483B-81AE-5344E280E3A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6F4F5F0-D92A-41D2-BC65-F5D0F9BAA81B}.Debug|Any CPU.ActiveCfg = Debug
+		{A6F4F5F0-D92A-41D2-BC65-F5D0F9BAA81B}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

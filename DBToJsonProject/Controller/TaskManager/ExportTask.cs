@@ -174,10 +174,12 @@ namespace DBToJsonProject.Controller.TaskManager
         {
             try
             {
-                //清空文件夹
-                foreach (string f in Directory.GetFiles(AppSetting.Default.ExportWorkFolder))
-                    File.Delete(f);
-
+                if (Directory.Exists(AppSetting.Default.ExportWorkFolder))
+                {
+                    //清空文件夹
+                    foreach (string f in Directory.GetFiles(AppSetting.Default.ExportWorkFolder))
+                        File.Delete(f);
+                }
                 dataBaseAccess.OpenConnection();
                 await BuildJsonFilesAsync();
                 PostExecution();
@@ -200,6 +202,7 @@ namespace DBToJsonProject.Controller.TaskManager
             }
             catch (Exception e)
             {
+                System.Diagnostics.Debug.WriteLine(e.StackTrace);
                 PostErrorAndAbort?.Invoke(this, new StringEventArgs()
                 {
                     Str = "信息:" + e.Message
@@ -220,9 +223,11 @@ namespace DBToJsonProject.Controller.TaskManager
             process.StartInfo = new System.Diagnostics.ProcessStartInfo()
             {
                 FileName = "java",
-                Arguments = "-jar " + "./DataSynchronize_EX.jar " + SpecifiedQuaryStringsArgs[0].Replace('\'', ' ') + " " 
-                                    + Environment.CurrentDirectory + "/" + AppSetting.Default.ExportWorkFolder + " "
-                                    + ProcessImg.ToString() + " " + ProcessVdo.ToString(),
+                Arguments = "-jar " + "./DataSynchronize_EX.jar "                   //调用名
+                                    + SpecifiedQuaryStringsArgs[0].Replace('\'', ' ') + " "         //参数1
+                                    + Environment.CurrentDirectory + "/" + AppSetting.Default.ExportWorkFolder + " "        //参数2
+                                    + ProcessImg.ToString() + " "       //参数3
+                                    + ProcessVdo.ToString(),            //参数4
                 UseShellExecute = false,
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
@@ -232,7 +237,7 @@ namespace DBToJsonProject.Controller.TaskManager
             process.Start();
             StreamReader sr = process.StandardOutput;
 
-            progressStage = UpdateStrings.PostExecute;
+            progressStage = UpdateStrings.PostExecute;      //更新进度
             Update(UpdateStrings.PostExecute);
 
             int i = 0;

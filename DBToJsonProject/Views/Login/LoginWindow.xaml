@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DBToJsonProject.Views.Login"
         mc:Ignorable="d"
-        Title="LoginWindow" Height="391" Width="478"
+        Title="登录" Height="391" Width="478"
         BorderThickness="24"
         WindowStyle="None"
         AllowsTransparency="True"

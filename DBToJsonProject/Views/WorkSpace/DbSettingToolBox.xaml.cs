@@ -48,7 +48,7 @@ namespace DBToJsonProject.Views.WorkSpace
     public partial class DbSettingToolBox : Window
     {
         public event EventHandler<WrongSettingEventArgs> WrongSetting;
-        public event EventHandler<StringEventArgs> UnKnowError;
+        public event EventHandler<ExceptionEventArgs> UnKnowError;
         public DbSettingToolBox()
         {
             InitializeComponent();
@@ -260,7 +260,7 @@ namespace DBToJsonProject.Views.WorkSpace
             }
             catch (Exception e)
             {
-                UnKnowError?.Invoke(this, new StringEventArgs() { Str = e.Message });
+                UnKnowError?.Invoke(this, new ExceptionEventArgs(e, e.Message));
             }
         }
         /// <summary>

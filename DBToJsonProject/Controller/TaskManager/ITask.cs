@@ -8,7 +8,7 @@ namespace DBToJsonProject.Controller.TaskManager
 {
     interface ITask : IDisposable
     {
-        event EventHandler<StringEventArgs> PostErrorAndAbort;
+        event EventHandler<ExceptionEventArgs> PostErrorAndAbort;
         event EventHandler<TaskPostBackEventArgs> UpdateProgressInfo;
         event EventHandler<FileEventArgs> OnFileOperation;
         int Progress { get; }

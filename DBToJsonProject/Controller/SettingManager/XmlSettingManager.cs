@@ -18,11 +18,13 @@ namespace DBToJsonProject.Controller.SettingManager
         /// 子设置文件识别名
         /// </summary>
         protected abstract string SettingFile { get; }
-        /// <summary>
-        /// 获取设置文件根目录
-        /// </summary>
-        protected static string SettingRootPath { get => ProfileRootPath + "\\Profiles\\"; }
+#if DEBUG
+        protected static string SettingRootPath { get => ProfileRootPath + "settings\\"; }
+        protected static string ProfileRootPath { get => BinDirectory; }
+#else
+        protected static string SettingRootPath { get => ProfileRootPath + "Profiles\\"; }
         protected static string ProfileRootPath { get => Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\DataSynchronization_MW\\"; }
+#endif
         protected static string BinDirectory { get => "./"; }
         protected void Start()
         {

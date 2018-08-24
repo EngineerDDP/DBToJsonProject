@@ -36,7 +36,7 @@ namespace DBToJsonProject.Controller.SettingManager
         {
             Name = username;
             UserFolder = String.Format("{0}/", Name);
-            log = new UserActivitiesLog();
+            log = new UserActivitiesLog(SettingRootPath + UserFolder + LogFileName);
             Sel = new PlainSelectableJsonNode(Xml_ExportSettingNode);
 
             base.Start();
@@ -90,11 +90,7 @@ namespace DBToJsonProject.Controller.SettingManager
             root.AppendChild(sel);
             SaveSettingXML(UserFolder, SettingFile, root);
 
-            //写入Log文件
-            using (FileStream fs = File.Create(SettingRootPath + UserFolder + LogFileName))
-            {
-                log.Serialize(new StreamWriter(fs));
-            }
+            log.Update();
         }
         /// <summary>
         /// 写上次记录的用户设置

@@ -19,8 +19,15 @@ namespace DBToJsonProject.Controller
         public string wrongValue { get; set; }
         public string wrongMsg { get; set; }
     }
-    public class StringEventArgs : EventArgs
+    public class ExceptionEventArgs : EventArgs
     {
+        public ExceptionEventArgs(Exception e, string str)
+        {
+            E = e;
+            Str = str;
+        }
+
+        public Exception E { get; set; }
         public String Str { get; set; }
     }
     public class FileEventArgs

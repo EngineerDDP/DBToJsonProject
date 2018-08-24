@@ -15,7 +15,7 @@ namespace DBToJsonProject.Controller.TaskManager
 
         public bool Complete { get; private set; }
 
-        public event EventHandler<StringEventArgs> PostErrorAndAbort;
+        public event EventHandler<ExceptionEventArgs> PostErrorAndAbort;
         public event EventHandler<TaskPostBackEventArgs> UpdateProgressInfo;
         public event EventHandler<FileEventArgs> OnFileOperation;
 
@@ -67,20 +67,16 @@ namespace DBToJsonProject.Controller.TaskManager
                     string output = sr.ReadLine();
                     if (output != null)
                     {
-                        string[] info = output.Split('\n');
-                        foreach (string i in info)
-                        {
-                            string[] j = i.Split(' ');
-                            Int32 p;
-                            if (Int32.TryParse(j[0], out p))
-                                UpdateProgressInfo?.Invoke(this, new TaskPostBackEventArgs(p, j[1], p, j[1]));
-                        }
+                        string[] j = output.Split(' ');
+                        Int32 p;
+                        if (Int32.TryParse(j[0], out p))
+                            UpdateProgressInfo?.Invoke(this, new TaskPostBackEventArgs(p, j[1], p, j[1]));
                     }
                 }
             }
             catch(Exception e)
             {
-                PostErrorAndAbort?.Invoke(this, new StringEventArgs() { Str = e.Message });
+                PostErrorAndAbort?.Invoke(this, new ExceptionEventArgs(e,e.Message));
             }
             finally
             {

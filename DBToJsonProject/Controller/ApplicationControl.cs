@@ -177,7 +177,7 @@ namespace DBToJsonProject.Controller
 
                 task.UpdateProgressInfo += T_UpdateProgressInfo;
                 task.PostErrorAndAbort += T_PostErrorAndAbort;
-                task.OnFileOperation += Task_OnFileOperation;
+                task.OnFileOperation += T_OnFileOperation;
                 task.Run();
                 files.Clear();
             }
@@ -197,7 +197,7 @@ namespace DBToJsonProject.Controller
 
                 task.UpdateProgressInfo += T_UpdateProgressInfo;
                 task.PostErrorAndAbort += T_PostErrorAndAbort;
-                task.OnFileOperation += Task_OnFileOperation;
+                task.OnFileOperation += T_OnFileOperation;
                 task.Run();
                 files.Clear();
             }
@@ -209,7 +209,7 @@ namespace DBToJsonProject.Controller
         /// <summary>
         /// 工作线程进行了文件操作
         /// </summary>
-        private void Task_OnFileOperation(object sender, FileEventArgs e)
+        private void T_OnFileOperation(object sender, FileEventArgs e)
         {
             files.Add(e);
             UseDispatcher(exportPage, () => {
@@ -223,8 +223,9 @@ namespace DBToJsonProject.Controller
         /// <summary>
         /// 工作线程报告任务中止
         /// </summary>
-        private void T_PostErrorAndAbort(object sender, StringEventArgs e)
+        private void T_PostErrorAndAbort(object sender, ExceptionEventArgs e)
         {
+            userSetting.PostLog("Stack trace :" + e.E.StackTrace);
             PostAnCriticalError(e.Str);
             task = null;
             T_UpdateProgressInfo(this, new TaskPostBackEventArgs(100, "操作失败 " + e.Str, 100, "准备就绪"));
@@ -416,8 +417,9 @@ namespace DBToJsonProject.Controller
         /// <summary>
         /// 属性设置窗口出现未知错误
         /// </summary>
-        private void DbSettingbox_UnKnowError(object sender, StringEventArgs e)
+        private void DbSettingbox_UnKnowError(object sender, ExceptionEventArgs e)
         {
+            userSetting.PostLog("Stack trace :" + e.E.StackTrace);
             PostAnCriticalError(e.Str);
         }
         /// <summary>

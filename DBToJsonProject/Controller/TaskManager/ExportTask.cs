@@ -59,7 +59,7 @@ namespace DBToJsonProject.Controller.TaskManager
     { }
     class ExportTask : ITask, IDisposable
     {
-        public event EventHandler<StringEventArgs> PostErrorAndAbort;           //报告错误并退出运行
+        public event EventHandler<ExceptionEventArgs> PostErrorAndAbort;           //报告错误并退出运行
         public event EventHandler<TaskPostBackEventArgs> UpdateProgressInfo;    //更新执行信息
         public event EventHandler<FileEventArgs> OnFileOperation;
 
@@ -188,25 +188,16 @@ namespace DBToJsonProject.Controller.TaskManager
             }
             catch(DbSqlException e)
             {
-                PostErrorAndAbort?.Invoke(this, new StringEventArgs()
-                {
-                    Str = "信息:" + e.Message + " SQL: " + e.SqlCommand
-                });
+                PostErrorAndAbort?.Invoke(this, new ExceptionEventArgs(e, "信息:" + e.Message + " SQL: " + e.SqlCommand));
             }
             catch (AggregateException e)
             {
-                PostErrorAndAbort?.Invoke(this, new StringEventArgs()
-                {
-                    Str = "信息:" + e.InnerException.Message
-                });
+                PostErrorAndAbort?.Invoke(this, new ExceptionEventArgs(e, "信息:" + e.InnerException.Message));
             }
             catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine(e.StackTrace);
-                PostErrorAndAbort?.Invoke(this, new StringEventArgs()
-                {
-                    Str = "信息:" + e.Message
-                });
+                PostErrorAndAbort?.Invoke(this, new ExceptionEventArgs(e, "信息:" + e.Message));
             }
             finally
             {

@@ -158,10 +158,15 @@
     </Window.Resources>
     
     <StackPanel>
-        <Grid Height="180">
-            <Grid.Background>
-                <ImageBrush ImageSource="/Images/login_img_background.jpg" Stretch="UniformToFill"/>
-            </Grid.Background>
+        <Grid Height="180" Background="#006599">
+            <StackPanel Orientation="Vertical">
+                <Image Source="/Images/login_img_background.jpg" Height="140"></Image>
+                <Border HorizontalAlignment="Center" VerticalAlignment="Top">
+                    <TextBlock Foreground="Azure" FontSize="18">
+                                漫湾电站大坝巡检系统Web端数据同步应用软件
+                    </TextBlock>
+                </Border>
+            </StackPanel>
             <StackPanel Width="42" Height="20" HorizontalAlignment="Right" VerticalAlignment="Top">
                 <local:NewWindowTitle x:Name="Btns_Ctrl" MinimumBtn_Clicked="Btns_Ctrl_MinimumBtn_Clicked" CloseBtn_Clicked="Btns_Ctrl_CloseBtn_Clicked" HorizontalAlignment="Right"></local:NewWindowTitle>
             </StackPanel>

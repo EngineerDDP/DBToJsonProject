@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DBToJsonProject.Views.WorkSpace"
         mc:Ignorable="d"
         WindowStartupLocation="Manual"
-        Title="工作台" Height="685" Width="1062" MinHeight="689" MinWidth="981" Background="#FFF0F0F0"
+        Title="漫湾电站大坝巡检系统Web端数据同步应用软件" Height="685" Width="1062" MinHeight="689" MinWidth="981" Background="#FFF0F0F0"
         Closed="Window_Closed">
     <Grid>
         <Grid.RowDefinitions>

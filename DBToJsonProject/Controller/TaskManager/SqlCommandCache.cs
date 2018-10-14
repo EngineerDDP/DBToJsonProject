@@ -49,32 +49,46 @@ namespace DBToJsonProject.Controller.TaskManager
                     describer.CustomizeSQLString :
                     String.Format("Select * From {0} Where ", dbname) + "{0} IN {1}";
             }
-            //处理参数列表
             i = Regex.Matches(sqlTemplate, @"{\d}").Count;
-            while (i != tmpParas.Count)
+            try
             {
-                tmpParas.Add(new ParameterCache(specifiedQuaryStringsArgs[j++]));
-                if (j > specifiedQuaryStringsArgs.Length)
-                    j = 0;
+                //处理可选项
+                if (treeNode.HasSelectionNode)
+                    foreach (IJsonTreeNode n in treeNode.ChildNodes.Values)
+                    {
+                        string str;
+                        if (n.IsSelectionNode && BuildSelection(n, out str))
+                        {
+                            if (n.Sql.HasCustomizeSQLString)
+                                str = "(" + string.Format(n.Sql.CustomizeSQLString, str) + ")";
+                            sqlTemplate += String.Format(" AND {0} IN {1}", n.DbName, str);
+                        }
+                        else if (n.IsSelectionNode)
+                        {
+                            sqlTemplate += String.Format(" AND 0 = 1");
+                            break;
+                        }
+                    }
+                paras = tmpParas.ToArray();
             }
-            //处理可选项
-            if (treeNode.HasSelectionNode)
-                foreach(IJsonTreeNode n in treeNode.ChildNodes.Values)
+            catch(Exception)
+            {
+                throw new Exception("处理可选项时发生错误,SQL Template：" + sqlTemplate);
+            }
+            //处理参数列表
+            try
+            {
+                while (i != tmpParas.Count)
                 {
-                    string str;
-                    if (n.IsSelectionNode && BuildSelection(n, out str))
-                    {
-                        if (n.Sql.HasCustomizeSQLString)
-                            str = "(" + string.Format(n.Sql.CustomizeSQLString, str) + ")";
-                        sqlTemplate += String.Format(" AND {0} IN {1}", n.DbName, str);
-                    }
-                    else if(n.IsSelectionNode)
-                    {
-                        sqlTemplate += String.Format(" AND 0 = 1");
-                        break;
-                    }
+                    tmpParas.Add(new ParameterCache(specifiedQuaryStringsArgs[j++]));
+                    if (j > specifiedQuaryStringsArgs.Length)
+                        j = 0;
                 }
-            paras = tmpParas.ToArray();
+            }
+            catch (Exception)
+            {
+                throw new Exception("处理参数列表发生错误,SQL Template：" + sqlTemplate);
+            }
         }
         /// <summary>
         /// 根据选项创建筛选集合

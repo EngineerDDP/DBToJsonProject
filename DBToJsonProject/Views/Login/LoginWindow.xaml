@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DBToJsonProject.Views.Login"
         mc:Ignorable="d"
-        Title="登录" Height="391" Width="478"
+        Title="漫湾电站大坝巡检数据同步应用软件" Height="391" Width="478"
         BorderThickness="24"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -163,7 +163,7 @@
                 <Image Source="/Images/login_img_background.jpg" Height="140"></Image>
                 <Border HorizontalAlignment="Center" VerticalAlignment="Top">
                     <TextBlock Foreground="Azure" FontSize="18">
-                                漫湾电站大坝巡检系统Web端数据同步应用软件
+                                漫湾电站大坝巡检数据同步应用软件
                     </TextBlock>
                 </Border>
             </StackPanel>

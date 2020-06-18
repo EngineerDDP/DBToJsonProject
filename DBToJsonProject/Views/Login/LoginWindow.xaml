@@ -163,7 +163,7 @@
                 <Image Source="/Images/login_img_background.jpg" Height="140"></Image>
                 <Border HorizontalAlignment="Center" VerticalAlignment="Top">
                     <TextBlock Name="AppNameTitle" Foreground="Azure" FontSize="18">
-                                漫湾电站大坝巡检数据同步应用软件
+                                ——————数据同步应用软件
                     </TextBlock>
                 </Border>
             </StackPanel>
@@ -205,7 +205,7 @@
                     </Border>
                     <StackPanel Orientation="Horizontal" Height="15" Width="180" Margin="0,10,0,0">
                         <CheckBox Name="Chk_RememberPassword" IsChecked="{Binding ElementName=Chk_AutoLogin,Path=IsChecked,Mode=OneWay}" Style="{DynamicResource CheckBoxStyle1}">记住密码</CheckBox>
-                        <CheckBox Name="Chk_AutoLogin" Style="{DynamicResource CheckBoxStyle1}" Margin="42,0,0,0">自动登陆</CheckBox>
+                        <CheckBox Name="Chk_AutoLogin" Style="{DynamicResource CheckBoxStyle1}" Margin="42,0,0,0">自动登录</CheckBox>
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Height="60" Margin="12">

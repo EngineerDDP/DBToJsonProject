@@ -19,6 +19,7 @@ namespace DBToJsonProject.Controller.SettingManager
         private static readonly string Xml_WindowWidth = "Width";
         private static readonly string Xml_WindowHeight = "Height";
         private static readonly string Xml_SimpleMode = "SimpleMode";
+        private static readonly string Xml_APPName = "GlobalName";
         public Int32 UpdateDelay
         {
             get => 500;
@@ -44,6 +45,7 @@ namespace DBToJsonProject.Controller.SettingManager
         public Double WindowWidth { get; set; }
         public Double WindowHeight { get; set; }
         public Boolean SimpleMode { get; set; }
+        public String AppName { get; set; }
         private static AppSetting obj;
         public static AppSetting Default
         {
@@ -70,6 +72,7 @@ namespace DBToJsonProject.Controller.SettingManager
             WindowTop = Double.Parse(window.Attributes[Xml_WindowLocY]);
             WindowWidth = Double.Parse(window.Attributes[Xml_WindowWidth]);
             WindowHeight = Double.Parse(window.Attributes[Xml_WindowHeight]);
+            AppName = window.Attributes[Xml_APPName];
         }
         protected override void Init()
         {
@@ -80,6 +83,7 @@ namespace DBToJsonProject.Controller.SettingManager
             WindowWidth = 1062;
             WindowHeight = 677;
             SimpleMode = true;
+            AppName = "ABC";
         }
         public override void Update()
         {
@@ -93,6 +97,7 @@ namespace DBToJsonProject.Controller.SettingManager
             window.SetAttribute(Xml_WindowLocY, WindowTop.ToString());
             window.SetAttribute(Xml_WindowWidth, WindowWidth.ToString());
             window.SetAttribute(Xml_WindowHeight, WindowHeight.ToString());
+            window.SetAttribute(Xml_APPName, AppName);
 
             root.AppendChild(window);
 

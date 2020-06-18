@@ -62,6 +62,7 @@ namespace DBToJsonProject.Views.Login
 
             loginInfo = new LoginInfo();
             Txt_loginFailure.DataContext = loginInfo;
+            AppNameTitle.Text = Controller.SettingManager.AppSetting.Default.AppName;
           
         }
         public void FillInfo(UserLoginEventArgs args)

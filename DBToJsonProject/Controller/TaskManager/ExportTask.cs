@@ -1,21 +1,17 @@
 ﻿using DBToJsonProject.Controller.SettingManager;
-using DBToJsonProject.Models;
 using DBToJsonProject.Models.EventArguments;
 using DBToJsonProject.TaskManager;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.IO;
 
 namespace DBToJsonProject.Controller.TaskManager
 {
-    
+
     public class UpdateStrings
     {
         public static readonly string DBColumnsNotFound = "数据库表 {0} 中，找不到名为 {1} 的列.";
@@ -25,7 +21,7 @@ namespace DBToJsonProject.Controller.TaskManager
             "写文件",
             "任务完成"
         };
-        public static readonly string Complete = "导出完成";
+        public static readonly string Complete = "操作结束";
         public static readonly string Initialize = "初始化资源...";
         public static string ReadTable(string name)
         {
@@ -46,6 +42,10 @@ namespace DBToJsonProject.Controller.TaskManager
         public static string Progress(int i)
         {
             return String.Format("进度 ({0}/100)", i);
+        }
+        public static string Exec(String s)
+        {
+            return String.Format("执行 : \"{0}\"", s);
         }
         public static readonly string PostExecute = "导出文件到Pad";
         public static readonly string Canceled = "任务被取消";
@@ -216,7 +216,7 @@ namespace DBToJsonProject.Controller.TaskManager
                 FileName = "java",
                 Arguments = "-jar " + "./DataSynchronize_EX.jar "                   //调用名
                                     + SpecifiedQuaryStringsArgs[0].Replace('\'', ' ') + " "         //参数1
-                                    + Environment.CurrentDirectory + "/" + AppSetting.Default.ExportWorkFolder + " "        //参数2
+                                    + Environment.CurrentDirectory + AppSetting.Default.ExportWorkFolder.Split('.')[1] + " "        //参数2
                                     + ProcessImg.ToString() + " "       //参数3
                                     + ProcessVdo.ToString(),            //参数4
                 UseShellExecute = false,
@@ -230,6 +230,7 @@ namespace DBToJsonProject.Controller.TaskManager
 
             progressStage = UpdateStrings.PostExecute;      //更新进度
             Update(UpdateStrings.PostExecute);
+            Update(UpdateStrings.Exec(process.StartInfo.Arguments));
 
             int i = 0;
 

@@ -11,11 +11,11 @@
         <Button Name="Ok" Margin="236,126,16,16" Click="Ok_Click" Height="28" Width="60">确定</Button>
         <Image Margin="22,21,226,65" Height="64" Width="64" Source="/DBToJsonProject;component/desktopicon.png" Stretch="Fill"/>
         <TextBlock Width="150" Height="100" Margin="110,29,52,41">
-            <Run>项目组：漫湾—景洪项目组</Run><LineBreak/>
-            <Run>软件版本：0.1.0.0</Run><LineBreak/>
-            <Run>发行日期：2018-08-16</Run><LineBreak/>
+            <Run>项目组：*******项目组</Run><LineBreak/>
+            <Run>软件版本：0.1.0.3</Run><LineBreak/>
+            <Run>发行日期：2019-12-01</Run><LineBreak/>
             <LineBreak></LineBreak>
-            <Run>Copyright@2018 版权所有</Run><LineBreak/>
+            <Run>Copyright@2019 版权所有</Run><LineBreak/>
         </TextBlock>
     </Grid>
 </Window>

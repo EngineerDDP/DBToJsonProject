@@ -69,7 +69,6 @@ namespace DBToJsonProject.Controller.TaskManager
                             break;
                         }
                     }
-                paras = tmpParas.ToArray();
             }
             catch(Exception)
             {
@@ -89,6 +88,7 @@ namespace DBToJsonProject.Controller.TaskManager
             {
                 throw new Exception("处理参数列表发生错误,SQL Template：" + sqlTemplate);
             }
+            paras = tmpParas.ToArray();
         }
         /// <summary>
         /// 根据选项创建筛选集合
@@ -129,7 +129,15 @@ namespace DBToJsonProject.Controller.TaskManager
                 }
                 i++;
             }
-            return String.Format(sqlTemplate, args);
+            try
+            {
+                var str = String.Format(sqlTemplate, args);
+                return str;
+            }
+            catch(Exception)
+            {
+                throw new Exception("动态初始化发生错误，Sql Template:" + sqlTemplate);
+            }
         }
     }
 }

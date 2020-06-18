@@ -32,6 +32,8 @@ namespace DBToJsonProject.Views.WorkSpace
         public WorkWindow()
         {
             InitializeComponent();
+
+            this.Title = Controller.SettingManager.AppSetting.Default.AppName;
         }
         public void ActivateSimpleMode()
         {

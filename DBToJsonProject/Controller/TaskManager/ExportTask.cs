@@ -1,6 +1,5 @@
 ﻿using DBToJsonProject.Controller.SettingManager;
 using DBToJsonProject.Models.EventArguments;
-using DBToJsonProject.TaskManager;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -366,24 +365,32 @@ namespace DBToJsonProject.Controller.TaskManager
                 object obj = String.Empty;
                 bool buildstate = false;
 
+                // 更新前台状态
                 progressStage = UpdateStrings.Working;
 
                 if(node.BuildSingleFile)
                 {
+                    // 更新前台状态
                     progressStage = UpdateStrings.BuildObj(node.JsonNodeName);
+                    // 父节点就是数组
                     if (node.MultiRelated)
                     {
                         obj = await FillJsonArrayAsync(node, s);
                         foreach (JObject o in obj as JArray)
                         {
-                            totalProgress = (int)((i * 100 + stageProgress) * UpdateStrings.DbTotalProcessRate / detial.roots.Count);
-                            stageProgress = 100 * c++ / (obj as JArray).Count;
+                            // 更新进度条
+                            {
+                                totalProgress = (int)((i * 100 + stageProgress) * UpdateStrings.DbTotalProcessRate / detial.roots.Count);
+                                stageProgress = 100 * c++ / (obj as JArray).Count;
+                            }
 
+                            // 构建子对象
                             buildstate = await buildChildsAsync(node, o);
                             if (!buildstate)
                                 break;
                         }
                     }
+                    // 父节点不是数组
                     else
                     {
                         stageProgress = 0;
@@ -442,12 +449,12 @@ namespace DBToJsonProject.Controller.TaskManager
             bool build = false;
             bool EndNode = true;
             
-            foreach (IJsonTreeNode k in currentNode.ChildNodes.Values)
+            foreach (IJsonTreeNode child in currentNode.ChildNodes.Values)
             {
-                if (k.IsDbTable)
+                if (child.IsDbTable)
                 {
-                    JToken t = await BuildJsonNodeAsync(k, currentObj, currentNode);
-                    currentObj.Add(k.JsonNodeName, t);
+                    JToken t = await BuildJsonNodeAsync(child, currentObj, currentNode);
+                    currentObj.Add(child.JsonNodeName, t);
                     build = true;
                     EndNode = false;
                 }

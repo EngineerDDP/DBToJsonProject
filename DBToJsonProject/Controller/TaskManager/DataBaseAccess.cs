@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 
-namespace DBToJsonProject.TaskManager
+namespace DBToJsonProject.Controller.TaskManager
 {
     public class DbSqlException : Exception
     {

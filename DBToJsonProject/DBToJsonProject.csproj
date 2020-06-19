@@ -105,6 +105,7 @@
     <Compile Include="Controller\TaskManager\ExportTask.cs" />
     <Compile Include="Controller\TaskManager\ImportTask.cs" />
     <Compile Include="Controller\TaskManager\ITask.cs" />
+    <Compile Include="Controller\TaskManager\JsonExportProcessor.cs" />
     <Compile Include="Controller\TaskManager\ParameterCache.cs" />
     <Compile Include="Controller\TaskManager\SqlCommandCache.cs" />
     <Compile Include="Controller\Test.cs" />

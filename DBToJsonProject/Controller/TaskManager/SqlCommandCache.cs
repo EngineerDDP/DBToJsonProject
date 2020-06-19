@@ -20,18 +20,24 @@ namespace DBToJsonProject.Controller.TaskManager
             paras = new ParameterCache[0];
             sqlTemplate = String.Format(treeNode.Sql.CustomizeSQLString, specifiedQuaryStringsArgs);
         }
-        public SqlCommandCache(IJsonTreeNode treeNode, IJsonTreeNode parent, String[] specifiedQuaryStringsArgs)
+        /// <summary>
+        /// 建立SQL查询指令缓存
+        /// </summary>
+        /// <param name="currentNode">当前节点的IJson抽象索引</param>
+        /// <param name="parentNode">当前节点的父节点IJson抽象索引</param>
+        /// <param name="specifiedQuaryStringsArgs">系统级全局参数字符串</param>
+        public SqlCommandCache(IJsonTreeNode currentNode, IJsonTreeNode parentNode, String[] specifiedQuaryStringsArgs)
         {
             int i = 0, j = 0;
             bool isallstring = true;
-            ICustomizedSqlDescriber describer = treeNode.Sql;
-            String dbname = treeNode.DbName;
+            ICustomizedSqlDescriber describer = currentNode.Sql;
+            String dbname = currentNode.DbName;
 
             var tmpParas = new List<ParameterCache>();
 
             foreach(Parameter p in describer.Params.Parameters)
             {
-                tmpParas.Add(new ParameterCache(p, parent));
+                tmpParas.Add(new ParameterCache(p, parentNode));
                 isallstring &= p.IsString;
                 i++;
             }
@@ -53,8 +59,8 @@ namespace DBToJsonProject.Controller.TaskManager
             try
             {
                 //处理可选项
-                if (treeNode.HasSelectionNode)
-                    foreach (IJsonTreeNode n in treeNode.ChildNodes.Values)
+                if (currentNode.HasSelectionNode)
+                    foreach (IJsonTreeNode n in currentNode.ChildNodes.Values)
                     {
                         string str;
                         if (n.IsSelectionNode && BuildSelection(n, out str))
